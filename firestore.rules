@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper: Usuario autenticado
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    // Helper: Verificar si es admin
+    function isAdmin() {
+      return isAuth() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Helper: Es el propio usuario
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+    
+    // Usuarios: lectura para autenticados, escritura para admin o propio usuario
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isOwner(userId);
+      allow delete: if isAdmin();
+    }
+    
+    // Productos: lectura para autenticados, escritura para admin
+    match /productos/{productoId} {
+      allow read: if isAuth();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Ventas: lectura para admin, creación para autenticados
+    match /ventas/{ventaId} {
+      allow read: if isAdmin();
+      allow create: if isAuth();
+      allow update, delete: if isAdmin();
+    }
+    
+    // Cierres de caja: solo usuarios autenticados
+    match /cierres_caja/{cierreId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth() && resource.data.usuarioId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Configuración: lectura autenticados, escritura admin
+    match /config/{configId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+  }
+}
