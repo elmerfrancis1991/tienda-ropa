@@ -200,63 +200,65 @@ export default function Login() {
                 </CardContent>
             </Card>
 
-            <div className="mt-8 text-center">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={async () => {
-                        try {
-                            const { collection, addDoc } = await import('firebase/firestore');
-                            const { db } = await import('@/lib/firebase');
+            {import.meta.env.MODE !== 'production' && (
+                <div className="mt-8 text-center">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                            try {
+                                const { collection, addDoc } = await import('firebase/firestore');
+                                const { db } = await import('@/lib/firebase');
 
-                            const products = [
-                                {
-                                    nombre: 'Camisa Test',
-                                    descripcion: 'Camisa de prueba básica',
-                                    precio: 1000,
-                                    costo: 500,
-                                    stock: 100,
-                                    categoria: 'Camisas',
-                                    tallas: ['M', 'L'],
-                                    colores: ['Blanco'],
-                                    imagen: '',
-                                    activo: true,
-                                    updatedAt: new Date()
-                                },
-                                {
-                                    nombre: 'Pantalón Test',
-                                    descripcion: 'Pantalón de prueba básico',
-                                    precio: 2000,
-                                    costo: 1200,
-                                    stock: 50,
-                                    categoria: 'Pantalones',
-                                    tallas: ['30', '32'],
-                                    colores: ['Azul'],
-                                    imagen: '',
-                                    activo: true,
-                                    updatedAt: new Date()
+                                const products = [
+                                    {
+                                        nombre: 'Camisa Test',
+                                        descripcion: 'Camisa de prueba básica',
+                                        precio: 1000,
+                                        costo: 500,
+                                        stock: 100,
+                                        categoria: 'Camisas',
+                                        tallas: ['M', 'L'],
+                                        colores: ['Blanco'],
+                                        imagen: '',
+                                        activo: true,
+                                        updatedAt: new Date()
+                                    },
+                                    {
+                                        nombre: 'Pantalón Test',
+                                        descripcion: 'Pantalón de prueba básico',
+                                        precio: 2000,
+                                        costo: 1200,
+                                        stock: 50,
+                                        categoria: 'Pantalones',
+                                        tallas: ['30', '32'],
+                                        colores: ['Azul'],
+                                        imagen: '',
+                                        activo: true,
+                                        updatedAt: new Date()
+                                    }
+                                ];
+
+                                let count = 0;
+                                for (const p of products) {
+                                    await addDoc(collection(db, 'productos'), {
+                                        ...p,
+                                        createdAt: new Date()
+                                    });
+                                    count++;
                                 }
-                            ];
 
-                            let count = 0;
-                            for (const p of products) {
-                                await addDoc(collection(db, 'productos'), {
-                                    ...p,
-                                    createdAt: new Date()
-                                });
-                                count++;
+                                alert(`✅ Éxito: ${count} productos agregados.\n\nUSUARIO ADMIN CREADO:\nEmail: admin@tienda.com\nPassword: 123456\n\n(Intenta loguearte con estos datos, si falla, regístrate manualmente con ese email)`);
+                            } catch (err: any) {
+                                console.error(err);
+                                alert(`❌ Error al poblar: ${err.message}`);
                             }
-
-                            alert(`✅ Éxito: ${count} productos agregados.\n\nUSUARIO ADMIN CREADO:\nEmail: admin@tienda.com\nPassword: 123456\n\n(Intenta loguearte con estos datos, si falla, regístrate manualmente con ese email)`);
-                        } catch (err: any) {
-                            console.error(err);
-                            alert(`❌ Error al poblar: ${err.message}`);
-                        }
-                    }}
-                >
-                    🛠️ Poblar Datos + Crear Admin
-                </Button>
-            </div>
+                        }}
+                    >
+                        🛠️ Poblar Datos + Crear Admin
+                    </Button>
+                </div>
+            )}
 
             <Dialog open={isResetOpen} onOpenChange={setIsResetOpen}>
                 <DialogContent>

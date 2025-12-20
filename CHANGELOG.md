@@ -8,6 +8,9 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 - Guía de comandos Git en `PRODUCTION_GUIDE.md`.
 - Este archivo `CHANGELOG.md` para seguimiento de mejoras.
 
+### 🛡️ Seguridad
+- El botón "Poblar Datos" ahora se oculta automáticamente en producción para proteger el acceso administrativo.
+
 ### ⚙️ Mejoras Técnicas
 - Inyección de credenciales de Firebase como fallback (reparación de pantalla negra).
 - Actualización de Node.js a la versión 20 en GitHub Actions.
