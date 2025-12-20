@@ -4,8 +4,14 @@ Tu sistema ahora utiliza un flujo profesional para asegurar que los cambios sean
 
 ## 🚀 El Ciclo de Despliegue
 
-### 1. Desarrollo y Pruebas (Staging)
-Cada vez que hagamos una mejora, se subirá primero a la rama `staging`.
+### 1. Identificar y Registrar Mejoras (NUEVO)
+Antes de subir cualquier cambio, es vital anotar qué se mejoró para llevar un control profesional.
+- Abre el archivo `CHANGELOG.md`.
+- Sigue el formato existente: añade la fecha, la versión y una lista de lo que hiciste (ej: "Se arregló el botón X").
+- Actualiza también la versión en `package.json` (ej: de `1.1.0` a `1.2.0`).
+
+### 2. Desarrollo y Pruebas (Staging)
+Una vez anotado el cambio, se sube primero a la rama `staging`.
 - **URL de Pruebas**: [https://tienda-ropa-staging-demo.web.app/](https://tienda-ropa-staging-demo.web.app/)
 - **Acción**: Aquí es donde tú entras, pruebas los botones, realizas ventas ficticias y validas que todo esté como te gusta.
 
@@ -35,7 +41,36 @@ Llevamos el control en el archivo `package.json`. Sigue este estándar para que 
 
 ---
 
-## 🛠️ Seguimiento en GitHub Actions
-Puedes monitorear el progreso de cada subida en la pestaña **"Actions"** de tu repositorio:
-- **Deploy Staging**: Se activa al subir a la rama `staging`.
-- **Deploy Production**: Se activa al subir a la rama `main`.
+## � Manual de Comandos (Cómo subir cambios)
+
+Aquí tienes los "hechizos" mágicos que debes escribir en tu terminal para gestionar el sistema:
+
+### Caso A: Subir mejoras a STAGING (Para probar)
+Usa esto cuando hayas terminado un cambio y quieras verlo en la web de pruebas:
+```powershell
+# 1. Guardar tus cambios localmente
+git add .
+git commit -m "Descripción de lo que hiciste (ej: cambio de versión)"
+
+# 2. Subirlo a la nube de pruebas
+git push origin staging
+```
+
+### Caso B: Pasar de STAGING a PRODUCCIÓN (Cuando ya probaste)
+Usa esto cuando lo que viste en el link de pruebas te encantó y quieres que tus clientes lo vean:
+```powershell
+# 1. Cambiarse a la rama principal
+git checkout main
+
+# 2. Traer los cambios aprobados desde staging
+git merge staging
+
+# 3. Subir a la web oficial
+git push origin main
+
+# 4. Volver a staging para seguir trabajando
+git checkout staging
+```
+
+> [!TIP]
+> **¿Dónde escribo esto?** En tu editor de código (VS Code), abre una **Terminal** (Ctrl+ñ) y pega los comandos uno por uno.
