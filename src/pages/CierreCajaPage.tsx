@@ -47,7 +47,7 @@ export default function CierreCajaPage() {
 
     // Calcular ventas del día por método de pago
     const ventasDelDia = (() => {
-        if (!cajaActual) return { efectivo: 0, tarjeta: 0, total: 0 }
+        if (!cajaActual) return { efectivo: 0, tarjeta: 0, transferencia: 0, total: 0 }
 
         const ventasHoy = ventas.filter(v => {
             // Si la venta tiene cajaId, filtrar por ID exacto
@@ -203,7 +203,7 @@ export default function CierreCajaPage() {
                                 <p className="text-sm text-muted-foreground flex items-center gap-1">
                                     <TrendingUp className="h-3 w-3" /> Transferencias
                                 </p>
-                                <p className="text-xl font-bold text-purple-600">{formatCurrency(ventasDelDia.transferencia)}</p>
+                                <p className="text-xl font-bold text-purple-600">{formatCurrency(ventasDelDia.transferencia || 0)}</p>
                             </div>
                             <div className="space-y-1">
                                 <p className="text-sm text-muted-foreground">Esperado en Caja</p>
@@ -372,7 +372,7 @@ export default function CierreCajaPage() {
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span>Transferencias:</span>
-                                <span className="font-medium text-purple-600">{formatCurrency(ventasDelDia.transferencia)}</span>
+                                <span className="font-medium text-purple-600">{formatCurrency(ventasDelDia.transferencia || 0)}</span>
                             </div>
                             <div className="flex justify-between font-bold border-t pt-2">
                                 <span>Esperado en Caja:</span>
