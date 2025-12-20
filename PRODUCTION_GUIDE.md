@@ -1,28 +1,41 @@
-# Guía de Despliegue a Producción (Vía GitHub)
+# Guía de Flujo de Trabajo y Despliegue
 
-¡Tienes razón! Tu sistema ya está configurado para desplegarse automáticamente a través de **GitHub Actions**. Esto significa que no necesitas compilar manualmente en tu computadora; GitHub lo hará por ti.
+Tu sistema ahora utiliza un flujo profesional para asegurar que los cambios sean probados antes de llegar a tus clientes.
 
-## Pasos para subir a Producción
+## 🚀 El Ciclo de Despliegue
 
-### 1. Preparar los archivos
-Asegúrate de que los cambios que hemos hecho (navegación, caja con transferencias, filtros) funcionen como esperas en el ambiente de Staging.
+### 1. Desarrollo y Pruebas (Staging)
+Cada vez que hagamos una mejora, se subirá primero a la rama `staging`.
+- **URL de Pruebas**: [https://tienda-ropa-staging-demo.web.app/](https://tienda-ropa-staging-demo.web.app/)
+- **Acción**: Aquí es donde tú entras, pruebas los botones, realizas ventas ficticias y validas que todo esté como te gusta.
 
-### 2. Configurar Producción (Si aún no está hecho)
-GitHub necesita saber a qué base de datos conectarse para "Producción". Debes tener un archivo `.env.production` con las credenciales finales. 
-> [!IMPORTANT]
-> Si el archivo `.env.production` no existe en tu repositorio, créalo siguiendo el formato de `.env.staging` pero con los datos de tu proyecto de Firebase Real/Producción.
+### 2. Validación y Pase a Producción
+Una vez que me digas "Listo, ya probé en staging y funciona", pasaremos los cambios a la rama `main`.
+- **Acción**: Yo (o tú vía Git) realizaré el "Merge" de staging a main.
+- **Resultado**: La URL oficial se actualizará automáticamente.
 
-### 3. Subir cambios a la rama `main`
-Cuando estés listo para que el mundo vea la nueva versión:
-1. Asegúrate de estar en la rama `main` (o haz un "Merge" desde tu rama de desarrollo a `main`).
-2. Sube los cambios (Push) a GitHub.
+---
 
-### 4. Seguimiento Automático
-1. Ve a la pestaña **"Actions"** en tu repositorio de GitHub.
-2. Verás un proceso llamado **"Deploy Production"** ejecutándose.
-3. Una vez termine (se ponga en verde), tu página web se actualizará sola en la URL de producción.
+## 🏷️ Control de Versiones (Esquina Superior Derecha)
 
-## Verificación Final
-1. Entra a tu URL de producción oficial.
-2. Abre una caja, realiza una venta y verifica que el historial de facturas ahora filtre correctamente por Hoy/Semana/Mes.
-3. ¡Disfruta de tu sistema actualizado!
+Llevamos el control en el archivo `package.json`. Sigue este estándar para que siempre sepas qué tienes instalado:
+
+1. **Para Pruebas (Staging)**: 
+   - Usa el sufijo `-rc` (Release Candidate). 
+   - Ejemplo: `"version": "1.1.0-rc.1"`
+   
+2. **Para Oficial (Producción)**: 
+   - Usa el número limpio una vez que la prueba sea exitosa.
+   - Ejemplo: `"version": "1.1.0"`
+
+### Cómo cambiar la versión:
+1. Abre el archivo `package.json`.
+2. En la línea 4, cambia el número: `"version": "1.1.0-rc.1"`.
+3. Guarda y sube el cambio a GitHub.
+
+---
+
+## 🛠️ Seguimiento en GitHub Actions
+Puedes monitorear el progreso de cada subida en la pestaña **"Actions"** de tu repositorio:
+- **Deploy Staging**: Se activa al subir a la rama `staging`.
+- **Deploy Production**: Se activa al subir a la rama `main`.
