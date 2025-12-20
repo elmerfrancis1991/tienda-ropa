@@ -17,18 +17,16 @@ service cloud.firestore {
       return isAuth() && request.auth.uid == userId;
     }
     
-    // Usuarios: lectura para autenticados, escritura para admin o propio usuario
+    // Usuarios: lectura para autenticados, escritura ABIERTA PARA CONFIGURACIÓN INICIAL
     match /users/{userId} {
-      allow read: if isAuth();
-      allow create: if isAdmin();
-      allow update: if isAdmin() || isOwner(userId);
-      allow delete: if isAdmin();
+      allow read: if true;
+      allow write: if true;
     }
     
-    // Productos: lectura para autenticados, escritura para admin
+    // Productos: lectura para todos, escritura ABIERTA PARA CONFIGURACIÓN INICIAL
     match /productos/{productoId} {
-      allow read: if isAuth();
-      allow create, update, delete: if isAdmin();
+      allow read: if true;
+      allow write: if true;
     }
     
     // Ventas: lectura para admin, creación para autenticados

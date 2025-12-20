@@ -119,6 +119,7 @@ export interface CierreCaja {
     montoCierre: number
     ventasEfectivo: number
     ventasTarjeta: number
+    ventasTransferencia: number
     ventasTotal: number
     diferencia: number
     observaciones?: string

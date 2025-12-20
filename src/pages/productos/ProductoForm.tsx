@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -37,6 +38,7 @@ interface ProductoFormProps {
 }
 
 export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoFormProps) {
+    const { user } = useAuth()
     const [selectedTallas, setSelectedTallas] = useState<string[]>([])
     const [selectedColores, setSelectedColores] = useState<string[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -252,33 +254,37 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
 
                     {/* Price and Stocks */}
                     <div className="grid gap-4 md:grid-cols-3">
-                        <div className="space-y-2">
-                            <Label htmlFor="costo">Costo (RD$)</Label>
-                            <Input
-                                id="costo"
-                                type="number"
-                                step="0.01"
-                                placeholder="0.00"
-                                {...register('costo', {
-                                    valueAsNumber: true,
-                                    onChange: handleCostoChange
-                                })}
-                            />
-                        </div>
+                        {user?.role === 'admin' && (
+                            <>
+                                <div className="space-y-2">
+                                    <Label htmlFor="costo">Costo (RD$)</Label>
+                                    <Input
+                                        id="costo"
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        {...register('costo', {
+                                            valueAsNumber: true,
+                                            onChange: handleCostoChange
+                                        })}
+                                    />
+                                </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="ganancia">Ganancia (RD$)</Label>
-                            <Input
-                                id="ganancia"
-                                type="number"
-                                step="0.01"
-                                placeholder="0.00"
-                                {...register('ganancia', {
-                                    valueAsNumber: true,
-                                    onChange: handleGananciaChange
-                                })}
-                            />
-                        </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="ganancia">Ganancia (RD$)</Label>
+                                    <Input
+                                        id="ganancia"
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        {...register('ganancia', {
+                                            valueAsNumber: true,
+                                            onChange: handleGananciaChange
+                                        })}
+                                    />
+                                </div>
+                            </>
+                        )}
 
                         <div className="space-y-2">
                             <Label htmlFor="precio">Precio (RD$) *</Label>

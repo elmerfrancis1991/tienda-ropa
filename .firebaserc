@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "sistema-tienda-c646b"
+    "default": "sistema-tienda-c646b",
+    "staging": "tienda-ropa-staging-demo"
   }
 }

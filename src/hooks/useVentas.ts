@@ -111,6 +111,7 @@ export function useVentas() {
                 const ventaParaGuardar = {
                     ...venta,
                     id: newVentaRef.id,
+                    cajaId: venta.cajaId || null,
                     fecha: Timestamp.fromDate(venta.fecha)
                 }
                 transaction.set(newVentaRef, ventaParaGuardar)

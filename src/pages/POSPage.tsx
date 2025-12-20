@@ -20,6 +20,7 @@ import { printTicket } from '@/lib/printer'
 import { useProductos } from '@/hooks/useProductos'
 import { useCart, Venta } from '@/hooks/useCart'
 import { useVentas } from '@/hooks/useVentas'
+import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { useAuth } from '@/contexts/AuthContext'
 import { useConfig } from '@/contexts/ConfigContext'
 import { Button } from '@/components/ui/button'
@@ -292,7 +293,8 @@ export default function POSPage() {
     const { user } = useAuth()
     const { settings } = useConfig()
     const { productos, loading } = useProductos()
-    const { agregarVenta, procesarVenta } = useVentas()
+    const { procesarVenta } = useVentas()
+    const { cajaActual } = useCierreCaja()
     const cart = useCart({
         itbisEnabled: settings.itbisEnabled,
         itbisRate: settings.itbisRate,
@@ -358,6 +360,7 @@ export default function POSPage() {
                 total: cart.total,
                 metodoPago,
                 vendedor: user?.nombre || 'Vendedor',
+                cajaId: cajaActual?.id,
                 cliente: 'Cliente General',
                 fecha: new Date(),
                 estado: 'completada',

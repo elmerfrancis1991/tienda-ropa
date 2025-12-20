@@ -61,15 +61,21 @@ export default function HistorialFacturasPage() {
         // Filtro por fecha
         const now = new Date()
         const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        const startOfTomorrow = new Date(startOfToday)
+        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1)
 
         if (dateFilter === 'hoy') {
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfToday
+                return fecha >= startOfToday && fecha < startOfTomorrow
             })
         } else if (dateFilter === 'semana') {
             const startOfWeek = new Date(startOfToday)
-            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
+            const day = startOfWeek.getDay()
+            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1) // Iniciar lunes
+            startOfWeek.setDate(diff)
+            startOfWeek.setHours(0, 0, 0, 0)
+
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
                 return fecha >= startOfWeek

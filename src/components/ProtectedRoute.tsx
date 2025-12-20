@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { UserRole } from '@/types'
 import { Loader2 } from 'lucide-react'
 
@@ -58,14 +59,35 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
         )
     }
 
+    // 1. Redirigir al login si no hay usuario
     if (!user) {
-        // Redirect to login with return URL
         return <Navigate to="/login" state={{ from: location }} replace />
     }
 
+    // 2. Redirigir por rol si es necesario
     if (requiredRole && !hasRole(requiredRole)) {
-        // Redirect to dashboard if user doesn't have required role
         return <Navigate to="/dashboard" replace />
+    }
+
+    return <CashDrawerGuard>{children}</CashDrawerGuard>
+}
+
+// Sub-componente para manejar el estado de la caja de forma aislada
+function CashDrawerGuard({ children }: { children: React.ReactNode }) {
+    const { isCajaAbierta, loading: loadingCaja } = useCierreCaja()
+    const location = useLocation()
+
+    if (loadingCaja) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Si la caja está cerrada y NO estamos en la página de caja, redirigir a caja
+    if (!isCajaAbierta && location.pathname !== '/caja') {
+        return <Navigate to="/caja" replace />
     }
 
     return <>{children}</>

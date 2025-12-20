@@ -1,12 +1,12 @@
 @echo off
 echo Inicializando Git Staging Flow...
 
-:: Initialize Git
-git init
+:: Initialize Git (Using standard path)
+"C:\Program Files\Git\cmd\git.exe" init
 
 :: Configure User (Standard placeholder, user should update)
-git config user.email "admin@tienda.com"
-git config user.name "Admin Tienda"
+"C:\Program Files\Git\cmd\git.exe" config user.email "admin@tienda.com"
+"C:\Program Files\Git\cmd\git.exe" config user.name "Admin Tienda"
 
 :: Ignore node_modules if not ignored
 if not exist .gitignore echo node_modules/ > .gitignore
@@ -15,16 +15,16 @@ if not exist .gitignore echo .env.* >> .gitignore
 if not exist .gitignore echo !.env.example >> .gitignore
 
 :: Add all files
-git add .
+"C:\Program Files\Git\cmd\git.exe" add .
 
 :: Initial Commit
-git commit -m "Initial commit: Production setup"
+"C:\Program Files\Git\cmd\git.exe" commit -m "Initial commit: Production setup"
 
 :: Create Main Branch
-git branch -M main
+"C:\Program Files\Git\cmd\git.exe" branch -M main
 
 :: Create Staging Branch
-git checkout -b staging
+"C:\Program Files\Git\cmd\git.exe" checkout -b staging
 
 echo.
 echo ==========================================

@@ -21,6 +21,7 @@ export interface Venta {
     metodoPago: 'efectivo' | 'tarjeta' | 'transferencia'
     cliente?: string
     vendedor: string
+    cajaId?: string
     fecha: Date
     estado: 'completada' | 'pendiente' | 'cancelada'
     itbisAplicado: boolean

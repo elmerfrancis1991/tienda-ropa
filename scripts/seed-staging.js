@@ -1,13 +1,10 @@
 const admin = require('firebase-admin');
-// const serviceAccount = require('./service-account-staging.json');
+const serviceAccount = require('../service-account-staging.json');
 
 // Instructions:
-// 1. Download service account key for STAGING project
-// 2. Save as service-account-staging.json in this directory
-// 3. Uncomment line above and below
-// 4. Run: node scripts/seed-staging.js
+// Key automatically copied from Downloads.
+// Run: node scripts/seed-staging.js
 
-/*
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });

@@ -43,6 +43,7 @@ export function useCierreCaja() {
                         montoCierre: data.montoCierre || 0,
                         ventasEfectivo: data.ventasEfectivo || 0,
                         ventasTarjeta: data.ventasTarjeta || 0,
+                        ventasTransferencia: data.ventasTransferencia || 0,
                         ventasTotal: data.ventasTotal || 0,
                         diferencia: data.diferencia || 0,
                         observaciones: data.observaciones,
@@ -89,6 +90,7 @@ export function useCierreCaja() {
                 montoCierre: 0,
                 ventasEfectivo: 0,
                 ventasTarjeta: 0,
+                ventasTransferencia: 0,
                 ventasTotal: 0,
                 diferencia: 0,
                 estado: 'abierto',
@@ -108,13 +110,14 @@ export function useCierreCaja() {
         montoCierre: number,
         ventasEfectivo: number,
         ventasTarjeta: number,
+        ventasTransferencia: number,
         observaciones?: string
     ): Promise<void> => {
         if (!user) throw new Error('Usuario no autenticado')
         if (!cajaActual) throw new Error('No hay caja abierta para cerrar')
 
         try {
-            const ventasTotal = ventasEfectivo + ventasTarjeta
+            const ventasTotal = ventasEfectivo + ventasTarjeta + ventasTransferencia
             const montoEsperado = cajaActual.montoApertura + ventasEfectivo
             const diferencia = montoCierre - montoEsperado
 
@@ -122,6 +125,7 @@ export function useCierreCaja() {
                 montoCierre,
                 ventasEfectivo,
                 ventasTarjeta,
+                ventasTransferencia,
                 ventasTotal,
                 diferencia,
                 observaciones: observaciones || '',

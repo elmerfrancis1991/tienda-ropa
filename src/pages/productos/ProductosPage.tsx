@@ -13,6 +13,7 @@ import {
     Minus,
 } from 'lucide-react'
 import { useProductos } from '@/hooks/useProductos'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -31,6 +32,7 @@ import { Producto, CATEGORIAS_ROPA, STOCK_MINIMO_DEFAULT } from '@/types'
 import { formatCurrency, cn } from '@/lib/utils'
 
 export default function ProductosPage() {
+    const { user } = useAuth()
     const { productos, loading, error, addProducto, updateProducto, deleteProducto } = useProductos()
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategoria, setSelectedCategoria] = useState<string>('')
@@ -173,10 +175,12 @@ export default function ProductosPage() {
                         Gestiona el catálogo y control de stock
                     </p>
                 </div>
-                <Button onClick={() => setFormOpen(true)} className="shrink-0">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nuevo Producto
-                </Button>
+                {user?.role === 'admin' && (
+                    <Button onClick={() => setFormOpen(true)} className="shrink-0">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Nuevo Producto
+                    </Button>
+                )}
             </div>
 
             {/* Stats */}
@@ -331,18 +335,19 @@ export default function ProductosPage() {
                                     <Package className="h-16 w-16 text-muted-foreground/50" />
                                 </div>
                             )}
-                            {/* Overlay actions */}
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                <Button size="sm" variant="secondary" onClick={() => openEditForm(producto)}>
-                                    <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button size="sm" variant="secondary" onClick={() => openStockModal(producto)}>
-                                    <Plus className="h-4 w-4" />
-                                </Button>
-                                <Button size="sm" variant="destructive" onClick={() => openDeleteDialog(producto)}>
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
+                            {user?.role === 'admin' && (
+                                <>
+                                    <Button size="sm" variant="secondary" onClick={() => openEditForm(producto)}>
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button size="sm" variant="secondary" onClick={() => openStockModal(producto)}>
+                                        <Plus className="h-4 w-4" />
+                                    </Button>
+                                    <Button size="sm" variant="destructive" onClick={() => openDeleteDialog(producto)}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </>
+                            )}
                         </div>
                         <CardContent className="p-4">
                             <div className="space-y-2">

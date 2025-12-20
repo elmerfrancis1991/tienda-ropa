@@ -49,9 +49,16 @@ export default function CierreCajaPage() {
     const ventasDelDia = (() => {
         if (!cajaActual) return { efectivo: 0, tarjeta: 0, total: 0 }
 
-        const fechaApertura = cajaActual.createdAt
         const ventasHoy = ventas.filter(v => {
+            // Si la venta tiene cajaId, filtrar por ID exacto
+            if (v.cajaId) {
+                return v.cajaId === cajaActual.id
+            }
+            // Fallback: Filtrar por fecha si no hay cajaId (migración/ventas viejas)
             const fechaVenta = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
+            const fechaApertura = cajaActual.createdAt instanceof Date
+                ? cajaActual.createdAt
+                : new Date(cajaActual.createdAt)
             return fechaVenta >= fechaApertura
         })
 
@@ -63,7 +70,11 @@ export default function CierreCajaPage() {
             .filter(v => v.metodoPago === 'tarjeta')
             .reduce((sum, v) => sum + v.total, 0)
 
-        return { efectivo, tarjeta, total: efectivo + tarjeta }
+        const transferencia = ventasHoy
+            .filter(v => v.metodoPago === 'transferencia')
+            .reduce((sum, v) => sum + v.total, 0)
+
+        return { efectivo, tarjeta, transferencia, total: efectivo + tarjeta + transferencia }
     })()
 
     const handleAbrirCaja = async () => {
@@ -98,7 +109,13 @@ export default function CierreCajaPage() {
         setError(null)
 
         try {
-            await cerrarCaja(monto, ventasDelDia.efectivo, ventasDelDia.tarjeta, observaciones)
+            await cerrarCaja(
+                monto,
+                ventasDelDia.efectivo || 0,
+                ventasDelDia.tarjeta || 0,
+                ventasDelDia.transferencia || 0,
+                observaciones
+            )
             setShowCerrarModal(false)
             setMontoCierre('')
             setObservaciones('')
@@ -183,9 +200,15 @@ export default function CierreCajaPage() {
                                 <p className="text-xl font-bold text-blue-600">{formatCurrency(ventasDelDia.tarjeta)}</p>
                             </div>
                             <div className="space-y-1">
+                                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                    <TrendingUp className="h-3 w-3" /> Transferencias
+                                </p>
+                                <p className="text-xl font-bold text-purple-600">{formatCurrency(ventasDelDia.transferencia)}</p>
+                            </div>
+                            <div className="space-y-1">
                                 <p className="text-sm text-muted-foreground">Esperado en Caja</p>
                                 <p className="text-xl font-bold text-primary">
-                                    {formatCurrency(cajaActual.montoApertura + ventasDelDia.efectivo)}
+                                    {formatCurrency((cajaActual?.montoApertura || 0) + (ventasDelDia?.efectivo || 0))}
                                 </p>
                             </div>
                         </div>
@@ -239,6 +262,9 @@ export default function CierreCajaPage() {
                                             <span>Apertura: {formatCurrency(cierre.montoApertura)}</span>
                                             <span>Cierre: {formatCurrency(cierre.montoCierre)}</span>
                                             <span>Ventas: {formatCurrency(cierre.ventasTotal)}</span>
+                                            {cierre.ventasTransferencia > 0 && (
+                                                <span className="text-purple-600">Trf: {formatCurrency(cierre.ventasTransferencia)}</span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -343,6 +369,10 @@ export default function CierreCajaPage() {
                             <div className="flex justify-between text-sm">
                                 <span>Ventas Tarjeta:</span>
                                 <span className="font-medium text-blue-600">{formatCurrency(ventasDelDia.tarjeta)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span>Transferencias:</span>
+                                <span className="font-medium text-purple-600">{formatCurrency(ventasDelDia.transferencia)}</span>
                             </div>
                             <div className="flex justify-between font-bold border-t pt-2">
                                 <span>Esperado en Caja:</span>

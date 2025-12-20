@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -135,9 +136,13 @@ export default function Dashboard() {
 
             {/* Stats Grid */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
-                    <StatCard key={stat.title} {...stat} />
-                ))}
+                {stats.map((stat) => {
+                    // Ocultar tarjeta de ganancia para vendedores
+                    if (stat.title === 'Ganancia Estimada' && user?.role === 'vendedor') {
+                        return null;
+                    }
+                    return <StatCard key={stat.title} {...stat} />;
+                })}
             </div>
 
             {/* Content Grid */}
@@ -216,18 +221,18 @@ export default function Dashboard() {
                             </p>
                         </div>
                         <div className="flex gap-3">
-                            <a
-                                href="/pos"
+                            <Link
+                                to="/pos"
                                 className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
                             >
                                 Nueva Venta
-                            </a>
-                            <a
-                                href="/productos"
+                            </Link>
+                            <Link
+                                to="/productos"
                                 className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
                             >
                                 Ver Productos
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </CardContent>
