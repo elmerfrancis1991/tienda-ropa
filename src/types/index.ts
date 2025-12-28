@@ -20,6 +20,7 @@ export interface Producto {
     costo?: number
     ganancia?: number
     stock: number
+    minStock?: number
     categoria: string
     tallas: string[]
     colores: string[]

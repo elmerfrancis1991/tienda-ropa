@@ -24,6 +24,7 @@ const productoSchema = z.object({
     costo: z.number().min(0, 'El costo no puede ser negativo').optional(),
     ganancia: z.number().optional(),
     stock: z.number().min(0, 'El stock no puede ser negativo'),
+    minStock: z.number().min(1, 'Mínimo 1').optional(),
     categoria: z.string().min(1, 'Selecciona una categoría'),
     imagen: z.string().url('URL de imagen inválida').or(z.literal('')),
 })
@@ -59,6 +60,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             costo: 0,
             ganancia: 0,
             stock: 0,
+            minStock: 5,
             categoria: '',
             imagen: '',
         },
@@ -75,6 +77,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 costo: producto.costo || 0,
                 ganancia: producto.ganancia || (producto.precio - (producto.costo || 0)),
                 stock: producto.stock,
+                minStock: producto.minStock || 5,
                 categoria: producto.categoria,
                 imagen: producto.imagen || '',
             })
@@ -316,6 +319,16 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             {errors.stock && (
                                 <p className="text-sm text-destructive">{errors.stock.message}</p>
                             )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="minStock">Min. Stock</Label>
+                            <Input
+                                id="minStock"
+                                type="number"
+                                placeholder="5"
+                                {...register('minStock', { valueAsNumber: true })}
+                            />
                         </div>
                     </div>
 

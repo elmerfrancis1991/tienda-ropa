@@ -15,6 +15,8 @@ import {
     TrendingUp,
     TrendingDown,
     User,
+    Eye,
+    Printer
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,6 +41,7 @@ export default function CierreCajaPage() {
 
     const [showAbrirModal, setShowAbrirModal] = useState(false)
     const [showCerrarModal, setShowCerrarModal] = useState(false)
+    const [selectedCierre, setSelectedCierre] = useState<any>(null)
     const [montoApertura, setMontoApertura] = useState('')
     const [montoCierre, setMontoCierre] = useState('')
     const [observaciones, setObservaciones] = useState('')
@@ -137,7 +140,34 @@ export default function CierreCajaPage() {
         return new Intl.DateTimeFormat('es-DO', {
             dateStyle: 'medium',
             timeStyle: 'short'
-        }).format(date)
+        }).format(new Date(date))
+    }
+
+    const handlePrintCierre = (cierre: any) => {
+        // Mock print - in production this would generate a PDF or receipt
+        console.log("Printing cierre:", cierre)
+        const content = `
+        CIERRE DE CAJA
+        ----------------
+        Fecha: ${formatDate(cierre.fecha)}
+        Usuario: ${cierre.usuarioNombre}
+        
+        Apertura: ${formatCurrency(cierre.montoApertura)}
+        Cierre: ${formatCurrency(cierre.montoCierre)}
+        
+        Ventas Efectivo: ${formatCurrency(cierre.ventasEfectivo || 0)}
+        Ventas Tarjeta: ${formatCurrency(cierre.ventasTarjeta || 0)}
+        Transferencias: ${formatCurrency(cierre.ventasTransferencia || 0)}
+        
+        Total Ventas: ${formatCurrency(cierre.ventasTotal)}
+        Diferencia: ${formatCurrency(cierre.diferencia)}
+        ----------------
+        Observaciones: ${cierre.observaciones || 'N/A'}
+        `
+        const win = window.open('', '', 'width=300,height=600')
+        win?.document.write('<pre>' + content + '</pre>')
+        win?.print()
+        win?.close()
     }
 
     if (loading) {
@@ -266,35 +296,18 @@ export default function CierreCajaPage() {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-4 mt-2 text-sm flex-wrap">
-                                            <span>Apertura: {formatCurrency(cierre.montoApertura)}</span>
                                             <span>Cierre: {formatCurrency(cierre.montoCierre)}</span>
-                                            <span>Ventas: {formatCurrency(cierre.ventasTotal)}</span>
-                                            {cierre.ventasTransferencia > 0 && (
-                                                <span className="text-purple-600">Trf: {formatCurrency(cierre.ventasTransferencia)}</span>
-                                            )}
+                                            <span className={cierre.diferencia < 0 ? 'text-red-500 font-bold' : ''}>
+                                                Dif: {cierre.diferencia > 0 ? '+' : ''}{formatCurrency(cierre.diferencia)}
+                                            </span>
                                         </div>
                                     </div>
+
                                     <div className="flex items-center gap-2">
-                                        <div className={cn(
-                                            "flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium",
-                                            cierre.diferencia === 0
-                                                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                                : cierre.diferencia > 0
-                                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                                        )}>
-                                            {cierre.diferencia === 0 ? (
-                                                <CheckCircle2 className="h-4 w-4" />
-                                            ) : cierre.diferencia > 0 ? (
-                                                <TrendingUp className="h-4 w-4" />
-                                            ) : (
-                                                <TrendingDown className="h-4 w-4" />
-                                            )}
-                                            {cierre.diferencia === 0
-                                                ? 'Cuadrado'
-                                                : `${cierre.diferencia > 0 ? '+' : ''}${formatCurrency(cierre.diferencia)}`
-                                            }
-                                        </div>
+                                        <Button size="sm" variant="outline" onClick={() => setSelectedCierre(cierre)}>
+                                            <Eye className="h-4 w-4 mr-2" />
+                                            Ver
+                                        </Button>
                                     </div>
                                 </div>
                             ))}
@@ -307,6 +320,78 @@ export default function CierreCajaPage() {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Modal Detalle Cierre */}
+            <Dialog open={!!selectedCierre} onOpenChange={() => setSelectedCierre(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Detalle de Cierre</DialogTitle>
+                        <DialogDescription>
+                            {selectedCierre && formatDate(selectedCierre.fecha)}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedCierre && (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p className="text-muted-foreground">Usuario</p>
+                                    <p className="font-medium">{selectedCierre.usuarioNombre}</p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Monto Apertura</p>
+                                    <p className="font-medium">{formatCurrency(selectedCierre.montoApertura)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Total Ventas</p>
+                                    <p className="font-medium">{formatCurrency(selectedCierre.ventasTotal)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-muted-foreground">Monto Cierre</p>
+                                    <p className="font-bold text-lg">{formatCurrency(selectedCierre.montoCierre)}</p>
+                                </div>
+                            </div>
+
+                            <div className="p-3 bg-muted rounded-lg text-sm space-y-2">
+                                <p className="font-medium border-b pb-1">Desglose Ventas</p>
+                                <div className="flex justify-between">
+                                    <span>Efectivo</span>
+                                    <span>{formatCurrency(selectedCierre.ventasEfectivo || 0)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Tarjeta</span>
+                                    <span>{formatCurrency(selectedCierre.ventasTarjeta || 0)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Transferencia</span>
+                                    <span>{formatCurrency(selectedCierre.ventasTransferencia || 0)}</span>
+                                </div>
+                            </div>
+
+                            {selectedCierre.diferencia !== 0 && (
+                                <div className={cn("p-3 rounded-lg text-sm font-medium text-center",
+                                    selectedCierre.diferencia > 0 ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700")}>
+                                    Diferencia: {selectedCierre.diferencia > 0 ? '+' : ''}{formatCurrency(selectedCierre.diferencia)}
+                                </div>
+                            )}
+
+                            {selectedCierre.observaciones && (
+                                <div className="space-y-1">
+                                    <p className="text-sm text-muted-foreground">Observaciones</p>
+                                    <p className="text-sm italic p-2 bg-muted/50 rounded">{selectedCierre.observaciones}</p>
+                                </div>
+                            )}
+
+                            <DialogFooter>
+                                <Button className="w-full" onClick={() => handlePrintCierre(selectedCierre)}>
+                                    <Printer className="h-4 w-4 mr-2" />
+                                    Imprimir Comprobante
+                                </Button>
+                            </DialogFooter>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
 
             {/* Modal Abrir Caja */}
             <Dialog open={showAbrirModal} onOpenChange={setShowAbrirModal}>

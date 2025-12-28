@@ -76,7 +76,7 @@ export default function InventarioPage() {
         }
 
         if (filterType === 'bajo') {
-            filtered = filtered.filter(p => p.stock <= STOCK_MINIMO_DEFAULT)
+            filtered = filtered.filter(p => p.stock <= (p.minStock || STOCK_MINIMO_DEFAULT))
         } else if (filterType === 'agotado') {
             filtered = filtered.filter(p => p.stock === 0)
         } else if (filterType === 'normal') {

@@ -417,7 +417,7 @@ export default function ConfiguracionPage() {
                         </div>
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Actualización</p>
-                            <p className="font-semibold text-sm sm:text-base">5 Dic 2024</p>
+                            <p className="font-semibold text-sm sm:text-base">28 Dic 2025</p>
                         </div>
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Base de Datos</p>

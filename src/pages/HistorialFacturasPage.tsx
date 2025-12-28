@@ -396,10 +396,6 @@ export default function HistorialFacturasPage() {
                                     <p className="text-muted-foreground">Método de Pago</p>
                                     <Badge>{selectedVenta.metodoPago}</Badge>
                                 </div>
-                                <div>
-                                    <p className="text-muted-foreground">Referencia</p>
-                                    <p className="font-mono text-sm">#{selectedVenta.id.slice(-8).toUpperCase()}</p>
-                                </div>
                             </div>
 
                             {/* Items */}
