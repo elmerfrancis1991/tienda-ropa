@@ -397,8 +397,8 @@ export default function HistorialFacturasPage() {
                                     <Badge>{selectedVenta.metodoPago}</Badge>
                                 </div>
                                 <div>
-                                    <p className="text-muted-foreground">ID Completo</p>
-                                    <p className="font-mono text-xs">{selectedVenta.id}</p>
+                                    <p className="text-muted-foreground">Referencia</p>
+                                    <p className="font-mono text-sm">#{selectedVenta.id.slice(-8).toUpperCase()}</p>
                                 </div>
                             </div>
 

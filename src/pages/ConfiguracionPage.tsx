@@ -413,7 +413,7 @@ export default function ConfiguracionPage() {
                     <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Versión</p>
-                            <p className="font-semibold text-sm sm:text-base">1.0.0</p>
+                            <p className="font-semibold text-sm sm:text-base">1.3.0</p>
                         </div>
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Actualización</p>

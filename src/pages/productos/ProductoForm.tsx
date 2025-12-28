@@ -220,18 +220,18 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
 
                         <div className="space-y-2">
                             <Label htmlFor="categoria">Categoría *</Label>
-                            <select
+                            <Input
                                 id="categoria"
+                                list="categorias-list"
+                                placeholder="Selecciona o escribe una categoría"
                                 {...register('categoria')}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="">Seleccionar categoría</option>
+                                className={errors.categoria ? 'border-destructive' : ''}
+                            />
+                            <datalist id="categorias-list">
                                 {CATEGORIAS_ROPA.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.nombre}
-                                    </option>
+                                    <option key={cat.id} value={cat.nombre} />
                                 ))}
-                            </select>
+                            </datalist>
                             {errors.categoria && (
                                 <p className="text-sm text-destructive">{errors.categoria.message}</p>
                             )}

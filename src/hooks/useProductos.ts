@@ -15,6 +15,7 @@ import {
 import { db } from '@/lib/firebase'
 import { Producto } from '@/types'
 import { generateId } from '@/lib/utils'
+import { productSchema } from '@/utils/validation'
 
 // Demo products for testing without Firebase
 const DEMO_PRODUCTS: Producto[] = [
@@ -193,6 +194,15 @@ export function useProductos(): UseProductosReturn {
     const addProducto = async (
         producto: Omit<Producto, 'id' | 'createdAt' | 'updatedAt'>
     ): Promise<string> => {
+        // Validation Logic
+        try {
+            productSchema.parse(producto);
+        } catch (validationError: any) {
+            const message = validationError.errors ? validationError.errors[0].message : 'Error de validación';
+            setError(message);
+            throw new Error(message);
+        }
+
         // Only use demo mode if explicitly enabled (which we disabled above for failures)
         if (useDemoMode) {
             const newId = generateId()
@@ -228,6 +238,15 @@ export function useProductos(): UseProductosReturn {
     }
 
     const updateProducto = async (id: string, updates: Partial<Producto>): Promise<void> => {
+        // Validation Logic for Updates
+        try {
+            productSchema.partial().parse(updates);
+        } catch (validationError: any) {
+            const message = validationError.errors ? validationError.errors[0].message : 'Error de validación';
+            setError(message);
+            throw new Error(message);
+        }
+
         if (useDemoMode) {
             setProductos((prev) =>
                 prev.map((p) =>

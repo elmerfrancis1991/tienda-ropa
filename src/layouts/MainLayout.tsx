@@ -3,15 +3,25 @@ import { Sidebar } from '@/components/Sidebar'
 import { TermsModal } from '@/components/TermsModal'
 import pkg from '../../package.json'
 
+import { useCierreCaja } from '@/hooks/useCierreCaja'
+
 export default function MainLayout() {
     const isStaging = import.meta.env.MODE === 'staging';
     const version = pkg.version || '1.0.0';
+    const { isCajaAbierta, loading } = useCierreCaja();
 
     return (
         <div className="flex min-h-screen bg-background relative">
             {isStaging && (
                 <div className="fixed top-0 left-0 right-0 bg-orange-500 text-white text-xs font-bold text-center z-50 py-1 pointer-events-none opacity-90">
                     ⚠️ MODO STAGING (PRUEBAS) - DATOS SEPARADOS DE PRODUCCIÓN
+                </div>
+            )}
+
+            {/* Aviso de Caja Cerrada */}
+            {!loading && !isCajaAbierta && (
+                <div className={`fixed ${isStaging ? 'top-6' : 'top-0'} left-0 right-0 bg-red-600 text-white text-xs font-bold text-center z-50 py-1 animate-pulse`}>
+                    ⚠️ CAJA CERRADA - DEBE ABRIR CAJA PARA FACTURAR
                 </div>
             )}
 

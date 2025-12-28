@@ -105,6 +105,13 @@ export default function CierreCajaPage() {
             return
         }
 
+        // Validación de justificación si hay faltante
+        const diferencia = monto - ((cajaActual?.montoApertura || 0) + ventasDelDia.efectivo)
+        if (diferencia < 0 && !observaciones.trim()) {
+            setError('Debe justificar el faltante en las observaciones')
+            return
+        }
+
         setIsSubmitting(true)
         setError(null)
 

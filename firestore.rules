@@ -16,27 +16,50 @@ service cloud.firestore {
     function isOwner(userId) {
       return isAuth() && request.auth.uid == userId;
     }
+
+    // Helper: Validar que no se esté modificando el rol
+    function notUpdatingRole() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']);
+    }
+
+    // Helper: Validar datos de producto
+    function isValidProduct() {
+      let data = request.resource.data;
+      return data.precio >= 0 && data.stock >= 0 && data.nombre.size() > 0;
+    }
     
-    // Usuarios: lectura para autenticados, escritura ABIERTA PARA CONFIGURACIÓN INICIAL
+    // Usuarios: 
+    // - Lectura: Admin o dueño
+    // - Creación/Borrado: Solo Admin (para evitar cuentas basura o borrados no autorizados)
+    // - Actualización: Dueño (sin tocar rol) o Admin
     match /users/{userId} {
-      allow read: if true;
-      allow write: if true;
+      allow read: if isAdmin() || isOwner(userId);
+      allow create: if isAdmin(); // Solo admins crean usuarios en este sistema POS
+      allow update: if isAdmin() || (isOwner(userId) && notUpdatingRole());
+      allow delete: if isAdmin();
     }
     
-    // Productos: lectura para todos, escritura ABIERTA PARA CONFIGURACIÓN INICIAL
+    // Productos: 
+    // - Lectura: Autenticados
+    // - Escritura: Solo Admin, con validación de datos
     match /productos/{productoId} {
-      allow read: if true;
-      allow write: if true;
+      allow read: if isAuth();
+      allow write: if isAdmin() && isValidProduct();
     }
     
-    // Ventas: lectura para admin, creación para autenticados
+    // Ventas: 
+    // - Lectura: Admin (historial completo)
+    // - Creación: Autenticados (Cajeros)
+    // - Modificación/Borrado: Solo Admin
     match /ventas/{ventaId} {
       allow read: if isAdmin();
-      allow create: if isAuth();
+      allow create: if isAuth(); // TODO: Validar estructura de venta si es posible
       allow update, delete: if isAdmin();
     }
     
-    // Cierres de caja: solo usuarios autenticados
+    // Cierres de caja: 
+    // - Lectura: Autenticados
+    // - Creación: Autenticados
     match /cierres_caja/{cierreId} {
       allow read: if isAuth();
       allow create: if isAuth();
@@ -44,7 +67,7 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // Configuración: lectura autenticados, escritura admin
+    // Configuración: Solo Admin escribe
     match /config/{configId} {
       allow read: if isAuth();
       allow write: if isAdmin();

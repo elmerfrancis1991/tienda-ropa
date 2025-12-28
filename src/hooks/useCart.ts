@@ -123,6 +123,13 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
         setItems(prev => {
             const updated = [...prev]
             if (updated[index]) {
+                // Validate stock limit
+                if (cantidad > updated[index].producto.stock) {
+                    // Start of User Feedback fix: prevent quantity > stock
+                    // We could also show a toast/alert here, but silencing the update is minimal intervention
+                    return updated
+                }
+
                 updated[index] = {
                     ...updated[index],
                     cantidad,
