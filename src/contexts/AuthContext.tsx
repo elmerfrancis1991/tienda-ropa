@@ -7,7 +7,7 @@ import {
     sendPasswordResetEmail,
     User as FirebaseUser
 } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { User, UserRole, AuthState, Permiso, PERMISOS_POR_ROL } from '@/types'
 
@@ -131,14 +131,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 })
             } else {
                 // Usuario existe en Auth pero no tiene documento en Firestore
+                // Verificar si hay usuarios existentes (si no hay, este será admin)
+                console.log('🔐 [LOGIN] Documento no existe, verificando si hay usuarios...')
+
+                const usersRef = collection(db, 'users')
+                const usersSnapshot = await getDocs(usersRef)
+                const isFirstUser = usersSnapshot.empty
+
+                console.log('🔐 [LOGIN] Es primer usuario?', isFirstUser)
+
                 // Crear documento para el usuario
                 const newUser = {
                     uid: userCredential.user.uid,
                     email: userCredential.user.email || '',
-                    nombre: userCredential.user.displayName || 'Usuario',
-                    role: 'vendedor' as const,
+                    nombre: userCredential.user.displayName || 'Administrador',
+                    role: isFirstUser ? 'admin' as const : 'vendedor' as const,
                     createdAt: new Date()
                 }
+                console.log('🔐 [LOGIN] Creando usuario con rol:', newUser.role)
                 await setDoc(doc(db, 'users', userCredential.user.uid), newUser)
                 setState({
                     user: newUser,

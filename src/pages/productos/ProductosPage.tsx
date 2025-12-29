@@ -288,10 +288,10 @@ export default function ProductosPage() {
                             onChange={(e) => setSelectedCategoria(e.target.value)}
                             className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-40"
                         >
-                            <option value="">Categoría</option>
-                            {CATEGORIAS_ROPA.map((cat) => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.nombre}
+                            <option value="">Todas las Categorías</option>
+                            {Array.from(new Set(productos.map(p => p.categoria))).sort().map((cat) => (
+                                <option key={cat} value={cat}>
+                                    {cat}
                                 </option>
                             ))}
                         </select>

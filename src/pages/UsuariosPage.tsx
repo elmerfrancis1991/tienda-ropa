@@ -133,7 +133,7 @@ function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormMod
                         <Label htmlFor="nombre">Nombre Completo *</Label>
                         <Input
                             id="nombre"
-                            placeholder="Ej: Juan Pérez"
+                            autoComplete="off"
                             {...register('nombre')}
                             className={errors.nombre ? 'border-destructive' : ''}
                         />
@@ -147,7 +147,7 @@ function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormMod
                         <Input
                             id="email"
                             type="email"
-                            placeholder="correo@tienda.com"
+                            autoComplete="off"
                             {...register('email')}
                             className={errors.email ? 'border-destructive' : ''}
                             disabled={!!user} // No permitir editar email (no soportado por Auth)
@@ -178,7 +178,7 @@ function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormMod
                             <Input
                                 id="password"
                                 type="password"
-                                placeholder="Mínimo 6 caracteres"
+                                autoComplete="off"
                                 {...register('password')}
                                 className={errors.password ? 'border-destructive' : ''}
                             />

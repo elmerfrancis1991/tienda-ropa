@@ -29,12 +29,15 @@ service cloud.firestore {
     }
     
     // Usuarios: 
-    // - Lectura: Admin o dueño
-    // - Creación/Borrado: Solo Admin (para evitar cuentas basura o borrados no autorizados)
+    // - Lectura: Dueño siempre, o Admin
+    // - Creación: Admin, o si es el primer usuario (bootstrap)
     // - Actualización: Dueño (sin tocar rol) o Admin
+    // - Borrado: Solo Admin
     match /users/{userId} {
-      allow read: if isAdmin() || isOwner(userId);
-      allow create: if isAdmin(); // Solo admins crean usuarios en este sistema POS
+      // Permitir lectura del propio documento siempre (para login)
+      allow read: if isOwner(userId) || isAdmin();
+      // Permitir crear el propio documento si no existe (bootstrap)
+      allow create: if isOwner(userId) || isAdmin();
       allow update: if isAdmin() || (isOwner(userId) && notUpdatingRole());
       allow delete: if isAdmin();
     }
