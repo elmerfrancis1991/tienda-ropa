@@ -50,12 +50,15 @@ export default function HistorialFacturasPage() {
 
         // Filtro por término de búsqueda
         if (searchTerm) {
-            const term = searchTerm.toLowerCase()
-            filtered = filtered.filter(v =>
-                v.id.toLowerCase().includes(term) ||
-                (v.cliente?.toLowerCase().includes(term)) ||
-                v.items.some(item => item.producto.nombre.toLowerCase().includes(term))
-            )
+            const term = searchTerm.toLowerCase().replace('#', '') // Remove # if user includes it
+            filtered = filtered.filter(v => {
+                // Match full ID or shortened ID (last 8 chars)
+                const shortId = v.id.slice(-8).toLowerCase()
+                return v.id.toLowerCase().includes(term) ||
+                    shortId.includes(term) ||
+                    (v.cliente?.toLowerCase().includes(term)) ||
+                    v.items.some(item => item.producto.nombre.toLowerCase().includes(term))
+            })
         }
 
         // Filtro por fecha

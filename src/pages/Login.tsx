@@ -45,6 +45,7 @@ export default function Login() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
+        reset,
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -192,7 +193,10 @@ export default function Login() {
                     <div className="mt-4 text-center">
                         <button
                             type="button"
-                            onClick={() => setIsRegistering(!isRegistering)}
+                            onClick={() => {
+                                setIsRegistering(!isRegistering)
+                                reset({ email: '', password: '', nombre: '' })
+                            }}
                             className="text-sm text-gray-600 hover:text-gray-900"
                         >
                             {isRegistering
