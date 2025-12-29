@@ -49,7 +49,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                                 nombre: userData.nombre || firebaseUser.displayName || 'Usuario',
                                 role: userData.role || 'vendedor',
                                 createdAt: userData.createdAt?.toDate() || new Date(),
-                                photoURL: firebaseUser.photoURL || undefined
+                                photoURL: firebaseUser.photoURL || undefined,
+                                permisos: userData.permisos || undefined
                             },
                             loading: false,
                             error: null

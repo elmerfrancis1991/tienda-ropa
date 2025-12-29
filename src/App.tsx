@@ -15,9 +15,18 @@ import AyudaPage from './pages/AyudaPage'
 import { useState } from 'react'
 
 export default function App() {
-    // Staging Gate
-    const [isStagingVerified, setIsStagingVerified] = useState(false)
+    // Staging Gate - persist in localStorage
+    const [isStagingVerified, setIsStagingVerified] = useState(() => {
+        return localStorage.getItem('stagingVerified') === 'true'
+    })
     const isStaging = import.meta.env.VITE_APP_ENV === 'staging'
+
+    const handleStagingVerification = (password: string) => {
+        if (password === 'staging123') {
+            localStorage.setItem('stagingVerified', 'true')
+            setIsStagingVerified(true)
+        }
+    }
 
     if (isStaging && !isStagingVerified) {
         return (
@@ -29,9 +38,7 @@ export default function App() {
                         type="password"
                         placeholder="Contraseña de acceso"
                         className="w-full px-4 py-2 rounded bg-neutral-800 border border-neutral-700 text-white focus:outline-none focus:border-yellow-500"
-                        onChange={(e) => {
-                            if (e.target.value === 'staging123') setIsStagingVerified(true)
-                        }}
+                        onChange={(e) => handleStagingVerification(e.target.value)}
                     />
                 </div>
             </div>
