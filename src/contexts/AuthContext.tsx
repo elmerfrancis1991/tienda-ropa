@@ -170,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 uid: userCredential.user.uid,
                 email: email,
                 nombre: nombre,
-                role: 'admin', // Default to admin for now
+                role: 'vendedor', // Default to vendedor for security
                 createdAt: new Date()
             }
 

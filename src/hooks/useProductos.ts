@@ -296,7 +296,8 @@ export function useProductos(): UseProductosReturn {
                 (p) =>
                     p.nombre.toLowerCase().includes(searchTerm) ||
                     p.descripcion.toLowerCase().includes(searchTerm) ||
-                    p.categoria.toLowerCase().includes(searchTerm)
+                    p.categoria.toLowerCase().includes(searchTerm) ||
+                    p.id.toLowerCase().includes(searchTerm) // Added ID search
             )
         },
         [productos]

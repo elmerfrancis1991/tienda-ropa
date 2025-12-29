@@ -270,6 +270,12 @@ export default function UsuariosPage() {
             return
         }
 
+        // Validate max admins
+        if (data.role === 'admin' && adminCount >= 2) {
+            setFormError('Por seguridad, el sistema solo permite un máximo de 2 administradores.')
+            return
+        }
+
         setFormLoading(true)
         setFormError(null)
 
@@ -291,6 +297,12 @@ export default function UsuariosPage() {
 
     const handleUpdateUser = async (data: UserFormData, permisos: Permiso[]) => {
         if (!editingUser) return
+
+        // Validate max admins (only if promoting to admin)
+        if (data.role === 'admin' && editingUser.role !== 'admin' && adminCount >= 2) {
+            setFormError('Por seguridad, el sistema solo permite un máximo de 2 administradores.')
+            return
+        }
 
         setFormLoading(true)
         setFormError(null)

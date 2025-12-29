@@ -1,14 +1,53 @@
+import { useEffect, useCallback } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from '@/components/Sidebar'
 import { TermsModal } from '@/components/TermsModal'
 import pkg from '../../package.json'
-
+import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
+
+const INACTIVITY_LIMIT_MS = 10 * 60 * 1000 // 10 minutes
 
 export default function MainLayout() {
     const isStaging = import.meta.env.MODE === 'staging';
     const version = pkg.version || '1.0.0';
     const { isCajaAbierta, loading } = useCierreCaja();
+    const { logout } = useAuth(); // Import logout
+
+    // Auto-logout logic
+    const handleLogout = useCallback(() => {
+        console.warn("⚠️ Sesión cerrada por inactividad (10 min).")
+        logout();
+        window.location.href = '/login'; // Force redirect
+    }, [logout]);
+
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+
+        const resetTimer = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(handleLogout, INACTIVITY_LIMIT_MS);
+        };
+
+        // Events to listen for
+        const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'mousemove'];
+
+        // Initial setup
+        resetTimer();
+
+        // Attach listeners
+        events.forEach(event => {
+            window.addEventListener(event, resetTimer);
+        });
+
+        // Cleanup
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            events.forEach(event => {
+                window.removeEventListener(event, resetTimer);
+            });
+        };
+    }, [handleLogout]);
 
     return (
         <div className="flex min-h-screen bg-background relative">

@@ -34,7 +34,7 @@ import { Producto, STOCK_MINIMO_DEFAULT, AlertaInventario } from '@/types'
 export default function InventarioPage() {
     const { productos, loading, updateProducto } = useProductos()
     const [searchTerm, setSearchTerm] = useState('')
-    const [filterType, setFilterType] = useState<'todos' | 'bajo' | 'agotado' | 'normal'>('todos')
+    const [filterType, setFilterType] = useState<string>('todos')
     const [selectedProducto, setSelectedProducto] = useState<Producto | null>(null)
     const [ajusteStock, setAjusteStock] = useState('')
     const [tipoAjuste, setTipoAjuste] = useState<'agregar' | 'restar' | 'establecer'>('agregar')
@@ -81,6 +81,9 @@ export default function InventarioPage() {
             filtered = filtered.filter(p => p.stock === 0)
         } else if (filterType === 'normal') {
             filtered = filtered.filter(p => p.stock > STOCK_MINIMO_DEFAULT)
+        } else if (filterType !== 'todos') {
+            // Assume filterType is a category
+            filtered = filtered.filter(p => p.categoria === filterType)
         }
 
         return filtered.sort((a, b) => a.stock - b.stock)
@@ -250,27 +253,35 @@ export default function InventarioPage() {
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Buscar producto..."
+                                placeholder="Buscar por ID, cliente o producto..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="pl-9"
                             />
                         </div>
-                        <div className="flex p-1 bg-muted rounded-lg">
-                            {(['todos', 'bajo', 'agotado', 'normal'] as const).map((tipo) => (
-                                <button
-                                    key={tipo}
-                                    onClick={() => setFilterType(tipo)}
-                                    className={cn(
-                                        "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-                                        filterType === tipo
-                                            ? "bg-background text-foreground shadow-sm"
-                                            : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                >
-                                    {tipo === 'todos' ? 'Todos' : tipo === 'bajo' ? 'Stock Bajo' : tipo === 'agotado' ? 'Agotados' : 'Normal'}
-                                </button>
-                            ))}
+                        <div className="flex gap-2 bg-muted p-1 rounded-lg overflow-x-auto">
+                            <select
+                                className="bg-transparent text-sm font-medium px-2 py-1 outline-none cursor-pointer"
+                                value={filterType === 'bajo' || filterType === 'agotado' || filterType === 'normal' || filterType === 'todos' ? filterType : 'todos'}
+                                onChange={(e) => setFilterType(e.target.value as any)}
+                            >
+                                <option value="todos">Todos los Estados</option>
+                                <option value="bajo">Stock Bajo</option>
+                                <option value="agotado">Agotados</option>
+                                <option value="normal">Normal</option>
+                            </select>
+
+                            {/* Dynamic Category Filter */}
+                            <select
+                                className="bg-transparent text-sm font-medium px-2 py-1 outline-none cursor-pointer border-l pl-2"
+                                value={['todos', 'bajo', 'agotado', 'normal'].includes(filterType) ? '' : filterType}
+                                onChange={(e) => setFilterType(e.target.value as any)}
+                            >
+                                <option value="">Todas las Categorías</option>
+                                {Array.from(new Set(productos.map(p => p.categoria))).sort().map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </CardContent>
@@ -432,6 +443,6 @@ export default function InventarioPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div>
+        </div >
     )
 }

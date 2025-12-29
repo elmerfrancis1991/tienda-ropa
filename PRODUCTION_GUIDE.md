@@ -57,6 +57,10 @@ git push origin staging
 ```
 
 ### Caso B: Pasar de STAGING a PRODUCCIÓN (Cuando ya probaste)
+> [!CAUTION]
+> **ATENCIÓN:** Solo ejecuta estos comandos cuando el Usuario haya dado su aprobación explícita.
+> Asegúrate de que **Staging** tiene la versión correcta y ha sido verificada.
+
 Usa esto cuando lo que viste en el link de pruebas te encantó y quieres que tus clientes lo vean:
 ```powershell
 # 1. Cambiarse a la rama principal

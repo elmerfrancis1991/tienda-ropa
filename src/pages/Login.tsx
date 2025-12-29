@@ -118,8 +118,9 @@ export default function Login() {
                                 <Input
                                     id="nombre"
                                     type="text"
-                                    placeholder="Ej. Juan Pérez"
+                                    placeholder=""
                                     {...register('nombre')}
+                                    autoComplete="off"
                                 />
                                 {errors.nombre && (
                                     <p className="text-sm text-red-500">{errors.nombre.message as string}</p>
@@ -132,8 +133,9 @@ export default function Login() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="nombre@empresa.com"
+                                placeholder=""
                                 {...register('email')}
+                                autoComplete="off"
                             />
                             {errors.email && (
                                 <p className="text-sm text-red-500">{errors.email.message as string}</p>
@@ -148,6 +150,7 @@ export default function Login() {
                                     type={showPassword ? 'text' : 'password'}
                                     {...register('password')}
                                     className="pr-10"
+                                    autoComplete="off"
                                 />
                                 <button
                                     type="button"
