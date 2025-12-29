@@ -132,13 +132,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 // Usuario existe en Auth pero no tiene documento en Firestore
                 // Verificar si hay usuarios existentes (si no hay, este será admin)
-                console.log('🔐 [LOGIN] Documento no existe, verificando si hay usuarios...')
+                console.log('🔐 [LOGIN] Documento no existe, creando documento de usuario...')
 
-                const usersRef = collection(db, 'users')
-                const usersSnapshot = await getDocs(usersRef)
-                const isFirstUser = usersSnapshot.empty
+                let isFirstUser = true // Default to admin if we can't check
 
-                console.log('🔐 [LOGIN] Es primer usuario?', isFirstUser)
+                try {
+                    const usersRef = collection(db, 'users')
+                    const usersSnapshot = await getDocs(usersRef)
+                    isFirstUser = usersSnapshot.empty
+                    console.log('🔐 [LOGIN] Verificación de usuarios exitosa. Es primer usuario?', isFirstUser)
+                } catch (checkError) {
+                    // If we can't list users (permission denied), assume first user for bootstrap
+                    console.log('🔐 [LOGIN] No se pudo verificar usuarios (normal si es bootstrap). Asumiendo primer usuario.')
+                    isFirstUser = true
+                }
 
                 // Crear documento para el usuario
                 const newUser = {
