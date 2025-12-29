@@ -14,6 +14,16 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 - **Facturación:** Eliminada visualización duplicada del ID de referencia.
 - **UI:** Mejorada la visualización de diferencias positivas/negativas en el historial.
 
+### 🛡️ System Hardening & Seguridad (Major Update)
+Se ha implementado una suite de 30 pruebas automatizadas y mejoras de robustez:
+- **Validación Estricta:** Implementados esquemas Zod para prevenir datos inválidos (precios negativos, XSS).
+- **Seguridad en BD:** Nuevas reglas de Firestore (`firestore.rules`) para proteger integridad de datos y evitar escalada de privilegios.
+- **Pruebas Automatizadas:** 
+    - 10 Pruebas de Seguridad/BD (Permisos, Estructura).
+    - 10 Pruebas Funcionales (Flujos Críticos, Inventario).
+    - 10 Pruebas Avanzadas (Inyección, DoS, Lógica de Negocio).
+- **Estabilidad:** Corrección de vulnerabilidades de "Prototype Pollution" y manejo de errores.
+
 ## [1.3.0] - 2025-12-28
 ### Agregado
 - **POS:** Validación de límite de stock al agregar al carrito.
