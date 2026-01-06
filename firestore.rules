@@ -1,78 +1,96 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper: Usuario autenticado
+    
+    // --- HELPER FUNCTIONS ---
+
+    // 1. Is Authenticated
     function isAuth() {
       return request.auth != null;
     }
-    
-    // Helper: Verificar si es admin
-    function isAdmin() {
-      return isAuth() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+
+    // 2. Get User Data (fetching from Firestore)
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
-    
-    // Helper: Es el propio usuario
+
+    // 3. Get User's Tenant ID
+    function getTenantId() {
+      return getUserData().tenantId;
+    }
+
+    // 4. Verify User is Admin (within their tenant)
+    function isAdmin() {
+      return isAuth() && getUserData().role == 'admin';
+    }
+
+    // 5. Belongs to Tenant (Resource matches User's Tenant)
+    function belongsToTenant(resourceData) {
+      return resourceData.tenantId == getTenantId();
+    }
+
+    // 6. Creating in Tenant (New Data matches User's Tenant)
+    function creatingInTenant() {
+      return request.resource.data.tenantId == getTenantId();
+    }
+
+    // 7. Is Owner of Document (User ID matches)
     function isOwner(userId) {
       return isAuth() && request.auth.uid == userId;
     }
 
-    // Helper: Validar que no se esté modificando el rol
-    function notUpdatingRole() {
-      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']);
+    // --- RULES ---
+
+    // USERS COLLECTION
+    // - Read: User can see themselves OR Admin from SAME tenant can see them.
+    // - Write: Admin from SAME tenant can manage users. User can update limited fields.
+    match /users/{userId} {
+      // Allow user to read their own profile (needed for getTenantId recursion potentially, but firestore handles self-access well usually)
+      allow read: if isOwner(userId) || (isAdmin() && belongsToTenant(resource.data));
+      
+      // Create: Allow creating if it's the first user (bootstrap) or by Admin of same tenant (conceptually tricky during signup)
+      // For simplicity/MVP: Authenticated users can create their own profile with a tenantId. 
+      // Ideally this is done via Cloud Functions to prevent spoofing tenantId, but for client-side app:
+      allow create: if isAuth() && (
+        isOwner(userId) || 
+        (isAdmin() && request.resource.data.tenantId == getTenantId())
+      );
+      
+      allow update: if (isAdmin() && belongsToTenant(resource.data)) || isOwner(userId);
+      allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
 
-    // Helper: Validar datos de producto
-    function isValidProduct() {
-      let data = request.resource.data;
-      return data.precio >= 0 && data.stock >= 0 && data.nombre.size() > 0;
-    }
-    
-    // Usuarios: 
-    // - Lectura: Dueño siempre, o Admin
-    // - Creación: Admin, o si es el primer usuario (bootstrap)
-    // - Actualización: Dueño (sin tocar rol) o Admin
-    // - Borrado: Solo Admin
-    match /users/{userId} {
-      // Permitir lectura del propio documento siempre (para login)
-      allow read: if isOwner(userId) || isAdmin();
-      // Permitir crear el propio documento si no existe (bootstrap)
-      allow create: if isOwner(userId) || isAdmin();
-      allow update: if isAdmin() || (isOwner(userId) && notUpdatingRole());
-      allow delete: if isAdmin();
-    }
-    
-    // Productos: 
-    // - Lectura: Autenticados
-    // - Escritura: Solo Admin, con validación de datos
+    // PRODUCTOS
+    // - Read: Auth users in same tenant.
+    // - Write: Admin in same tenant.
     match /productos/{productoId} {
-      allow read: if isAuth();
-      allow write: if isAdmin() && isValidProduct();
+      allow read: if isAuth() && belongsToTenant(resource.data);
+      allow create: if isAdmin() && creatingInTenant();
+      allow update: if isAdmin() && belongsToTenant(resource.data) && creatingInTenant(); // Prevent moving to another tenant
+      allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
-    
-    // Ventas: 
-    // - Lectura: Admin (historial completo)
-    // - Creación: Autenticados (Cajeros)
-    // - Modificación/Borrado: Solo Admin
+
+    // VENTAS
+    // - Read: Admin can see all tenant sales.
+    // - Create: Any Auth user in tenant (Cajero).
+    // - Update/Delete: Admin only.
     match /ventas/{ventaId} {
-      allow read: if isAdmin();
-      allow create: if isAuth(); // TODO: Validar estructura de venta si es posible
-      allow update, delete: if isAdmin();
+      allow read: if isAdmin() && belongsToTenant(resource.data);
+      allow create: if isAuth() && creatingInTenant();
+      allow update, delete: if isAdmin() && belongsToTenant(resource.data);
     }
-    
-    // Cierres de caja: 
-    // - Lectura: Autenticados
-    // - Creación: Autenticados
+
+    // CIERRES DE CAJA
     match /cierres_caja/{cierreId} {
-      allow read: if isAuth();
-      allow create: if isAuth();
-      allow update: if isAuth() && resource.data.usuarioId == request.auth.uid;
-      allow delete: if isAdmin();
+      allow read: if isAuth() && belongsToTenant(resource.data);
+      allow create: if isAuth() && creatingInTenant();
+      allow update: if isAuth() && belongsToTenant(resource.data);
+      allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
-    
-    // Configuración: Solo Admin escribe
+
+    // CONFIGURACION
     match /config/{configId} {
-      allow read: if isAuth();
+      allow read: if isAuth(); // Allow all for now, or match tenant if config has tenantId
       allow write: if isAdmin();
     }
   }

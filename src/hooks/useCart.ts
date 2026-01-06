@@ -1,12 +1,11 @@
 import { useState, useCallback } from 'react'
 import { Producto } from '@/types'
 import { generateId } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 export interface CartItem {
     producto: Producto
     cantidad: number
-    talla: string
-    color: string
     subtotal: number
 }
 
@@ -22,6 +21,7 @@ export interface Venta {
     cliente?: string
     vendedor: string
     cajaId?: string
+    tenantId: string // Multi-tenant
     fecha: Date
     estado: 'completada' | 'pendiente' | 'cancelada'
     itbisAplicado: boolean
@@ -35,7 +35,7 @@ interface TaxConfig {
     propinaRate: number
 }
 
-interface UseCartReturn {
+export interface UseCartReturn {
     items: CartItem[]
     subtotal: number
     descuento: number
@@ -44,7 +44,7 @@ interface UseCartReturn {
     total: number
     itbisEnabled: boolean
     propinaEnabled: boolean
-    addToCart: (producto: Producto, talla: string, color: string, cantidad?: number) => void
+    addToCart: (producto: Producto, cantidad?: number) => void
     removeFromCart: (index: number) => void
     updateQuantity: (index: number, cantidad: number) => void
     setDescuento: (porcentaje: number) => void
@@ -56,6 +56,7 @@ interface UseCartReturn {
 }
 
 export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
+    const { user } = useAuth()
     const [items, setItems] = useState<CartItem[]>([])
     const [descuentoPorcentaje, setDescuentoPorcentaje] = useState(0)
     const [itbisEnabled, setItbisEnabled] = useState(initialTaxConfig?.itbisEnabled ?? true)
@@ -79,32 +80,40 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
 
     const addToCart = useCallback((
         producto: Producto,
-        talla: string,
-        color: string,
         cantidad: number = 1
     ) => {
         setItems(prev => {
             const existingIndex = prev.findIndex(
-                item => item.producto.id === producto.id &&
-                    item.talla === talla &&
-                    item.color === color
+                item => item.producto.id === producto.id
             )
 
             if (existingIndex >= 0) {
                 const updated = [...prev]
+                const newQuantity = updated[existingIndex].cantidad + cantidad
+
+                // Stock validation
+                if (newQuantity > producto.stock) {
+                    alert(`No hay suficiente stock. Stock máximo: ${producto.stock}`)
+                    return prev
+                }
+
                 updated[existingIndex] = {
                     ...updated[existingIndex],
-                    cantidad: updated[existingIndex].cantidad + cantidad,
-                    subtotal: (updated[existingIndex].cantidad + cantidad) * producto.precio
+                    cantidad: newQuantity,
+                    subtotal: newQuantity * producto.precio
                 }
                 return updated
+            }
+
+            // Initial add validation
+            if (cantidad > producto.stock) {
+                alert(`No hay suficiente stock. Stock máximo: ${producto.stock}`)
+                return prev
             }
 
             return [...prev, {
                 producto,
                 cantidad,
-                talla,
-                color,
                 subtotal: cantidad * producto.precio
             }]
         })
@@ -123,10 +132,8 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
         setItems(prev => {
             const updated = [...prev]
             if (updated[index]) {
-                // Validate stock limit
+                // Validate stock validation
                 if (cantidad > updated[index].producto.stock) {
-                    // Start of User Feedback fix: prevent quantity > stock
-                    // We could also show a toast/alert here, but silencing the update is minimal intervention
                     return updated
                 }
 
@@ -165,6 +172,7 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
             metodoPago,
             vendedor,
             cliente: cliente || 'Cliente General',
+            tenantId: user?.tenantId || 'default', // Multi-tenant
             fecha: new Date(),
             estado: 'completada',
             itbisAplicado: itbisEnabled,
@@ -173,7 +181,7 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
 
         clearCart()
         return venta
-    }, [items, subtotal, descuento, impuesto, propina, total, itbisEnabled, propinaEnabled, clearCart])
+    }, [items, subtotal, descuento, impuesto, propina, total, itbisEnabled, propinaEnabled, clearCart, user])
 
     return {
         items,

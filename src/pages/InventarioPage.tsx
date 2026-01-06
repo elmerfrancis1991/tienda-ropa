@@ -29,9 +29,11 @@ import {
 } from '@/components/ui/dialog'
 import { formatCurrency, cn } from '@/lib/utils'
 import { useProductos } from '@/hooks/useProductos'
+import { useAuth } from '@/contexts/AuthContext'
 import { Producto, STOCK_MINIMO_DEFAULT, AlertaInventario } from '@/types'
 
 export default function InventarioPage() {
+    const { hasPermiso } = useAuth()
     const { productos, loading, updateProducto } = useProductos()
     const [searchTerm, setSearchTerm] = useState('')
     const [filterType, setFilterType] = useState<string>('todos')
@@ -322,12 +324,14 @@ export default function InventarioPage() {
                                         </span>
                                     </div>
                                 </div>
-                                <Button size="icon" variant="ghost" onClick={(e) => {
-                                    e.stopPropagation()
-                                    setSelectedProducto(producto)
-                                }}>
-                                    <Edit className="h-4 w-4" />
-                                </Button>
+                                {hasPermiso('inventario:ajustar') && (
+                                    <Button size="icon" variant="ghost" onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedProducto(producto)
+                                    }}>
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

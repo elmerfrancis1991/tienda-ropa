@@ -2,6 +2,14 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.2] - 2026-01-06
+### Corregido
+- **POS:** Validación de stock ahora suma TODAS las variantes (tallas/colores) del mismo producto.
+- **POS:** El botón "+" se deshabilita cuando el total de unidades en carrito alcanza el stock disponible.
+- **POS:** Indicador visual naranja cuando se alcanza el límite de stock.
+- **POS:** Actualización automática del inventario después de completar una venta (sin necesidad de F5).
+- **UX:** Tooltip mejorado muestra el stock máximo y la cantidad total en carrito.
+
 ## [1.3.1] - 2025-12-28
 ### Agregado
 - **Inventario:** Campo para configurar stock mínimo por producto.

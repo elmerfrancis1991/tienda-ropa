@@ -7,7 +7,7 @@ import {
     sendPasswordResetEmail,
     User as FirebaseUser
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { User, UserRole, AuthState, Permiso, PERMISOS_POR_ROL } from '@/types'
 
@@ -33,21 +33,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                // User is signed in
-                try {
-                    // Try to get custom role/data from Firestore 'users' collection
-                    const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid))
+        let unsubscribeDoc: (() => void) | null = null
 
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data()
+        const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (unsubscribeDoc) {
+                unsubscribeDoc()
+                unsubscribeDoc = null
+            }
+
+            if (firebaseUser) {
+                // Listen to the user document in real-time
+                const userRef = doc(db, 'users', firebaseUser.uid)
+
+                unsubscribeDoc = onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data()
                         setState({
                             user: {
                                 uid: firebaseUser.uid,
                                 email: firebaseUser.email || '',
                                 nombre: userData.nombre || firebaseUser.displayName || 'Usuario',
                                 role: userData.role || 'vendedor',
+                                tenantId: userData.tenantId || 'default', // Multi-tenant
                                 createdAt: userData.createdAt?.toDate() || new Date(),
                                 photoURL: firebaseUser.photoURL || undefined,
                                 permisos: userData.permisos || undefined
@@ -56,51 +63,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                             error: null
                         })
                     } else {
-                        // If no firestore doc, plain User data (fallback) -> Probably a first registration
-                        const newUser: User = {
-                            uid: firebaseUser.uid,
-                            email: firebaseUser.email || '',
-                            nombre: firebaseUser.displayName || 'Usuario Nuevo',
-                            role: 'admin', // First users might default to admin for simplicity in this sprint, or wait for setup
-                            createdAt: new Date()
-                        }
-                        setState({ user: newUser, loading: false, error: null })
+                        // If no firestore doc, plain User data (fallback)
+                        setState({
+                            user: {
+                                uid: firebaseUser.uid,
+                                email: firebaseUser.email || '',
+                                nombre: firebaseUser.displayName || 'Usuario Nuevo',
+                                role: 'vendedor',
+                                tenantId: 'default', // Multi-tenant default
+                                createdAt: new Date()
+                            },
+                            loading: false,
+                            error: null
+                        })
                     }
-                } catch (e) {
-                    console.error("Error fetching user profile:", e)
-                    // Still log them in but with basic info
-                    setState({
-                        user: {
-                            uid: firebaseUser.uid,
-                            email: firebaseUser.email || '',
-                            nombre: 'Usuario',
-                            role: 'vendedor',
-                            createdAt: new Date()
-                        },
-                        loading: false,
-                        error: null
-                    })
-                }
+                }, (error) => {
+                    console.error("Error listening to user doc:", error)
+                    setState(prev => ({ ...prev, loading: false }))
+                })
             } else {
-                // User is signed out
                 setState({ user: null, loading: false, error: null })
             }
         })
 
-        // Backup timeout in case Firebase is blocked or offline and doesn't fire immediately
-        const safetyTimer = setTimeout(() => {
-            setState(current => {
-                if (current.loading) {
-                    console.warn("Firebase Auth timed out. Forcing loading=false")
-                    return { ...current, loading: false, error: 'La conexión con el servidor de autenticación está tardando. Verifique su internet.' }
-                }
-                return current
-            })
-        }, 15000)
-
         return () => {
-            unsubscribe()
-            clearTimeout(safetyTimer)
+            unsubscribeAuth()
+            if (unsubscribeDoc) unsubscribeDoc()
         }
     }, [])
 
@@ -124,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         email: userCredential.user.email || '',
                         nombre: userData.nombre || userCredential.user.displayName || 'Usuario',
                         role: userData.role || 'vendedor',
+                        tenantId: userData.tenantId || 'default', // Multi-tenant
                         createdAt: userData.createdAt?.toDate() || new Date(),
                         photoURL: userCredential.user.photoURL || undefined
                     },
@@ -154,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     email: userCredential.user.email || '',
                     nombre: userCredential.user.displayName || 'Administrador',
                     role: isFirstUser ? 'admin' as const : 'vendedor' as const,
+                    tenantId: 'default', // Multi-tenant: default for now
                     createdAt: new Date()
                 }
                 console.log('🔐 [LOGIN] Creando usuario con rol:', newUser.role)
@@ -189,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 email: email,
                 nombre: nombre,
                 role: 'vendedor', // Default to vendedor for security
+                tenantId: 'default', // Multi-tenant: default for now
                 createdAt: new Date()
             }
 
@@ -227,7 +218,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!state.user) return false
         // Admin tiene todos los permisos
         if (state.user.role === 'admin') return true
-        // Verificar permisos según rol
+
+        // 1. Verificar si tiene el permiso asignado explícitamente (custom)
+        if (state.user.permisos?.includes(permiso)) return true
+
+        // 2. Verificar permisos según rol por defecto
         const permisosRol = PERMISOS_POR_ROL[state.user.role] || []
         return permisosRol.includes(permiso)
     }

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
     Search,
     ShoppingCart,
@@ -15,6 +15,7 @@ import {
     Menu,
     Receipt,
     Printer,
+    Barcode,
 } from 'lucide-react'
 import { printTicket } from '@/lib/printer'
 import { useProductos } from '@/hooks/useProductos'
@@ -39,13 +40,6 @@ import {
 import { Producto } from '@/types'
 import { formatCurrency } from '@/lib/utils'
 
-interface ProductSelectModalProps {
-    producto: Producto | null
-    open: boolean
-    onClose: () => void
-    onAdd: (producto: Producto, talla: string, color: string) => void
-}
-
 const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
     const [error, setError] = useState(false)
 
@@ -64,83 +58,6 @@ const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
             className="w-full h-full object-cover"
             onError={() => setError(true)}
         />
-    )
-}
-
-function ProductSelectModal({ producto, open, onClose, onAdd }: ProductSelectModalProps) {
-    const [selectedTalla, setSelectedTalla] = useState<string>('')
-    const [selectedColor, setSelectedColor] = useState<string>('')
-
-    if (!producto) return null
-
-    const handleAdd = () => {
-        if (selectedTalla && selectedColor) {
-            onAdd(producto, selectedTalla, selectedColor)
-            setSelectedTalla('')
-            setSelectedColor('')
-            onClose()
-        }
-    }
-
-    return (
-        <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-[95vw] sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle className="text-base sm:text-lg">Seleccionar Variante</DialogTitle>
-                    <DialogDescription className="text-sm">{producto.nombre}</DialogDescription>
-                </DialogHeader>
-
-                <div className="space-y-4">
-                    <div>
-                        <p className="text-sm font-medium mb-2">Talla *</p>
-                        <div className="flex flex-wrap gap-2">
-                            {producto.tallas.map((talla) => (
-                                <Badge
-                                    key={talla}
-                                    variant={selectedTalla === talla ? 'default' : 'outline'}
-                                    className="cursor-pointer text-xs sm:text-sm px-2 sm:px-3 py-1"
-                                    onClick={() => setSelectedTalla(talla)}
-                                >
-                                    {talla}
-                                </Badge>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div>
-                        <p className="text-sm font-medium mb-2">Color *</p>
-                        <div className="flex flex-wrap gap-2">
-                            {producto.colores.map((color) => (
-                                <Badge
-                                    key={color}
-                                    variant={selectedColor === color ? 'default' : 'outline'}
-                                    className="cursor-pointer text-xs sm:text-sm px-2 sm:px-3 py-1"
-                                    onClick={() => setSelectedColor(color)}
-                                >
-                                    {color}
-                                </Badge>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="pt-2">
-                        <p className="text-xl sm:text-2xl font-bold text-primary">
-                            {formatCurrency(producto.precio)}
-                        </p>
-                    </div>
-                </div>
-
-                <DialogFooter className="flex-col sm:flex-row gap-2">
-                    <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
-                        Cancelar
-                    </Button>
-                    <Button onClick={handleAdd} disabled={!selectedTalla || !selectedColor} className="w-full sm:w-auto">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Agregar
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     )
 }
 
@@ -290,9 +207,9 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
 }
 
 export default function POSPage() {
-    const { user } = useAuth()
+    const { user, hasPermiso } = useAuth()
     const { settings } = useConfig()
-    const { productos, loading } = useProductos()
+    const { productos, loading, fetchProductos } = useProductos()
     const { procesarVenta } = useVentas()
     const { cajaActual } = useCierreCaja()
     const cart = useCart({
@@ -303,11 +220,11 @@ export default function POSPage() {
     })
 
     const [searchTerm, setSearchTerm] = useState('')
-    const [selectedProducto, setSelectedProducto] = useState<Producto | null>(null)
     const [showCheckout, setShowCheckout] = useState(false)
     const [completedVenta, setCompletedVenta] = useState<Venta | null>(null)
     const [discountInput, setDiscountInput] = useState('')
     const [showCart, setShowCart] = useState(false) // Mobile cart toggle
+    const searchInputRef = useRef<HTMLInputElement>(null)
 
     // Sync tax settings from config
     useEffect(() => {
@@ -319,33 +236,72 @@ export default function POSPage() {
         })
     }, [settings.itbisEnabled, settings.itbisRate, settings.propinaEnabled, settings.propinaRate])
 
+    // Auto-focus search on load
+    useEffect(() => {
+        // Simple barcode scanner listener: focus input if not focused
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (!searchInputRef.current) return;
+            // If user types but not modifying any other input, focus search
+            if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+                searchInputRef.current.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    // Barcode Search Logic: Check for direct match
+    useEffect(() => {
+        if (!searchTerm) return
+
+        // 1. Strict exact match for barcode (Instant Add)
+        const exactMatch = productos.find(p => p.codigoBarra === searchTerm && p.activo && p.stock > 0)
+
+        // If exact match found and it's a barcode-like scan (usually fast input?)
+        // For now, let's just use Enter key or a dedicated function.
+        // Actually, if using a scanner, it often sends 'Enter' at the end.
+        // Let's implement handlesearch submit.
+    }, [searchTerm, productos])
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!searchTerm) return
+
+        // Check for exact barcode match
+        const exactMatch = productos.find(p => p.codigoBarra === searchTerm && p.activo && p.stock > 0)
+
+        if (exactMatch) {
+            handleAddToCart(exactMatch)
+            setSearchTerm('') // Clear after add
+        }
+    }
+
     const filteredProductos = useMemo(() => {
         if (!searchTerm.trim()) return productos.filter(p => p.activo && p.stock > 0)
         const term = searchTerm.toLowerCase()
         return productos.filter(
             p => p.activo && p.stock > 0 && (
                 p.nombre.toLowerCase().includes(term) ||
-                p.categoria.toLowerCase().includes(term)
+                p.categoria.toLowerCase().includes(term) ||
+                (p.codigoBarra && p.codigoBarra.includes(term)) || // Partial match for code too?
+                (p.talla && p.talla.toLowerCase().includes(term)) ||
+                (p.color && p.color.toLowerCase().includes(term))
             )
         )
     }, [productos, searchTerm])
 
-    const handleAddToCart = (producto: Producto, talla: string, color: string) => {
-        // Check current quantity in cart
-        const currentItem = cart.items.find(
-            item => item.producto.id === producto.id && item.talla === talla && item.color === color
-        )
-        const currentQty = currentItem?.cantidad || 0
+    const handleAddToCart = (producto: Producto) => {
+        // Calculate total quantity of THIS specific variant/SKU in cart
+        // (Since Flat SKU, product ID is unique for this variant)
+        const currentInCart = cart.items.find(item => item.producto.id === producto.id)?.cantidad || 0
 
-        if (currentQty + 1 > producto.stock) {
-            alert(`No hay suficiente stock disponible. Stock actual: ${producto.stock}`)
+        if (currentInCart + 1 > producto.stock) {
+            alert(`Stock insuficiente.\n\nDisponible: ${producto.stock}\nEn carrito: ${currentInCart}`)
             return
         }
 
-        cart.addToCart(producto, talla, color)
+        cart.addToCart(producto)
     }
-
-
 
     const handleCheckout = async (metodoPago: 'efectivo' | 'tarjeta' | 'transferencia') => {
         try {
@@ -362,6 +318,7 @@ export default function POSPage() {
                 vendedor: user?.nombre || 'Vendedor',
                 cajaId: cajaActual?.id,
                 cliente: 'Cliente General',
+                tenantId: user?.tenantId || 'default', // Multi-tenant
                 fecha: new Date(),
                 estado: 'completada',
                 itbisAplicado: cart.itbisEnabled,
@@ -373,6 +330,9 @@ export default function POSPage() {
 
             // 2. Only clear cart if successful
             cart.clearCart()
+
+            // 3. Refresh product list to show updated stock
+            await fetchProductos()
 
             setShowCheckout(false)
             setCompletedVenta(venta)
@@ -425,15 +385,20 @@ export default function POSPage() {
                 </div>
 
                 {/* Search */}
-                <div className="relative mb-3 sm:mb-4">
+                <form onSubmit={handleSearchSubmit} className="relative mb-3 sm:mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Buscar productos..."
+                        ref={searchInputRef}
+                        placeholder="Buscar producto o escanear código de barras..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-9 text-sm"
+                        autoComplete="off"
                     />
-                </div>
+                    <Button type="submit" variant="ghost" size="sm" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0">
+                        <Barcode className="h-4 w-4" />
+                    </Button>
+                </form>
 
                 {/* Products Grid */}
                 <div className="flex-1 overflow-y-auto min-h-0">
@@ -442,17 +407,35 @@ export default function POSPage() {
                             <Card
                                 key={producto.id}
                                 className="cursor-pointer hover:border-primary/50 transition-colors"
-                                onClick={() => setSelectedProducto(producto)}
+                                onClick={() => handleAddToCart(producto)}
                             >
                                 <div className="aspect-square relative bg-muted rounded-t-lg overflow-hidden">
                                     <ProductImage src={producto.imagen} alt={producto.nombre} />
                                     <Badge className="absolute top-1 right-1 text-[10px] sm:text-xs" variant={producto.stock <= 5 ? 'warning' : 'success'}>
                                         {producto.stock}
                                     </Badge>
+                                    {/* Show size/color badge */}
+                                    <div className="absolute bottom-1 left-1 flex gap-1">
+                                        {producto.talla && (
+                                            <Badge variant="secondary" className="text-[10px] px-1 h-5 bg-black/50 text-white hover:bg-black/70 border-none">
+                                                {producto.talla}
+                                            </Badge>
+                                        )}
+                                        {producto.color && (
+                                            <Badge variant="secondary" className="text-[10px] px-1 h-5 bg-black/50 text-white hover:bg-black/70 border-none">
+                                                {producto.color}
+                                            </Badge>
+                                        )}
+                                    </div>
                                 </div>
                                 <CardContent className="p-2 sm:p-3">
                                     <p className="font-medium text-xs sm:text-sm truncate">{producto.nombre}</p>
-                                    <p className="text-primary font-bold text-sm sm:text-base">{formatCurrency(producto.precio)}</p>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <p className="text-primary font-bold text-sm sm:text-base">{formatCurrency(producto.precio)}</p>
+                                        <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
+                                            {producto.codigoBarra?.slice(-4) || '---'}
+                                        </span>
+                                    </div>
                                 </CardContent>
                             </Card>
                         ))}
@@ -507,7 +490,7 @@ export default function POSPage() {
                                 <div className="flex-1 min-w-0">
                                     <p className="font-medium text-xs sm:text-sm truncate">{item.producto.nombre}</p>
                                     <p className="text-[10px] sm:text-xs text-muted-foreground">
-                                        {item.talla} / {item.color}
+                                        {item.producto.talla} / {item.producto.color} <span className="font-mono ml-1">[{item.producto.codigoBarra}]</span>
                                     </p>
                                     <p className="text-primary font-semibold text-xs sm:text-sm">
                                         {formatCurrency(item.subtotal)}
@@ -522,15 +505,30 @@ export default function POSPage() {
                                     >
                                         <Minus className="h-3 w-3" />
                                     </Button>
-                                    <span className="w-6 sm:w-8 text-center font-medium text-xs sm:text-sm">{item.cantidad}</span>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-6 w-6 sm:h-7 sm:w-7"
-                                        onClick={() => cart.updateQuantity(index, item.cantidad + 1)}
-                                    >
-                                        <Plus className="h-3 w-3" />
-                                    </Button>
+                                    {(() => {
+                                        const atMaxStock = item.cantidad >= item.producto.stock
+                                        return (
+                                            <>
+                                                <span className={`w-6 sm:w-8 text-center font-medium text-xs sm:text-sm ${atMaxStock ? 'text-orange-500' : ''}`}>
+                                                    {item.cantidad}
+                                                </span>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    className="h-6 w-6 sm:h-7 sm:w-7"
+                                                    onClick={() => {
+                                                        if (item.cantidad < item.producto.stock) {
+                                                            cart.updateQuantity(index, item.cantidad + 1)
+                                                        }
+                                                    }}
+                                                    disabled={atMaxStock}
+                                                    title={atMaxStock ? `Stock máximo: ${item.producto.stock}` : ''}
+                                                >
+                                                    <Plus className="h-3 w-3" />
+                                                </Button>
+                                            </>
+                                        )
+                                    })()}
                                     <Button
                                         variant="ghost"
                                         size="icon"
@@ -548,49 +546,53 @@ export default function POSPage() {
                 {cart.items.length > 0 && (
                     <div className="p-3 sm:p-4 border-t space-y-2 sm:space-y-3">
                         {/* Discount */}
-                        <div className="flex gap-2">
-                            <Input
-                                placeholder="% Desc."
-                                value={discountInput}
-                                onChange={(e) => setDiscountInput(e.target.value)}
-                                className="flex-1 text-sm h-9"
-                                type="number"
-                                min="0"
-                                max="100"
-                            />
-                            <Button variant="outline" onClick={handleApplyDiscount} className="h-9 text-sm px-3">
-                                Aplicar
-                            </Button>
-                        </div>
+                        {hasPermiso('pos:descuentos') && (
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="% Desc."
+                                    value={discountInput}
+                                    onChange={(e) => setDiscountInput(e.target.value)}
+                                    className="flex-1 text-sm h-9"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                />
+                                <Button variant="outline" onClick={handleApplyDiscount} className="h-9 text-sm px-3">
+                                    Aplicar
+                                </Button>
+                            </div>
+                        )}
 
                         {/* Tax toggles for this sale */}
-                        <div className="space-y-1">
-                            <div className="flex items-center justify-between text-xs sm:text-sm">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={cart.itbisEnabled}
-                                        onChange={(e) => cart.setItbisEnabled(e.target.checked)}
-                                        className="rounded border-border"
-                                    />
-                                    <span>ITBIS ({settings.itbisRate}%)</span>
-                                </label>
-                                {cart.itbisEnabled && <span>{formatCurrency(cart.impuesto)}</span>}
-                            </div>
+                        {hasPermiso('pos:descuentos') && (
+                            <div className="space-y-1">
+                                <div className="flex items-center justify-between text-xs sm:text-sm">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={cart.itbisEnabled}
+                                            onChange={(e) => cart.setItbisEnabled(e.target.checked)}
+                                            className="rounded border-border"
+                                        />
+                                        <span>ITBIS ({settings.itbisRate}%)</span>
+                                    </label>
+                                    {cart.itbisEnabled && <span>{formatCurrency(cart.impuesto)}</span>}
+                                </div>
 
-                            <div className="flex items-center justify-between text-xs sm:text-sm">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={cart.propinaEnabled}
-                                        onChange={(e) => cart.setPropinaEnabled(e.target.checked)}
-                                        className="rounded border-border"
-                                    />
-                                    <span>Propina ({settings.propinaRate}%)</span>
-                                </label>
-                                {cart.propinaEnabled && <span>{formatCurrency(cart.propina)}</span>}
+                                <div className="flex items-center justify-between text-xs sm:text-sm">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={cart.propinaEnabled}
+                                            onChange={(e) => cart.setPropinaEnabled(e.target.checked)}
+                                            className="rounded border-border"
+                                        />
+                                        <span>Propina ({settings.propinaRate}%)</span>
+                                    </label>
+                                    {cart.propinaEnabled && <span>{formatCurrency(cart.propina)}</span>}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Totals */}
                         <div className="space-y-1 text-xs sm:text-sm">
@@ -625,12 +627,6 @@ export default function POSPage() {
             </Card>
 
             {/* Modals */}
-            <ProductSelectModal
-                producto={selectedProducto}
-                open={!!selectedProducto}
-                onClose={() => setSelectedProducto(null)}
-                onAdd={handleAddToCart}
-            />
 
             <CheckoutModal
                 open={showCheckout}
@@ -648,3 +644,4 @@ export default function POSPage() {
         </div>
     )
 }
+

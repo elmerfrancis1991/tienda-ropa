@@ -7,6 +7,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
+import { UserRole, Permiso } from '@/types'
 import {
     LayoutDashboard,
     Package,
@@ -32,18 +33,19 @@ interface NavItem {
     title: string
     href: string
     icon: React.ElementType
-    requiredRole?: 'admin' | 'vendedor'
+    requiredRole?: UserRole
+    requiredPermiso?: Permiso
 }
 
 const navItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { title: 'Punto de Venta', href: '/pos', icon: ShoppingCart },
-    { title: 'Productos', href: '/productos', icon: Package },
-    { title: 'Caja', href: '/caja', icon: Wallet },
-    { title: 'Reportes', href: '/reportes', icon: BarChart3, requiredRole: 'admin' },
-    { title: 'Historial', href: '/historial', icon: FileText, requiredRole: 'admin' },
-    { title: 'Usuarios', href: '/usuarios', icon: Users, requiredRole: 'admin' },
-    { title: 'Configuración', href: '/configuracion', icon: Settings, requiredRole: 'admin' },
+    { title: 'Punto de Venta', href: '/pos', icon: ShoppingCart, requiredPermiso: 'pos:vender' },
+    { title: 'Productos', href: '/productos', icon: Package, requiredPermiso: 'productos:ver' },
+    { title: 'Caja', href: '/caja', icon: Wallet, requiredPermiso: 'caja:abrir' },
+    { title: 'Reportes', href: '/reportes', icon: BarChart3, requiredPermiso: 'reportes:ver' },
+    { title: 'Historial', href: '/historial', icon: FileText, requiredPermiso: 'caja:historial' },
+    { title: 'Usuarios', href: '/usuarios', icon: Users, requiredPermiso: 'usuarios:ver' },
+    { title: 'Configuración', href: '/configuracion', icon: Settings, requiredPermiso: 'configuracion:ver' },
     { title: 'Ayuda', href: '/ayuda', icon: HelpCircle },
 ]
 
@@ -52,7 +54,7 @@ export function Sidebar() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const location = useLocation()
     const navigate = useNavigate()
-    const { user, logout, hasRole } = useAuth()
+    const { user, logout, hasRole, hasPermiso } = useAuth()
     const { settings } = useConfig()
     const { theme, toggleTheme } = useTheme()
 
@@ -70,9 +72,15 @@ export function Sidebar() {
             .slice(0, 2)
     }
 
-    const filteredNavItems = navItems.filter(
-        (item) => !item.requiredRole || hasRole(item.requiredRole)
-    )
+    const filteredNavItems = navItems.filter((item) => {
+        // Si requiere un rol específico y no lo tiene
+        if (item.requiredRole && !hasRole(item.requiredRole)) return false
+
+        // Si requiere un permiso específico y no lo tiene
+        if (item.requiredPermiso && !hasPermiso(item.requiredPermiso)) return false
+
+        return true
+    })
 
     const handleNavClick = () => {
         setMobileOpen(false)

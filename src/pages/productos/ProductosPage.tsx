@@ -32,7 +32,7 @@ import { Producto, CATEGORIAS_ROPA, STOCK_MINIMO_DEFAULT } from '@/types'
 import { formatCurrency, cn } from '@/lib/utils'
 
 export default function ProductosPage() {
-    const { user } = useAuth()
+    const { user, hasPermiso } = useAuth()
     const { productos, loading, error, addProducto, updateProducto, deleteProducto } = useProductos()
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedCategoria, setSelectedCategoria] = useState<string>('')
@@ -175,7 +175,7 @@ export default function ProductosPage() {
                         Gestiona el catálogo y control de stock
                     </p>
                 </div>
-                {user?.role === 'admin' && (
+                {hasPermiso('productos:editar') && (
                     <Button onClick={() => setFormOpen(true)} className="shrink-0">
                         <Plus className="h-4 w-4 mr-2" />
                         Nuevo Producto
@@ -335,19 +335,23 @@ export default function ProductosPage() {
                                     <Package className="h-16 w-16 text-muted-foreground/50" />
                                 </div>
                             )}
-                            {user?.role === 'admin' && (
-                                <>
-                                    <Button size="sm" variant="secondary" onClick={() => openEditForm(producto)}>
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                    <Button size="sm" variant="secondary" onClick={() => openStockModal(producto)}>
-                                        <Plus className="h-4 w-4" />
-                                    </Button>
+                            <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {hasPermiso('productos:editar') && (
+                                    <>
+                                        <Button size="sm" variant="secondary" onClick={() => openEditForm(producto)}>
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button size="sm" variant="secondary" onClick={() => openStockModal(producto)}>
+                                            <Plus className="h-4 w-4" />
+                                        </Button>
+                                    </>
+                                )}
+                                {hasPermiso('productos:eliminar') && (
                                     <Button size="sm" variant="destructive" onClick={() => openDeleteDialog(producto)}>
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
-                                </>
-                            )}
+                                )}
+                            </div>
                         </div>
                         <CardContent className="p-4">
                             <div className="space-y-2">

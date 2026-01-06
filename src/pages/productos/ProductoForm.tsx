@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { X, Loader2, ImagePlus } from 'lucide-react'
+import { X, Loader2, ImagePlus, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +16,7 @@ import {
     DialogDescription,
 } from '@/components/ui/dialog'
 import { Producto, CATEGORIAS_ROPA, TALLAS, COLORES } from '@/types'
+import { generateId } from '@/lib/utils'
 
 const productoSchema = z.object({
     nombre: z.string().min(2, 'Nombre muy corto').max(100),
@@ -27,6 +28,10 @@ const productoSchema = z.object({
     minStock: z.number().min(1, 'Mínimo 1').optional(),
     categoria: z.string().min(1, 'Selecciona una categoría'),
     imagen: z.string().url('URL de imagen inválida').or(z.literal('')),
+    // For single edit mode
+    talla: z.string().optional(),
+    color: z.string().optional(),
+    codigoBarra: z.string().optional(),
 })
 
 type ProductoFormData = z.infer<typeof productoSchema>
@@ -43,6 +48,9 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
     const [selectedTallas, setSelectedTallas] = useState<string[]>([])
     const [selectedColores, setSelectedColores] = useState<string[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [generatedCount, setGeneratedCount] = useState(0)
+
+    const isEditing = !!producto
 
     const {
         register,
@@ -63,13 +71,14 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             minStock: 5,
             categoria: '',
             imagen: '',
+            codigoBarra: '',
         },
     })
 
-    // Cargar datos del producto cuando se abre el modal o cambia el producto
+    // Load data
     useEffect(() => {
         if (open && producto) {
-            // Resetear formulario con los valores del producto
+            // Edit Mode: Load single product data
             reset({
                 nombre: producto.nombre,
                 descripcion: producto.descripcion,
@@ -80,11 +89,15 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 minStock: producto.minStock || 5,
                 categoria: producto.categoria,
                 imagen: producto.imagen || '',
+                talla: producto.talla,
+                color: producto.color,
+                codigoBarra: producto.codigoBarra || '',
             })
-            setSelectedTallas(producto.tallas || [])
-            setSelectedColores(producto.colores || [])
+            // In edit mode, arrays are ignored, we bind to specific talla/color
+            setSelectedTallas([producto.talla || ''])
+            setSelectedColores([producto.color || ''])
         } else if (open && !producto) {
-            // Nuevo producto - limpiar formulario
+            // Create Mode
             reset({
                 nombre: '',
                 descripcion: '',
@@ -92,60 +105,56 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 costo: 0,
                 ganancia: 0,
                 stock: 0,
+                minStock: 5,
                 categoria: '',
                 imagen: '',
+                codigoBarra: '',
             })
             setSelectedTallas([])
             setSelectedColores([])
+            setGeneratedCount(0)
         }
     }, [open, producto, reset])
 
+    // Calc generated count
+    useEffect(() => {
+        if (!isEditing) {
+            setGeneratedCount(selectedTallas.length * selectedColores.length)
+        }
+    }, [selectedTallas, selectedColores, isEditing])
+
     const imagenUrl = watch('imagen')
     const precioActual = watch('precio')
-    const costoActual = watch('costo')
 
     // Calculadoras inteligentes
     const handleCostoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nuevoCosto = parseFloat(e.target.value) || 0
         const gananciaActual = watch('ganancia') || 0
-
-        // Si hay ganancia definida, actualizamos precio: Precio = Costo + Ganancia
-        if (gananciaActual > 0) {
-            setValue('precio', nuevoCosto + gananciaActual)
-        }
-        // Si hay precio definido pero no ganancia, actualizamos ganancia: Ganancia = Precio - Costo
-        else if (precioActual > 0) {
-            setValue('ganancia', precioActual - nuevoCosto)
-        }
+        if (gananciaActual > 0) setValue('precio', nuevoCosto + gananciaActual)
+        else if (precioActual > 0) setValue('ganancia', precioActual - nuevoCosto)
     }
 
     const handlePrecioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nuevoPrecio = parseFloat(e.target.value) || 0
         const costo = watch('costo') || 0
-
-        // Al cambiar precio, recalculamos ganancia: Ganancia = Precio - Costo
-        if (costo > 0) {
-            setValue('ganancia', nuevoPrecio - costo)
-        }
+        if (costo > 0) setValue('ganancia', nuevoPrecio - costo)
     }
 
     const handleGananciaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nuevaGanancia = parseFloat(e.target.value) || 0
         const costo = watch('costo') || 0
-
-        // Al cambiar ganancia, recalculamos precio: Precio = Costo + Ganancia
-        if (costo > 0) {
-            setValue('precio', costo + nuevaGanancia)
-        }
+        if (costo > 0) setValue('precio', costo + nuevaGanancia)
     }
 
     const toggleTalla = (talla: string) => {
+        if (isEditing) return // Prevent toggling in edit mode 
         setSelectedTallas((prev) =>
             prev.includes(talla) ? prev.filter((t) => t !== talla) : [...prev, talla]
         )
     }
 
     const toggleColor = (color: string) => {
+        if (isEditing) return
         setSelectedColores((prev) =>
             prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
         )
@@ -154,24 +163,69 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
     const [submitError, setSubmitError] = useState<string | null>(null)
 
     const handleFormSubmit = async (data: ProductoFormData) => {
-        if (selectedTallas.length === 0) {
-            alert('Selecciona al menos una talla')
-            return
-        }
-        if (selectedColores.length === 0) {
-            alert('Selecciona al menos un color')
-            return
-        }
-
         setIsSubmitting(true)
         setSubmitError(null)
+
         try {
-            await onSubmit({
-                ...data,
-                tallas: selectedTallas,
-                colores: selectedColores,
-                activo: true,
-            })
+            if (isEditing && producto) {
+                // Update Single Product
+                await onSubmit({
+                    ...data,
+                    // Use form values or fallback to existing
+                    talla: data.talla || producto.talla || 'Unica',
+                    color: data.color || producto.color || 'Unico',
+                    // ParentId stays same
+                    parentId: producto.parentId,
+                    activo: true,
+                    codigoBarra: data.codigoBarra, // Update barcode
+                    tenantId: producto.tenantId, // Should persist
+                })
+            } else {
+                // Create New Variants
+                if (selectedTallas.length === 0) {
+                    throw new Error('Selecciona al menos una talla')
+                }
+                if (selectedColores.length === 0) {
+                    throw new Error('Selecciona al menos un color')
+                }
+
+                const parentId = generateId()
+                const baseBarcode = data.codigoBarra?.trim() || ''
+
+                const promises = []
+                for (const talla of selectedTallas) {
+                    for (const color of selectedColores) {
+                        // Smart barcode generation: if base provided, append variant info
+                        // e.g. "SHIRT1" -> "SHIRT1-S-RED"
+                        // If empty, leave empty or backend assigns ID
+                        const variantBarcode = baseBarcode
+                            ? `${baseBarcode}-${talla}-${color}`.toUpperCase().replace(/\s+/g, '')
+                            : ''
+
+                        const variantData = {
+                            ...data,
+                            talla,
+                            color,
+                            parentId,
+                            activo: true,
+                            codigoBarra: variantBarcode,
+                            // tenantId will be added by useProductos/hook logic usually, 
+                            // but if hook expects it in data we might need it. 
+                            // However, useProductos uses useAuth to get tenantId.
+                            // We'll pass it without tenantId here as hook handles it? 
+                            // Actually checking useProductos implementation... 
+                            // "const producto = { ...nuevoProducto, tenantId: user.tenantId, ... }"
+                            // So we are good.
+                        }
+                        // Remove utility fields to avoid cluttering DB if they are not in schema
+                        // But TypeScript Omit takes care of id/dates.
+                        promises.push(onSubmit(variantData))
+                    }
+                }
+
+                await Promise.all(promises)
+            }
+
             reset()
             setSelectedTallas([])
             setSelectedColores([])
@@ -186,8 +240,6 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
 
     const handleClose = () => {
         reset()
-        setSelectedTallas(producto?.tallas || [])
-        setSelectedColores(producto?.colores || [])
         onClose()
     }
 
@@ -196,12 +248,12 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
-                        {producto ? 'Editar Producto' : 'Nuevo Producto'}
+                        {isEditing ? 'Editar Variante' : 'Nuevo Producto (Generador de Variantes)'}
                     </DialogTitle>
                     <DialogDescription>
-                        {producto
-                            ? 'Actualiza la información del producto'
-                            : 'Completa el formulario para agregar un nuevo producto'}
+                        {isEditing
+                            ? 'Actualiza los datos de este artículo específico.'
+                            : 'Genera múltiples artículos automáticamente combinando tallas y colores.'}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -209,10 +261,10 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                     {/* Basic Info */}
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                            <Label htmlFor="nombre">Nombre del Producto *</Label>
+                            <Label htmlFor="nombre">Nombre Base *</Label>
                             <Input
                                 id="nombre"
-                                placeholder="Ej: Camisa Casual Azul"
+                                placeholder="Ej: Camisa Casual"
                                 {...register('nombre')}
                                 className={errors.nombre ? 'border-destructive' : ''}
                             />
@@ -226,7 +278,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             <Input
                                 id="categoria"
                                 list="categorias-list"
-                                placeholder="Selecciona o escribe una categoría"
+                                placeholder="Selecciona..."
                                 {...register('categoria')}
                                 className={errors.categoria ? 'border-destructive' : ''}
                             />
@@ -245,18 +297,51 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                         <Label htmlFor="descripcion">Descripción *</Label>
                         <textarea
                             id="descripcion"
-                            placeholder="Describe el producto..."
+                            placeholder="Detalles del producto..."
                             {...register('descripcion')}
-                            rows={3}
+                            rows={2}
                             className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                         />
-                        {errors.descripcion && (
-                            <p className="text-sm text-destructive">{errors.descripcion.message}</p>
-                        )}
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {/* Barcode */}
+                        <div className="space-y-2">
+                            <Label htmlFor="codigoBarra">
+                                {isEditing ? 'Código de Barra' : 'Código Base (Prefijo)'}
+                            </Label>
+                            <Input
+                                id="codigoBarra"
+                                placeholder={isEditing ? "Escanea..." : "Ej: CAMISA001"}
+                                {...register('codigoBarra')}
+                            />
+                            {!isEditing && (
+                                <p className="text-[10px] text-muted-foreground">
+                                    Se generará: CÓDIGO-TALLA-COLOR
+                                </p>
+                            )}
+                        </div>
+                        {/* Image */}
+                        <div className="space-y-2">
+                            <Label htmlFor="imagen">URL de Imagen</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="imagen"
+                                    placeholder="https://..."
+                                    {...register('imagen')}
+                                    className="flex-1"
+                                />
+                                {imagenUrl && (
+                                    <div className="w-10 h-10 rounded border overflow-hidden shrink-0">
+                                        <img src={imagenUrl} className="w-full h-full object-cover" onError={(e) => (e.target as HTMLImageElement).style.display = 'none'} />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     {/* Price and Stocks */}
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-3 bg-muted/30 p-4 rounded-lg">
                         {user?.role === 'admin' && (
                             <>
                                 <div className="space-y-2">
@@ -265,135 +350,122 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                         id="costo"
                                         type="number"
                                         step="0.01"
-                                        placeholder="0.00"
-                                        {...register('costo', {
-                                            valueAsNumber: true,
-                                            onChange: handleCostoChange
-                                        })}
+                                        {...register('costo', { valueAsNumber: true, onChange: handleCostoChange })}
                                     />
                                 </div>
-
                                 <div className="space-y-2">
-                                    <Label htmlFor="ganancia">Ganancia (RD$)</Label>
+                                    <Label htmlFor="ganancia">Ganancia</Label>
                                     <Input
                                         id="ganancia"
                                         type="number"
                                         step="0.01"
-                                        placeholder="0.00"
-                                        {...register('ganancia', {
-                                            valueAsNumber: true,
-                                            onChange: handleGananciaChange
-                                        })}
+                                        {...register('ganancia', { valueAsNumber: true, onChange: handleGananciaChange })}
                                     />
                                 </div>
                             </>
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="precio">Precio (RD$) *</Label>
+                            <Label htmlFor="precio">Precio Venta (RD$) *</Label>
                             <Input
                                 id="precio"
                                 type="number"
                                 step="0.01"
-                                placeholder="0.00"
-                                {...register('precio', {
-                                    valueAsNumber: true,
-                                    onChange: handlePrecioChange
-                                })}
-                                className={errors.precio ? 'border-destructive' : ''}
+                                {...register('precio', { valueAsNumber: true, onChange: handlePrecioChange })}
+                                className={errors.precio ? 'border-destructive font-bold' : 'font-bold'}
                             />
-                            {errors.precio && (
-                                <p className="text-sm text-destructive">{errors.precio.message}</p>
-                            )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="stock">Stock *</Label>
+                            <Label htmlFor="stock">Stock Inicial *</Label>
                             <Input
                                 id="stock"
                                 type="number"
-                                placeholder="0"
                                 {...register('stock', { valueAsNumber: true })}
-                                className={errors.stock ? 'border-destructive' : ''}
+                                placeholder="Por variante"
                             />
-                            {errors.stock && (
-                                <p className="text-sm text-destructive">{errors.stock.message}</p>
-                            )}
+                            <p className="text-[10px] text-muted-foreground">Cantidad para CADA variante</p>
                         </div>
-
                         <div className="space-y-2">
                             <Label htmlFor="minStock">Min. Stock</Label>
                             <Input
                                 id="minStock"
                                 type="number"
-                                placeholder="5"
                                 {...register('minStock', { valueAsNumber: true })}
                             />
                         </div>
                     </div>
 
-                    {/* Image */}
-                    <div className="space-y-2">
-                        <Label htmlFor="imagen">URL de Imagen</Label>
-                        <div className="flex gap-3">
-                            <Input
-                                id="imagen"
-                                placeholder="https://ejemplo.com/imagen.jpg"
-                                {...register('imagen')}
-                                className="flex-1"
-                            />
-                            {imagenUrl && (
-                                <div className="w-16 h-10 rounded-md overflow-hidden border">
-                                    <img
-                                        src={imagenUrl}
-                                        alt="Preview"
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            ; (e.target as HTMLImageElement).style.display = 'none'
-                                        }}
-                                    />
-                                </div>
+                    {/* Variants Generation */}
+                    <div className="space-y-4 border-t pt-4">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-base font-semibold">Variantes</Label>
+                            {!isEditing && generatedCount > 0 && (
+                                <Badge variant="secondary">
+                                    Se crearán {generatedCount} productos
+                                </Badge>
                             )}
                         </div>
-                    </div>
 
-                    {/* Tallas */}
-                    <div className="space-y-2">
-                        <Label>Tallas Disponibles *</Label>
-                        <div className="flex flex-wrap gap-2">
-                            {TALLAS.map((talla) => (
-                                <Badge
-                                    key={talla}
-                                    variant={selectedTallas.includes(talla) ? 'default' : 'outline'}
-                                    className="cursor-pointer transition-all hover:scale-105"
-                                    onClick={() => toggleTalla(talla)}
-                                >
-                                    {talla}
-                                </Badge>
-                            ))}
+                        {/* Tallas */}
+                        <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Tallas Disponibles</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {isEditing ? (
+                                    // Single Select for Edit
+                                    <select
+                                        {...register('talla')}
+                                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    >
+                                        {TALLAS.map(t => <option key={t} value={t}>{t}</option>)}
+                                    </select>
+                                ) : (
+                                    // Multi Select for Create
+                                    TALLAS.map((talla) => (
+                                        <Badge
+                                            key={talla}
+                                            variant={selectedTallas.includes(talla) ? 'default' : 'outline'}
+                                            className="cursor-pointer hover:scale-105 active:scale-95 select-none"
+                                            onClick={() => toggleTalla(talla)}
+                                        >
+                                            {talla}
+                                        </Badge>
+                                    ))
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Colores */}
-                    <div className="space-y-2">
-                        <Label>Colores Disponibles *</Label>
-                        <div className="flex flex-wrap gap-2">
-                            {COLORES.map((color) => (
-                                <Badge
-                                    key={color}
-                                    variant={selectedColores.includes(color) ? 'default' : 'outline'}
-                                    className="cursor-pointer transition-all hover:scale-105"
-                                    onClick={() => toggleColor(color)}
-                                >
-                                    {color}
-                                </Badge>
-                            ))}
+                        {/* Colores */}
+                        <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Colores Disponibles</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {isEditing ? (
+                                    <select
+                                        {...register('color')}
+                                        className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                    >
+                                        {COLORES.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                ) : (
+                                    COLORES.map((color) => (
+                                        <Badge
+                                            key={color}
+                                            variant={selectedColores.includes(color) ? 'default' : 'outline'}
+                                            className="cursor-pointer hover:scale-105 active:scale-95 select-none"
+                                            onClick={() => toggleColor(color)}
+                                        >
+                                            {color}
+                                        </Badge>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     {submitError && (
-                        <div className="p-3 mb-4 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md">
-                            Error: {submitError}
+                        <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded-md">
+                            <AlertCircle className="h-4 w-4" />
+                            {submitError}
                         </div>
                     )}
 
@@ -404,7 +476,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                         </Button>
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {producto ? 'Guardar Cambios' : 'Crear Producto'}
+                            {isEditing ? 'Guardar Cambios' : `Crear ${generatedCount > 0 ? generatedCount + ' ' : ''}Productos`}
                         </Button>
                     </div>
                 </form>

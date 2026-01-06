@@ -2,16 +2,17 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
-import { UserRole } from '@/types'
+import { UserRole, Permiso } from '@/types'
 import { Loader2 } from 'lucide-react'
 
 interface ProtectedRouteProps {
     children: React.ReactNode
     requiredRole?: UserRole
+    requiredPermiso?: Permiso
 }
 
-export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-    const { user, loading, hasRole } = useAuth()
+export function ProtectedRoute({ children, requiredRole, requiredPermiso }: ProtectedRouteProps) {
+    const { user, loading, hasRole, hasPermiso } = useAuth()
     const location = useLocation()
     const [showTimeout, setShowTimeout] = useState(false)
 
@@ -66,6 +67,11 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
     // 2. Redirigir por rol si es necesario
     if (requiredRole && !hasRole(requiredRole)) {
+        return <Navigate to="/dashboard" replace />
+    }
+
+    // 3. Redirigir por permiso granular si es necesario
+    if (requiredPermiso && !hasPermiso(requiredPermiso)) {
         return <Navigate to="/dashboard" replace />
     }
 

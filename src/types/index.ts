@@ -7,6 +7,7 @@ export interface User {
     email: string
     nombre: string
     role: UserRole
+    tenantId: string // Multi-tenant: isolates data per company
     createdAt: Date
     photoURL?: string
     permisos?: string[] // Permisos personalizados del usuario
@@ -14,6 +15,8 @@ export interface User {
 
 export interface Producto {
     id: string
+    tenantId: string // Multi-tenant: isolates data per company
+    codigoBarra: string // Unique barcode per tenant (for scanner)
     nombre: string
     descripcion: string
     precio: number
@@ -22,8 +25,9 @@ export interface Producto {
     stock: number
     minStock?: number
     categoria: string
-    tallas: string[]
-    colores: string[]
+    talla: string // Single size (e.g., "M")
+    color: string // Single color (e.g., "Azul")
+    parentId?: string // Optional: groups variants under same "base product"
     imagen: string
     activo: boolean
     createdAt: Date
@@ -80,6 +84,7 @@ export type Permiso =
     | 'reportes:ver'         // Puede ver reportes
     | 'usuarios:ver'         // Puede ver usuarios
     | 'usuarios:editar'      // Puede editar usuarios
+    | 'usuarios:eliminar'    // Puede eliminar usuarios
     | 'caja:abrir'           // Puede abrir caja
     | 'caja:cerrar'          // Puede cerrar caja
     | 'caja:historial'       // Puede ver historial de caja
@@ -93,7 +98,7 @@ export const PERMISOS_POR_ROL: Record<UserRole, Permiso[]> = {
         'productos:ver', 'productos:editar', 'productos:eliminar',
         'inventario:ver', 'inventario:ajustar',
         'reportes:ver',
-        'usuarios:ver', 'usuarios:editar',
+        'usuarios:ver', 'usuarios:editar', 'usuarios:eliminar',
         'caja:abrir', 'caja:cerrar', 'caja:historial',
         'configuracion:ver', 'configuracion:editar'
     ],
@@ -152,6 +157,7 @@ export const PERMISOS_INFO: Record<Permiso, { nombre: string; categoria: string 
     'reportes:ver': { nombre: 'Ver reportes', categoria: 'Reportes' },
     'usuarios:ver': { nombre: 'Ver usuarios', categoria: 'Usuarios' },
     'usuarios:editar': { nombre: 'Editar usuarios', categoria: 'Usuarios' },
+    'usuarios:eliminar': { nombre: 'Eliminar usuarios', categoria: 'Usuarios' },
     'caja:abrir': { nombre: 'Abrir caja', categoria: 'Caja' },
     'caja:cerrar': { nombre: 'Cerrar caja', categoria: 'Caja' },
     'caja:historial': { nombre: 'Ver historial caja', categoria: 'Caja' },

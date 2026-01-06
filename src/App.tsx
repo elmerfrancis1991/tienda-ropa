@@ -66,7 +66,7 @@ export default function App() {
                 <Route
                     path="reportes"
                     element={
-                        <ProtectedRoute requiredRole="admin">
+                        <ProtectedRoute requiredPermiso="reportes:ver">
                             <ReportesPage />
                         </ProtectedRoute>
                     }
@@ -74,7 +74,7 @@ export default function App() {
                 <Route
                     path="usuarios"
                     element={
-                        <ProtectedRoute requiredRole="admin">
+                        <ProtectedRoute requiredPermiso="usuarios:ver">
                             <UsuariosPage />
                         </ProtectedRoute>
                     }
@@ -82,7 +82,7 @@ export default function App() {
                 <Route
                     path="historial"
                     element={
-                        <ProtectedRoute requiredRole="admin">
+                        <ProtectedRoute requiredPermiso="caja:historial">
                             <HistorialFacturasPage />
                         </ProtectedRoute>
                     }
@@ -91,7 +91,7 @@ export default function App() {
                 <Route
                     path="configuracion"
                     element={
-                        <ProtectedRoute requiredRole="admin">
+                        <ProtectedRoute requiredPermiso="configuracion:ver">
                             <ConfiguracionPage />
                         </ProtectedRoute>
                     }

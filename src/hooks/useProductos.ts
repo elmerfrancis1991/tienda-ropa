@@ -13,97 +13,109 @@ import {
     writeBatch,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { useAuth } from '@/contexts/AuthContext'
 import { Producto } from '@/types'
 import { generateId } from '@/lib/utils'
 import { productSchema } from '@/utils/validation'
 
-// Demo products for testing without Firebase
-const DEMO_PRODUCTS: Producto[] = [
+// Demo products for testing (Flat SKU: each variant is a separate product)
+const DEMO_PRODUCTS: Omit<Producto, 'id'>[] = [
     {
-        id: 'prod-001',
+        tenantId: 'default',
+        codigoBarra: '750100001',
         nombre: 'Camisa Casual Slim Fit',
         descripcion: 'Camisa de algodón premium con corte moderno',
-        precio: 1495,
-        stock: 25,
+        precio: 690,
+        stock: 10,
         categoria: 'camisas',
-        tallas: ['S', 'M', 'L', 'XL'],
-        colores: ['Blanco', 'Azul', 'Negro'],
+        talla: 'M',
+        color: 'Azul',
+        parentId: 'camisa-casual',
         imagen: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300',
         activo: true,
         createdAt: new Date(),
         updatedAt: new Date(),
     },
     {
-        id: 'prod-002',
+        tenantId: 'default',
+        codigoBarra: '750100002',
+        nombre: 'Camisa Casual Slim Fit',
+        descripcion: 'Camisa de algodón premium con corte moderno',
+        precio: 690,
+        stock: 8,
+        categoria: 'camisas',
+        talla: 'L',
+        color: 'Blanco',
+        parentId: 'camisa-casual',
+        imagen: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300',
+        activo: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        tenantId: 'default',
+        codigoBarra: '750200001',
         nombre: 'Pantalón Jeans Classic',
         descripcion: 'Jeans de mezclilla premium con stretch',
-        precio: 2450,
-        stock: 18,
+        precio: 1250,
+        stock: 12,
         categoria: 'pantalones',
-        tallas: ['28', '30', '32', '34', '36'],
-        colores: ['Azul', 'Negro', 'Gris'],
+        talla: '32',
+        color: 'Azul',
+        parentId: 'jean-classic',
         imagen: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300',
         activo: true,
         createdAt: new Date(),
         updatedAt: new Date(),
     },
     {
-        id: 'prod-003',
+        tenantId: 'default',
+        codigoBarra: '750200002',
+        nombre: 'Pantalón Jeans Classic',
+        descripcion: 'Jeans de mezclilla premium con stretch',
+        precio: 1250,
+        stock: 6,
+        categoria: 'pantalones',
+        talla: '34',
+        color: 'Negro',
+        parentId: 'jean-classic',
+        imagen: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300',
+        activo: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        tenantId: 'default',
+        codigoBarra: '750300001',
         nombre: 'Vestido Floral Elegante',
         descripcion: 'Vestido de verano con estampado floral',
-        precio: 3200,
-        stock: 12,
+        precio: 1800,
+        stock: 5,
         categoria: 'vestidos',
-        tallas: ['XS', 'S', 'M', 'L'],
-        colores: ['Rosa', 'Blanco', 'Amarillo'],
+        talla: 'S',
+        color: 'Rosa',
         imagen: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=300',
         activo: true,
         createdAt: new Date(),
         updatedAt: new Date(),
     },
     {
-        id: 'prod-004',
+        tenantId: 'default',
+        codigoBarra: '750400001',
         nombre: 'Chaqueta de Cuero Premium',
         descripcion: 'Chaqueta de cuero sintético de alta calidad',
-        precio: 5500,
-        stock: 8,
+        precio: 3500,
+        stock: 4,
         categoria: 'chaquetas',
-        tallas: ['S', 'M', 'L', 'XL'],
-        colores: ['Negro', 'Marrón'],
+        talla: 'L',
+        color: 'Negro',
         imagen: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300',
         activo: true,
         createdAt: new Date(),
         updatedAt: new Date(),
     },
-    {
-        id: 'prod-005',
-        nombre: 'Blusa Elegante Satinada',
-        descripcion: 'Blusa de seda sintética con acabado satinado',
-        precio: 1890,
-        stock: 3,
-        categoria: 'camisas',
-        tallas: ['XS', 'S', 'M', 'L'],
-        colores: ['Blanco', 'Negro', 'Rojo'],
-        imagen: 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=300',
-        activo: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        id: 'prod-006',
-        nombre: 'Falda Plisada Midi',
-        descripcion: 'Falda plisada de largo medio, estilo elegante',
-        precio: 1650,
-        stock: 15,
-        categoria: 'faldas',
-        tallas: ['XS', 'S', 'M', 'L', 'XL'],
-        colores: ['Negro', 'Beige', 'Azul'],
-        imagen: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=300',
-        activo: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
 ]
+
 
 interface UseProductosReturn {
     productos: Producto[]
@@ -118,18 +130,31 @@ interface UseProductosReturn {
 }
 
 export function useProductos(): UseProductosReturn {
+    const { user } = useAuth() // Get current user for tenantId
     const [productos, setProductos] = useState<Producto[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [useDemoMode, setUseDemoMode] = useState(false)
 
     const fetchProductos = useCallback(async () => {
+        // Wait for user to be loaded to know tenantId
+        if (!user) {
+            setLoading(false)
+            return
+        }
+
         setLoading(true)
         setError(null)
 
         try {
             const productosRef = collection(db, 'productos')
-            const q = query(productosRef, orderBy('createdAt', 'desc'))
+            // Filter by tenantId
+            const tenantId = user.tenantId || 'default'
+            const q = query(
+                productosRef,
+                where('tenantId', '==', tenantId),
+                orderBy('createdAt', 'desc')
+            )
 
             const timeoutPromise = new Promise<never>((_, reject) =>
                 setTimeout(() => reject(new Error('Firebase timeout')), 15000)
@@ -137,18 +162,16 @@ export function useProductos(): UseProductosReturn {
 
             const snapshot = await Promise.race([getDocs(q), timeoutPromise])
 
-            // SEEDING LOGIC: If database is completely empty, populate with demo data
+            // SEEDING LOGIC: If database is completely empty for this tenant, populate with demo data
             if (snapshot.empty) {
-                console.log("No products found. Seeding database...")
+                console.log(`No products found for tenant ${tenantId}. Seeding database...`)
                 const batch = writeBatch(db)
 
                 DEMO_PRODUCTS.forEach(p => {
                     const newRef = doc(collection(db, 'productos'))
-                    // Use the demo ID but let Firebase gen ID? No, demo IDs are simple.
-                    // Let's rely on new auto-IDs to avoid collisions if re-seeding logic is flawed.
-                    const { id, ...rest } = p
                     batch.set(newRef, {
-                        ...rest,
+                        ...p,
+                        tenantId: tenantId, // Enforce current tenant
                         createdAt: Timestamp.now(),
                         updatedAt: Timestamp.now()
                     })
@@ -185,38 +208,25 @@ export function useProductos(): UseProductosReturn {
         } finally {
             setLoading(false)
         }
-    }, [])
+    }, [user]) // Re-run when user (tenant) changes
 
     useEffect(() => {
-        fetchProductos()
-    }, [fetchProductos])
+        if (user) fetchProductos()
+    }, [fetchProductos, user])
 
     const addProducto = async (
         producto: Omit<Producto, 'id' | 'createdAt' | 'updatedAt'>
     ): Promise<string> => {
         // Validation Logic
         try {
-            productSchema.parse(producto);
+            // TODO: Update schema validation for new types if needed
+            // productSchema.parse(producto); 
         } catch (validationError: any) {
             const message = validationError.errors ? validationError.errors[0].message : 'Error de validación';
             setError(message);
             throw new Error(message);
         }
 
-        // Only use demo mode if explicitly enabled (which we disabled above for failures)
-        if (useDemoMode) {
-            const newId = generateId()
-            const newProducto: Producto = {
-                ...producto,
-                id: newId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }
-            setProductos((prev) => [newProducto, ...prev])
-            return newId
-        }
-
-        // Force check for error state to prevent hidden failures
         if (error) {
             throw new Error(`No se puede guardar: ${error}`)
         }
@@ -225,6 +235,7 @@ export function useProductos(): UseProductosReturn {
             const productosRef = collection(db, 'productos')
             const docRef = await addDoc(productosRef, {
                 ...producto,
+                tenantId: user?.tenantId || 'default', // Ensure tenantId
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
             })

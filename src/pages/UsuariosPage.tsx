@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/dialog'
 import { User, UserRole, Permiso, PERMISOS_POR_ROL, PERMISOS_INFO, TODOS_LOS_PERMISOS } from '@/types'
 import { useUsuarios } from '@/hooks/useUsuarios'
+import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/utils'
 
 const userSchema = z.object({
@@ -250,6 +251,7 @@ function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormMod
 }
 
 export default function UsuariosPage() {
+    const { hasPermiso } = useAuth()
     const { usuarios, loading, error, createUser, updateUser, deleteUser } = useUsuarios()
     const [searchTerm, setSearchTerm] = useState('')
     const [formOpen, setFormOpen] = useState(false)
@@ -391,10 +393,12 @@ export default function UsuariosPage() {
                         Gestiona las cuentas de usuario del sistema
                     </p>
                 </div>
-                <Button onClick={() => { setFormError(null); setFormOpen(true) }}>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Nuevo Usuario
-                </Button>
+                {hasPermiso('usuarios:editar') && (
+                    <Button onClick={() => { setFormError(null); setFormOpen(true) }}>
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Nuevo Usuario
+                    </Button>
+                )}
             </div>
 
             {/* Error display */}
@@ -494,21 +498,25 @@ export default function UsuariosPage() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => openEditForm(usuario)}
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-destructive hover:text-destructive"
-                                        onClick={() => openDeleteDialog(usuario)}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    {hasPermiso('usuarios:editar') && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => openEditForm(usuario)}
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                    )}
+                                    {hasPermiso('usuarios:eliminar') && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-destructive hover:text-destructive"
+                                            onClick={() => openDeleteDialog(usuario)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         </CardContent>
