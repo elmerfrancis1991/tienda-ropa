@@ -219,10 +219,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Admin tiene todos los permisos
         if (state.user.role === 'admin') return true
 
-        // 1. Verificar si tiene el permiso asignado explícitamente (custom)
-        if (state.user.permisos?.includes(permiso)) return true
+        // 1. Verificar si tiene permisos personalizados (Exclusivo)
+        if (state.user.permisos && Array.isArray(state.user.permisos)) {
+            return state.user.permisos.includes(permiso)
+        }
 
-        // 2. Verificar permisos según rol por defecto
+        // 2. Si no tiene personalizados, usar defecto del rol
         const permisosRol = PERMISOS_POR_ROL[state.user.role] || []
         return permisosRol.includes(permiso)
     }

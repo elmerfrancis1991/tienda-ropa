@@ -152,8 +152,7 @@ export function useProductos(): UseProductosReturn {
             const tenantId = user.tenantId || 'default'
             const q = query(
                 productosRef,
-                where('tenantId', '==', tenantId),
-                orderBy('createdAt', 'desc')
+                where('tenantId', '==', tenantId)
             )
 
             const timeoutPromise = new Promise<never>((_, reject) =>
@@ -188,6 +187,8 @@ export function useProductos(): UseProductosReturn {
                     createdAt: doc.data().createdAt?.toDate() || new Date(),
                     updatedAt: doc.data().updatedAt?.toDate() || new Date(),
                 })) as Producto[]
+                // Client-side sort to avoid compound index requirement
+                data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
                 setProductos(data)
 
             } else {
@@ -197,6 +198,8 @@ export function useProductos(): UseProductosReturn {
                     createdAt: doc.data().createdAt?.toDate() || new Date(),
                     updatedAt: doc.data().updatedAt?.toDate() || new Date(),
                 })) as Producto[]
+                // Client-side sort to avoid compound index requirement
+                data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
                 setProductos(data)
             }
 
