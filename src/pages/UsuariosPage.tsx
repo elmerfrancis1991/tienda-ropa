@@ -51,7 +51,7 @@ interface UserFormModalProps {
     isLoading?: boolean
 }
 
-function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormModalProps) {
+export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormModalProps) {
     const [selectedPermisos, setSelectedPermisos] = useState<Permiso[]>([])
     const [showPermisos, setShowPermisos] = useState(false)
     const {
@@ -88,8 +88,8 @@ function UserFormModal({ open, onClose, onSubmit, user, isLoading }: UserFormMod
                 role: 'vendedor',
                 password: '',
             })
-            // Set permisos: use user's custom permisos if available, otherwise use role defaults
-            if (user && user.permisos && user.permisos.length > 0) {
+            // Set permisos: use user's custom permisos if available (even if empty), otherwise use role defaults
+            if (user && Array.isArray(user.permisos)) {
                 setSelectedPermisos(user.permisos as Permiso[])
             } else {
                 const rolePermisos = PERMISOS_POR_ROL[user?.role || 'vendedor']

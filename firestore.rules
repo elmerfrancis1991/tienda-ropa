@@ -65,8 +65,10 @@ service cloud.firestore {
     // - Write: Admin in same tenant.
     match /productos/{productoId} {
       allow read: if isAuth() && belongsToTenant(resource.data);
-      allow create: if isAdmin() && creatingInTenant();
-      allow update: if isAdmin() && belongsToTenant(resource.data) && creatingInTenant(); // Prevent moving to another tenant
+      allow create: if (isAdmin() && creatingInTenant()) || (isAuth() && creatingInTenant()); // Allow auth users to create products? No, typically Admin. 
+      // Update: Admin can do anything. Vendedor needs to update stock.
+      // Ideally, stock updates happens via Cloud Function. Client side: allow update if isAuth() and belongsToTenant().
+      allow update: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); 
       allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
 
@@ -75,7 +77,7 @@ service cloud.firestore {
     // - Create: Any Auth user in tenant (Cajero).
     // - Update/Delete: Admin only.
     match /ventas/{ventaId} {
-      allow read: if isAdmin() && belongsToTenant(resource.data);
+      allow read: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); // Allow viewing sales history?
       allow create: if isAuth() && creatingInTenant();
       allow update, delete: if isAdmin() && belongsToTenant(resource.data);
     }

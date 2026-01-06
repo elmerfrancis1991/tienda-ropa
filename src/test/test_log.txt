@@ -1,0 +1,1027 @@
+
+> tienda-ropa-pos@1.3.2 test
+> vitest src/test/PermissionsInit.test.tsx --run --no-color
+
+
+ RUN  v4.0.16 C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web
+
+stderr | src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should respect empty permission array (revoked permissions) and NOT load defaults
+Warning: An update to UserFormModal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+
+stderr | src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should respect empty permission array (revoked permissions) and NOT load defaults
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:93:64
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:25:59
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs:24:7
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:93:64
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:25:59
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs:24:7
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+
+stderr | src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should load default permissions if user has undefined permissions
+Warning: An update to UserFormModal inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+
+stderr | src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should load default permissions if user has undefined permissions
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:93:64
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:25:59
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs:24:7
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:93:64
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:25:59
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to FocusScope inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to Presence inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+Warning: An update to DismissableLayer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dismissable-layer/dist/index.mjs:24:7
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-focus-scope/dist/index.mjs:15:5
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:206:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:132:58
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:123:64
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:33:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-slot/dist/index.mjs:9:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/node_modules/@radix-ui/react-primitive/dist/index.mjs:28:13
+    at file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-portal/dist/index.mjs:11:22
+    at Presence (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-presence/dist/index.mjs:19:11)
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at DialogPortal (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:85:11)
+    at C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/components/ui/dialog.tsx:45:59
+    at Provider (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/node_modules/@radix-ui/react-context/dist/index.mjs:27:15)
+    at Dialog (file:///C:/Users/Elmer/Desktop/Archivos%20Recuperados%20antes%20de%20Formatearla/Pagina%20web/node_modules/@radix-ui/react-dialog/dist/index.mjs:25:5)
+    at UserFormModal (C:/Users/Elmer/Desktop/Archivos Recuperados antes de Formatearla/Pagina web/src/pages/UsuariosPage.tsx:43:26)
+
+ ❯ src/test/PermissionsInit.test.tsx (2 tests | 2 failed) 226ms
+     × should respect empty permission array (revoked permissions) and NOT load defaults 183ms
+     × should load default permissions if user has undefined permissions 42ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should respect empty permission array (revoked permissions) and NOT load defaults
+TestingLibraryElementError: Unable to find a label with the text of: Realizar ventas
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mdata-scroll-locked[39m=[32m"1"[39m
+  [33mstyle[39m=[32m"pointer-events: none;"[39m
+[36m>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-radix-focus-guard[39m=[32m""[39m
+    [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-state[39m=[32m"open"[39m
+    [33mstyle[39m=[32m"pointer-events: auto;"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-describedby[39m=[32m"radix-:r2:"[39m
+    [33maria-labelledby[39m=[32m"radix-:r1:"[39m
+    [33mclass[39m=[32m"fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-md"[39m
+    [33mdata-state[39m=[32m"open"[39m
+    [33mid[39m=[32m"radix-:r0:"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mstyle[39m=[32m"pointer-events: auto;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col space-y-1.5 text-center sm:text-left"[39m
+    [36m>[39m
+      [36m<h2[39m
+        [33mclass[39m=[32m"text-lg font-semibold leading-none tracking-tight"[39m
+        [33mid[39m=[32m"radix-:r1:"[39m
+      [36m>[39m
+        [0mEditar Usuario[0m
+      [36m</h2>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"radix-:r2:"[39m
+      [36m>[39m
+        [0mActualiza la información del usuario[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"nombre"[39m
+        [36m>[39m
+          [0mNombre Completo *[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mautocomplete[39m=[32m"off"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"nombre"[39m
+          [33mname[39m=[32m"nombre"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"email"[39m
+        [36m>[39m
+          [0mCorreo Electrónico *[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mautocomplete[39m=[32m"off"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mdisabled[39m=[32m""[39m
+          [33mid[39m=[32m"email"[39m
+          [33mname[39m=[32m"email"[39m
+          [33mtype[39m=[32m"email"[39m
+        [36m/>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-xs text-muted-foreground"[39m
+        [36m>[39m
+          [0mEl correo no se puede modificar[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"role"[39m
+        [36m>[39m
+          [0mRol *[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"[39m
+          [33mid[39m=[32m"role"[39m
+          [33mname[39m=[32m"role"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"vendedor"[39m
+          [36m>[39m
+            [0mVendedor[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"admin"[39m
+          [36m>[39m
+            [0mAdministrador[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"flex items-center gap-2 text-sm font-medium text-primary hover:underline"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-shield h-4 w-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mVer/editar permisos[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mCancelar[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mGuardar Cambios[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33mclass[39m=[32m"lucide lucide-x h-4 w-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"sr-only"[39m
+      [36m>[39m
+        [0mClose[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-radix-focus-guard[39m=[32m""[39m
+    [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/test/PermissionsInit.test.tsx:58:33
+     56|         const nombrePermiso = PERMISOS_INFO[defaultVendedorPermiso]?.n…
+     57| 
+     58|         const checkbox = screen.getByLabelText(nombrePermiso) as HTMLI…
+       |                                 ^
+     59| 
+     60|         // Wait for state to settle
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/test/PermissionsInit.test.tsx > UserFormModal Permission Logic > should load default permissions if user has undefined permissions
+TestingLibraryElementError: Unable to find a label with the text of: Realizar ventas
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mdata-scroll-locked[39m=[32m"1"[39m
+  [33mstyle[39m=[32m"pointer-events: none;"[39m
+[36m>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-radix-focus-guard[39m=[32m""[39m
+    [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-state[39m=[32m"open"[39m
+    [33mstyle[39m=[32m"pointer-events: auto;"[39m
+  [36m/>[39m
+  [36m<div[39m
+    [33maria-describedby[39m=[32m"radix-:r5:"[39m
+    [33maria-labelledby[39m=[32m"radix-:r4:"[39m
+    [33mclass[39m=[32m"fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg max-w-md"[39m
+    [33mdata-state[39m=[32m"open"[39m
+    [33mid[39m=[32m"radix-:r3:"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mstyle[39m=[32m"pointer-events: auto;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col space-y-1.5 text-center sm:text-left"[39m
+    [36m>[39m
+      [36m<h2[39m
+        [33mclass[39m=[32m"text-lg font-semibold leading-none tracking-tight"[39m
+        [33mid[39m=[32m"radix-:r4:"[39m
+      [36m>[39m
+        [0mEditar Usuario[0m
+      [36m</h2>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-muted-foreground"[39m
+        [33mid[39m=[32m"radix-:r5:"[39m
+      [36m>[39m
+        [0mActualiza la información del usuario[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"nombre"[39m
+        [36m>[39m
+          [0mNombre Completo *[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mautocomplete[39m=[32m"off"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"nombre"[39m
+          [33mname[39m=[32m"nombre"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"email"[39m
+        [36m>[39m
+          [0mCorreo Electrónico *[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mautocomplete[39m=[32m"off"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mdisabled[39m=[32m""[39m
+          [33mid[39m=[32m"email"[39m
+          [33mname[39m=[32m"email"[39m
+          [33mtype[39m=[32m"email"[39m
+        [36m/>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-xs text-muted-foreground"[39m
+        [36m>[39m
+          [0mEl correo no se puede modificar[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"role"[39m
+        [36m>[39m
+          [0mRol *[0m
+        [36m</label>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"[39m
+          [33mid[39m=[32m"role"[39m
+          [33mname[39m=[32m"role"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"vendedor"[39m
+          [36m>[39m
+            [0mVendedor[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"admin"[39m
+          [36m>[39m
+            [0mAdministrador[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"flex items-center gap-2 text-sm font-medium text-primary hover:underline"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-shield h-4 w-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mVer/editar permisos[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mCancelar[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mGuardar Cambios[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33mclass[39m=[32m"lucide lucide-x h-4 w-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"sr-only"[39m
+      [36m>[39m
+        [0mClose[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<span[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mdata-aria-hidden[39m=[32m"true"[39m
+    [33mdata-radix-focus-guard[39m=[32m""[39m
+    [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/test/PermissionsInit.test.tsx:94:33
+     92|         const nombrePermiso = PERMISOS_INFO[defaultVendedorPermiso]?.n…
+     93| 
+     94|         const checkbox = screen.getByLabelText(nombrePermiso) as HTMLI…
+       |                                 ^
+     95| 
+     96|         await waitFor(() => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  16:27:13
+   Duration  1.67s (transform 185ms, setup 93ms, import 577ms, tests 226ms, environment 605ms)
+
