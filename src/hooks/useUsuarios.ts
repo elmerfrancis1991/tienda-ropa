@@ -83,7 +83,8 @@ export function useUsuarios() {
                 nombre: userData.nombre,
                 role: userData.role,
                 createdAt: new Date(),
-                permisos: userData.permisos
+                permisos: userData.permisos,
+                tenantId: 'default'
             }
 
             await setDoc(doc(db, 'users', userCredential.user.uid), newUser)

@@ -7,7 +7,7 @@ import { Venta } from './useCart'
 const DEMO_VENTAS: Venta[] = [
     {
         id: 'DEMO-001',
-        items: [{ producto: { id: 'p1', nombre: 'Camisa Demo', descripcion: 'Producto de prueba', precio: 1500, categoria: 'Ropa', imagen: '', tallas: [], colores: [], stock: 10, activo: true, createdAt: new Date(), updatedAt: new Date() }, cantidad: 2, talla: 'M', color: 'Azul', subtotal: 3000 }],
+        items: [{ producto: { id: 'p1', nombre: 'Camisa Demo', descripcion: 'Producto de prueba', precio: 1500, categoria: 'Ropa', imagen: '', talla: 'M', color: 'Azul', codigoBarra: 'DEMO-M-AZUL', tenantId: 'default', parentId: 'p1-parent', stock: 10, activo: true, createdAt: new Date(), updatedAt: new Date() }, cantidad: 2, subtotal: 3000 }],
         subtotal: 3000,
         descuento: 0,
         impuesto: 540,
@@ -19,7 +19,8 @@ const DEMO_VENTAS: Venta[] = [
         fecha: new Date(),
         estado: 'completada',
         itbisAplicado: true,
-        propinaAplicada: false
+        propinaAplicada: false,
+        tenantId: 'default'
     }
 ]
 

@@ -177,9 +177,9 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                     // ParentId stays same
                     parentId: producto.parentId,
                     activo: true,
-                    codigoBarra: data.codigoBarra, // Update barcode
+                    codigoBarra: data.codigoBarra || '', // Update barcode
                     tenantId: producto.tenantId, // Should persist
-                })
+                } as any)
             } else {
                 // Create New Variants
                 if (selectedTallas.length === 0) {
@@ -209,17 +209,11 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             parentId,
                             activo: true,
                             codigoBarra: variantBarcode,
-                            // tenantId will be added by useProductos/hook logic usually, 
-                            // but if hook expects it in data we might need it. 
-                            // However, useProductos uses useAuth to get tenantId.
-                            // We'll pass it without tenantId here as hook handles it? 
-                            // Actually checking useProductos implementation... 
-                            // "const producto = { ...nuevoProducto, tenantId: user.tenantId, ... }"
-                            // So we are good.
+                            tenantId: user?.tenantId || 'default',
                         }
                         // Remove utility fields to avoid cluttering DB if they are not in schema
                         // But TypeScript Omit takes care of id/dates.
-                        promises.push(onSubmit(variantData))
+                        promises.push(onSubmit(variantData as any)) // Cast to any or implicit match if types align
                     }
                 }
 

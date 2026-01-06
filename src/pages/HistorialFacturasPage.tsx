@@ -413,8 +413,8 @@ export default function HistorialFacturasPage() {
                                                 <p className="font-medium">{item.producto.nombre}</p>
                                                 <p className="text-sm text-muted-foreground">
                                                     {item.cantidad} x {formatCurrency(item.producto.precio)}
-                                                    {item.talla && ` • Talla: ${item.talla}`}
-                                                    {item.color && ` • ${item.color}`}
+                                                    {item.producto.talla && ` • Talla: ${item.producto.talla}`}
+                                                    {item.producto.color && ` • ${item.producto.color}`}
                                                 </p>
                                             </div>
                                             <p className="font-medium">{formatCurrency(item.subtotal)}</p>
