@@ -24,8 +24,11 @@ export function useCierreCaja() {
 
     // Escuchar cierres de caja
     useEffect(() => {
+        if (!user?.uid || !user?.tenantId) return // Wait for user
+
         const q = query(
             collection(db, 'cierres_caja'),
+            where('tenantId', '==', user.tenantId), // Add tenant filter
             orderBy('createdAt', 'desc'),
             limit(50)
         )
@@ -49,7 +52,8 @@ export function useCierreCaja() {
                         observaciones: data.observaciones,
                         estado: data.estado || 'cerrado',
                         createdAt: data.createdAt?.toDate() || new Date(),
-                        closedAt: data.closedAt?.toDate()
+                        closedAt: data.closedAt?.toDate(),
+                        tenantId: data.tenantId
                     }
                 })
 
@@ -57,7 +61,7 @@ export function useCierreCaja() {
 
                 // Buscar caja abierta del usuario actual
                 const cajaAbierta = cierresData.find(c =>
-                    c.estado === 'abierto' && c.usuarioId === user?.uid
+                    c.estado === 'abierto' && c.usuarioId === user.uid
                 )
                 setCajaActual(cajaAbierta || null)
 
@@ -65,17 +69,18 @@ export function useCierreCaja() {
             },
             (err) => {
                 console.error('Error loading cierres:', err)
-                setError('Error al cargar cierres de caja')
+                setError('Error al cargar cierres de caja: ' + err.message)
                 setLoading(false)
             }
         )
 
         return () => unsubscribe()
-    }, [user?.uid])
+    }, [user?.uid, user?.tenantId])
 
     // Abrir Caja
     const abrirCaja = useCallback(async (montoApertura: number): Promise<string> => {
         if (!user) throw new Error('Usuario no autenticado')
+        if (!user.tenantId) throw new Error('Error de configuración: Sin Tenant ID')
 
         if (cajaActual) {
             throw new Error('Ya tiene una caja abierta. Debe cerrarla primero.')
@@ -86,6 +91,7 @@ export function useCierreCaja() {
                 fecha: Timestamp.now(),
                 usuarioId: user.uid,
                 usuarioNombre: user.nombre,
+                tenantId: user.tenantId, // Add tenantId
                 montoApertura,
                 montoCierre: 0,
                 ventasEfectivo: 0,
