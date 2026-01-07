@@ -8,24 +8,33 @@ import {
     query,
     onSnapshot,
     orderBy,
-    setDoc
+    setDoc,
+    where
 } from 'firebase/firestore'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
 import { User, UserRole, Permiso } from '@/types'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function useUsuarios() {
     const [usuarios, setUsuarios] = useState<User[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const { user } = useAuth()
 
     useEffect(() => {
+        if (!user?.tenantId) return;
+
         let unsubscribe: () => void = () => { };
 
         const loadUsers = async () => {
             try {
                 // Usar colección 'users' para sincronizar con Auth
-                const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'))
+                const q = query(
+                    collection(db, 'users'),
+                    where('tenantId', '==', user.tenantId),
+                    orderBy('createdAt', 'desc')
+                )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
                     const users = snapshot.docs.map(doc => {
@@ -58,7 +67,7 @@ export function useUsuarios() {
         return () => {
             unsubscribe()
         }
-    }, [])
+    }, [user?.tenantId])
 
     // Crear usuario con Firebase Auth + Firestore
     const createUser = useCallback(async (userData: {

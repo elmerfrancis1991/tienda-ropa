@@ -2,6 +2,11 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.5-rc.2] - 2026-01-07
+### Corregido
+- **Seguridad (CRÍTICO):** Corregidas Reglas de Firestore para manejar correctamente el valor por defecto `'default'` cuando el campo `tenantId` está ausente.
+- **Hooks:** Implementado filtrado obligatorio por `tenantId` en todos los hooks (`useUsuarios`, `useVentas`) para prevenir errores de permisos insuficientes.
+
 ## [1.3.5-rc.1] - 2026-01-07
 ### Corregido
 - **Auth:** Corregida condición de carrera en inicio de sesión que ignoraba permisos personalizados.

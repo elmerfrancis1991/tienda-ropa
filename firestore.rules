@@ -14,19 +14,21 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
-    // 3. Get User's Tenant ID
+    // 3. Get User's Tenant ID (with default fallback)
     function getTenantId() {
-      return getUserData().tenantId;
+      let data = getUserData();
+      return data.get('tenantId', 'default');
     }
 
     // 4. Verify User is Admin (within their tenant)
     function isAdmin() {
-      return isAuth() && getUserData().role == 'admin';
+      let data = getUserData();
+      return isAuth() && data.get('role', 'vendedor') == 'admin';
     }
 
     // 5. Belongs to Tenant (Resource matches User's Tenant)
     function belongsToTenant(resourceData) {
-      return resourceData.tenantId == getTenantId();
+      return resourceData.get('tenantId', 'default') == getTenantId();
     }
 
     // 6. Creating in Tenant (New Data matches User's Tenant)
