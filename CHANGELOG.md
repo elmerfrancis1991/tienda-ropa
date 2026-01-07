@@ -2,6 +2,12 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.6-rc.3] - 2026-01-07
+### fixed
+- **Historial:** Corregidos filtros de fecha (Hoy, Semana, Mes).
+- **Usuarios:** Mejorada la visibilidad de vendedores para administradores.
+- **Versión:** Forzada sincronización global a v1.3.6-rc.3.
+
 ## [1.3.6-rc.2] - 2026-01-07
 ### fixed
 - Versión actualizada para forzar despliegue y visibilidad de cambios.

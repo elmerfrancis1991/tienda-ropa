@@ -75,19 +75,20 @@ export default function HistorialFacturasPage() {
         } else if (dateFilter === 'semana') {
             const startOfWeek = new Date(startOfToday)
             const day = startOfWeek.getDay()
-            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1) // Iniciar lunes
+            const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1) // Iniciar lunes
             startOfWeek.setDate(diff)
             startOfWeek.setHours(0, 0, 0, 0)
 
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfWeek
+                // De lunes a hoy (incluido el resto del día de hoy)
+                return fecha >= startOfWeek && fecha < startOfTomorrow
             })
         } else if (dateFilter === 'mes') {
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfMonth
+                return fecha >= startOfMonth && fecha < startOfTomorrow
             })
         }
 
