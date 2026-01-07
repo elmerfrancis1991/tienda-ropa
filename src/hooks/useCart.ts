@@ -4,6 +4,7 @@ import { generateId } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
 
 export interface CartItem {
+    cartItemId: string
     producto: Producto
     cantidad: number
     subtotal: number
@@ -45,8 +46,8 @@ export interface UseCartReturn {
     itbisEnabled: boolean
     propinaEnabled: boolean
     addToCart: (producto: Producto, cantidad?: number) => void
-    removeFromCart: (index: number) => void
-    updateQuantity: (index: number, cantidad: number) => void
+    removeFromCart: (cartItemId: string) => void
+    updateQuantity: (cartItemId: string, cantidad: number) => void
     setDescuento: (porcentaje: number) => void
     setItbisEnabled: (enabled: boolean) => void
     setPropinaEnabled: (enabled: boolean) => void
@@ -83,35 +84,18 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
         cantidad: number = 1
     ) => {
         setItems(prev => {
-            const existingIndex = prev.findIndex(
-                item => item.producto.id === producto.id
-            )
+            // Check total quantity of this SKU in cart for stock validation
+            const totalInCart = prev
+                .filter(item => item.producto.id === producto.id)
+                .reduce((sum, item) => sum + item.cantidad, 0)
 
-            if (existingIndex >= 0) {
-                const updated = [...prev]
-                const newQuantity = updated[existingIndex].cantidad + cantidad
-
-                // Stock validation
-                if (newQuantity > producto.stock) {
-                    alert(`No hay suficiente stock. Stock máximo: ${producto.stock}`)
-                    return prev
-                }
-
-                updated[existingIndex] = {
-                    ...updated[existingIndex],
-                    cantidad: newQuantity,
-                    subtotal: newQuantity * producto.precio
-                }
-                return updated
-            }
-
-            // Initial add validation
-            if (cantidad > producto.stock) {
-                alert(`No hay suficiente stock. Stock máximo: ${producto.stock}`)
+            if (totalInCart + cantidad > producto.stock) {
+                alert(`No hay suficiente stock. Disponible: ${producto.stock}. En carrito: ${totalInCart}`)
                 return prev
             }
 
             return [...prev, {
+                cartItemId: generateId(),
                 producto,
                 cantidad,
                 subtotal: cantidad * producto.precio
@@ -119,29 +103,30 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
         })
     }, [])
 
-    const removeFromCart = useCallback((index: number) => {
-        setItems(prev => prev.filter((_, i) => i !== index))
+    const removeFromCart = useCallback((cartItemId: string) => {
+        setItems(prev => prev.filter((item) => item.cartItemId !== cartItemId))
     }, [])
 
-    const updateQuantity = useCallback((index: number, cantidad: number) => {
+    const updateQuantity = useCallback((cartItemId: string, cantidad: number) => {
         if (cantidad <= 0) {
-            removeFromCart(index)
+            removeFromCart(cartItemId)
             return
         }
 
         setItems(prev => {
-            const updated = [...prev]
-            if (updated[index]) {
-                // Validate stock validation
-                if (cantidad > updated[index].producto.stock) {
-                    return updated
-                }
+            const index = prev.findIndex(item => item.cartItemId === cartItemId)
+            if (index === -1) return prev
 
-                updated[index] = {
-                    ...updated[index],
-                    cantidad,
-                    subtotal: cantidad * updated[index].producto.precio
-                }
+            const updated = [...prev]
+            // Validate stock validation
+            if (cantidad > updated[index].producto.stock) {
+                return updated
+            }
+
+            updated[index] = {
+                ...updated[index],
+                cantidad,
+                subtotal: cantidad * updated[index].producto.precio
             }
             return updated
         })

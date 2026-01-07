@@ -26,6 +26,7 @@ import { Badge } from '@/components/ui/badge'
 import { useConfig } from '@/contexts/ConfigContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useState } from 'react'
+import { APP_VERSION, LAST_UPDATE } from '@/version'
 
 const businessSchema = z.object({
     businessName: z.string().min(2, 'Nombre muy corto'),
@@ -413,11 +414,11 @@ export default function ConfiguracionPage() {
                     <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Versión</p>
-                            <p className="font-semibold text-sm sm:text-base">1.3.1</p>
+                            <p className="font-semibold text-sm sm:text-base">{APP_VERSION}</p>
                         </div>
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Actualización</p>
-                            <p className="font-semibold text-sm sm:text-base">28 Dic 2025</p>
+                            <p className="font-semibold text-sm sm:text-base">{LAST_UPDATE}</p>
                         </div>
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Base de Datos</p>

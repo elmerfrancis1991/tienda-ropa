@@ -38,6 +38,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog'
 import { Producto } from '@/types'
+import { Label } from '@/components/ui/label'
 import { formatCurrency } from '@/lib/utils'
 
 const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
@@ -149,6 +150,8 @@ interface SaleCompleteModalProps {
 function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModalProps) {
     if (!venta) return null
 
+    const [copies, setCopies] = useState(1)
+
     const handlePrint = () => {
         printTicket(venta, {
             businessName: settings.businessName,
@@ -156,7 +159,7 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
             direccion: settings.direccion,
             telefono: settings.telefono,
             email: settings.email
-        })
+        }, copies)
     }
 
     return (
@@ -189,6 +192,19 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
                     <div className="flex justify-between text-base sm:text-lg font-bold">
                         <span>Total:</span>
                         <span className="text-primary">{formatCurrency(venta.total)}</span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3 justify-center py-2">
+                    <Label htmlFor="print-copies" className="text-sm">Copias:</Label>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCopies(Math.max(1, copies - 1))}>
+                            <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="w-8 text-center font-bold">{copies}</span>
+                        <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCopies(Math.min(10, copies + 1))}>
+                            <Plus className="h-3 w-3" />
+                        </Button>
                     </div>
                 </div>
 
@@ -323,6 +339,11 @@ export default function POSPage() {
                 estado: 'completada',
                 itbisAplicado: cart.itbisEnabled,
                 propinaAplicada: cart.propinaEnabled
+            }
+
+            // Final safety check
+            if (!cajaActual) {
+                throw new Error("No se puede procesar la venta: La caja está cerrada.")
             }
 
             // 1. Process sale atomically in Firebase
@@ -485,8 +506,8 @@ export default function POSPage() {
                             <p className="text-sm">El carrito está vacío</p>
                         </div>
                     ) : (
-                        cart.items.map((item, index) => (
-                            <div key={index} className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-muted/50 rounded-lg">
+                        cart.items.map((item) => (
+                            <div key={item.cartItemId} className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-muted/50 rounded-lg">
                                 <div className="flex-1 min-w-0">
                                     <p className="font-medium text-xs sm:text-sm truncate">{item.producto.nombre}</p>
                                     <p className="text-[10px] sm:text-xs text-muted-foreground">
@@ -501,7 +522,7 @@ export default function POSPage() {
                                         variant="outline"
                                         size="icon"
                                         className="h-6 w-6 sm:h-7 sm:w-7"
-                                        onClick={() => cart.updateQuantity(index, item.cantidad - 1)}
+                                        onClick={() => cart.updateQuantity(item.cartItemId, item.cantidad - 1)}
                                     >
                                         <Minus className="h-3 w-3" />
                                     </Button>
@@ -518,7 +539,7 @@ export default function POSPage() {
                                                     className="h-6 w-6 sm:h-7 sm:w-7"
                                                     onClick={() => {
                                                         if (item.cantidad < item.producto.stock) {
-                                                            cart.updateQuantity(index, item.cantidad + 1)
+                                                            cart.updateQuantity(item.cartItemId, item.cantidad + 1)
                                                         }
                                                     }}
                                                     disabled={atMaxStock}
@@ -533,7 +554,7 @@ export default function POSPage() {
                                         variant="ghost"
                                         size="icon"
                                         className="h-6 w-6 sm:h-7 sm:w-7 text-destructive"
-                                        onClick={() => cart.removeFromCart(index)}
+                                        onClick={() => cart.removeFromCart(item.cartItemId)}
                                     >
                                         <X className="h-3 w-3" />
                                     </Button>
@@ -613,14 +634,23 @@ export default function POSPage() {
                             </div>
                         </div>
 
+                        {/* Cash Drawer Warning */}
+                        {!cajaActual && (
+                            <div className="p-3 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg text-orange-600 dark:text-orange-400 text-xs flex items-center gap-2 mb-2">
+                                <Package className="h-4 w-4 shrink-0" />
+                                <span>Caja cerrada. Abra la caja para realizar ventas.</span>
+                            </div>
+                        )}
+
                         {/* Checkout Button */}
                         <Button
                             className="w-full"
                             size="lg"
                             onClick={() => setShowCheckout(true)}
+                            disabled={!cajaActual}
                         >
                             <CreditCard className="h-4 w-4 mr-2" />
-                            Procesar Pago
+                            {!cajaActual ? 'Caja Cerrada' : 'Procesar Pago'}
                         </Button>
                     </div>
                 )}

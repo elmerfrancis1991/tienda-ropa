@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
     collection,
-    addDoc,
     updateDoc,
     deleteDoc,
     doc,
     query,
     onSnapshot,
-    orderBy,
     setDoc,
     where
 } from 'firebase/firestore'
@@ -29,7 +27,6 @@ export function useUsuarios() {
 
         const loadUsers = async () => {
             try {
-                // Usar colección 'users' para sincronizar con Auth
                 const q = query(
                     collection(db, 'users'),
                     where('tenantId', '==', user.tenantId)
@@ -41,11 +38,10 @@ export function useUsuarios() {
                         return {
                             ...data,
                             uid: doc.id,
-                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now())
                         }
                     }) as User[]
 
-                    // Sort in memory
                     users.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
                     setUsuarios(users)
@@ -71,7 +67,6 @@ export function useUsuarios() {
         }
     }, [user?.tenantId])
 
-    // Crear usuario con Firebase Auth + Firestore
     const createUser = useCallback(async (userData: {
         nombre: string
         email: string
@@ -80,14 +75,12 @@ export function useUsuarios() {
         permisos?: Permiso[]
     }) => {
         try {
-            // 1. Crear cuenta en Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 userData.email,
                 userData.password
             )
 
-            // 2. Crear documento en Firestore con el mismo UID
             const newUser: User = {
                 uid: userCredential.user.uid,
                 email: userData.email,
@@ -95,12 +88,10 @@ export function useUsuarios() {
                 role: userData.role,
                 createdAt: new Date(),
                 permisos: userData.permisos,
-                tenantId: 'default'
+                tenantId: user?.tenantId || 'default'
             }
 
             await setDoc(doc(db, 'users', userCredential.user.uid), newUser)
-
-            console.log('Usuario creado exitosamente:', newUser.email)
             return userCredential.user.uid
 
         } catch (err: any) {
@@ -116,7 +107,7 @@ export function useUsuarios() {
             setError(message)
             throw new Error(message)
         }
-    }, [])
+    }, [user?.tenantId])
 
     const updateUser = useCallback(async (uid: string, data: Partial<User>) => {
         try {
@@ -131,8 +122,6 @@ export function useUsuarios() {
 
     const deleteUser = useCallback(async (uid: string) => {
         try {
-            // Solo eliminar documento de Firestore
-            // Nota: Eliminar de Firebase Auth requiere Admin SDK o que el usuario esté logueado
             await deleteDoc(doc(db, 'users', uid))
         } catch (err) {
             console.error("Error deleting user:", err)

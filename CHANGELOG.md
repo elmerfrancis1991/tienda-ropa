@@ -2,6 +2,19 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.6-rc.1] - 2026-01-07
+### Agregado
+- **POS (Tickets):** Implementado selector de cantidad de copias al finalizar la venta.
+- **POS (Tickets):** Aumentado tamaño de fuente y grosor de líneas para mejor legibilidad en impresoras térmicas de 58mm.
+- **Sistema:** Automatizada la visualización de versión y fecha de actualización en la página de Configuración.
+
+### Corregido
+- **POS (Carrito):** Los productos con el mismo ID ahora se agregan como líneas independientes ("cada item es diferente"), facilitando el control unitario.
+- **Usuarios:** Corregida la creación de usuarios para administradores; ahora se asigna automáticamente el `tenantId` correcto, permitiendo que los nuevos usuarios sean visibles por su administrador.
+- **Core:** Centralizada la gestión de versiones en un archivo maestro para evitar discrepancias.
+
+## [1.3.5-rc.5] - 2026-01-07
+
 ## [1.3.5-rc.4] - 2026-01-07
 ### Corregido
 - **Definitive Root Fix:** Eliminados todos los requerimientos de índices compuestos mediante ordenamiento en cliente (memoria). Esto garantiza que el sistema funcione en cualquier entorno sin configuración manual.

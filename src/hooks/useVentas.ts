@@ -82,7 +82,18 @@ export function useVentas() {
                     return { ...p, docSnap }
                 }))
 
-                // 2. Validate stock availability
+                // 2. Validate Cash Drawer Status
+                if (!venta.cajaId) {
+                    throw new Error("No hay una caja abierta vinculada a esta venta.")
+                }
+                const cajaRef = doc(db, 'cierres_caja', venta.cajaId)
+                const cajaSnap = await transaction.get(cajaRef)
+
+                if (!cajaSnap.exists() || cajaSnap.data()?.estado !== 'abierto') {
+                    throw new Error("La caja ha sido cerrada. No se pueden procesar más ventas.")
+                }
+
+                // 3. Validate stock availability
                 for (const p of productDocs) {
                     if (!p.docSnap.exists()) {
                         throw new Error(`El producto "${p.item.producto.nombre}" ya no existe.`)
