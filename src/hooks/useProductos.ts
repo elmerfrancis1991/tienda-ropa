@@ -11,6 +11,8 @@ import {
     where,
     Timestamp,
     writeBatch,
+    onSnapshot,
+    setDoc,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from '@/contexts/AuthContext'
@@ -136,114 +138,80 @@ export function useProductos(): UseProductosReturn {
     const [error, setError] = useState<string | null>(null)
     const [useDemoMode, setUseDemoMode] = useState(false)
 
-    const fetchProductos = useCallback(async () => {
-        // Wait for user to be loaded to know tenantId
-        if (!user) {
-            setLoading(false)
-            return
-        }
+    useEffect(() => {
+        if (!user?.tenantId) return;
 
-        setLoading(true)
-        setError(null)
+        let unsubscribe: () => void = () => { };
 
-        try {
-            const productosRef = collection(db, 'productos')
-            // Filter by tenantId
-            const tenantId = user.tenantId || 'default'
-            const q = query(
-                productosRef,
-                where('tenantId', '==', tenantId)
-            )
+        const loadProducts = async () => {
+            try {
+                const q = query(
+                    collection(db, 'productos'),
+                    where('tenantId', '==', user.tenantId)
+                )
 
-            const timeoutPromise = new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error('Firebase timeout')), 15000)
-            )
+                unsubscribe = onSnapshot(q, async (snapshot) => {
+                    if (snapshot.empty) {
+                        // One-time seed for new tenants
+                        const batch = writeBatch(db)
+                        DEMO_PRODUCTS.forEach(p => {
+                            const newRef = doc(collection(db, 'productos'))
+                            batch.set(newRef, {
+                                ...p,
+                                tenantId: user.tenantId,
+                                createdAt: Timestamp.now(),
+                                updatedAt: Timestamp.now()
+                            })
+                        })
+                        await batch.commit()
+                        return; // Snapshot will trigger again automatically
+                    }
 
-            const snapshot = await Promise.race([getDocs(q), timeoutPromise])
+                    const data = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                        createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date(doc.data().createdAt),
+                        updatedAt: doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate() : new Date(doc.data().updatedAt)
+                    })) as Producto[]
 
-            // SEEDING LOGIC: If database is completely empty for this tenant, populate with demo data
-            if (snapshot.empty) {
-                console.log(`No products found for tenant ${tenantId}. Seeding database...`)
-                const batch = writeBatch(db)
-
-                DEMO_PRODUCTS.forEach(p => {
-                    const newRef = doc(collection(db, 'productos'))
-                    batch.set(newRef, {
-                        ...p,
-                        tenantId: tenantId, // Enforce current tenant
-                        createdAt: Timestamp.now(),
-                        updatedAt: Timestamp.now()
-                    })
+                    data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+                    setProductos(data)
+                    setLoading(false)
+                    setError(null)
+                }, (err) => {
+                    console.error("Firestore productos error:", err)
+                    setError("Error al sincronizar productos")
+                    setLoading(false)
                 })
 
-                await batch.commit()
-                console.log("Database seeded successfully!")
-
-                // Fetch again to get the new data with proper IDs
-                const newSnapshot = await getDocs(q)
-                const data = newSnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate() || new Date(),
-                    updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-                })) as Producto[]
-                // Client-side sort to avoid compound index requirement
-                data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-                setProductos(data)
-
-            } else {
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate() || new Date(),
-                    updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-                })) as Producto[]
-                // Client-side sort to avoid compound index requirement
-                data.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-                setProductos(data)
+            } catch (err) {
+                console.error("Error setting up productos sync:", err)
+                setError("No se pudo conectar a la base de datos")
+                setLoading(false)
             }
-
-            setUseDemoMode(false)
-        } catch (err) {
-            console.error('Firebase connection error:', err)
-            setError(err instanceof Error ? err.message : 'Error desconocido de conexión')
-            setProductos([])
-        } finally {
-            setLoading(false)
         }
-    }, [user]) // Re-run when user (tenant) changes
 
-    useEffect(() => {
-        if (user) fetchProductos()
-    }, [fetchProductos, user])
+        loadProducts()
+        return () => unsubscribe()
+    }, [user?.tenantId])
+
+    const fetchProductos = useCallback(async () => {
+        // Now just a placeholder for compatibility if needed elsewhere, 
+        // since onSnapshot handles it.
+    }, [])
 
     const addProducto = async (
         producto: Omit<Producto, 'id' | 'createdAt' | 'updatedAt'>
     ): Promise<string> => {
-        // Validation Logic
         try {
-            // TODO: Update schema validation for new types if needed
-            // productSchema.parse(producto); 
-        } catch (validationError: any) {
-            const message = validationError.errors ? validationError.errors[0].message : 'Error de validación';
-            setError(message);
-            throw new Error(message);
-        }
-
-        if (error) {
-            throw new Error(`No se puede guardar: ${error}`)
-        }
-
-        try {
-            const productosRef = collection(db, 'productos')
-            const docRef = await addDoc(productosRef, {
+            const id = generateId()
+            await setDoc(doc(db, 'productos', id), {
                 ...producto,
-                tenantId: user?.tenantId || 'default', // Ensure tenantId
+                tenantId: user?.tenantId || 'default',
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now(),
             })
-            await fetchProductos()
-            return docRef.id
+            return id
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error al crear producto'
             setError(message)
@@ -252,31 +220,12 @@ export function useProductos(): UseProductosReturn {
     }
 
     const updateProducto = async (id: string, updates: Partial<Producto>): Promise<void> => {
-        // Validation Logic for Updates
-        try {
-            productSchema.partial().parse(updates);
-        } catch (validationError: any) {
-            const message = validationError.errors ? validationError.errors[0].message : 'Error de validación';
-            setError(message);
-            throw new Error(message);
-        }
-
-        if (useDemoMode) {
-            setProductos((prev) =>
-                prev.map((p) =>
-                    p.id === id ? { ...p, ...updates, updatedAt: new Date() } : p
-                )
-            )
-            return
-        }
-
         try {
             const docRef = doc(db, 'productos', id)
             await updateDoc(docRef, {
                 ...updates,
                 updatedAt: Timestamp.now(),
             })
-            await fetchProductos()
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error al actualizar producto'
             setError(message)
@@ -285,15 +234,9 @@ export function useProductos(): UseProductosReturn {
     }
 
     const deleteProducto = async (id: string): Promise<void> => {
-        if (useDemoMode) {
-            setProductos((prev) => prev.filter((p) => p.id !== id))
-            return
-        }
-
         try {
             const docRef = doc(db, 'productos', id)
             await deleteDoc(docRef)
-            await fetchProductos()
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error al eliminar producto'
             setError(message)

@@ -2,6 +2,11 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.6-rc.2] - 2026-01-07
+### fixed
+- Versión actualizada para forzar despliegue y visibilidad de cambios.
+- Todas las mejoras de v1.3.6-rc.1 consolidadas.
+
 ## [1.3.6-rc.1] - 2026-01-07
 ### Agregado
 - **POS (Tickets):** Implementado selector de cantidad de copias al finalizar la venta.
