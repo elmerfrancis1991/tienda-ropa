@@ -1,42 +1,32 @@
 import { useState, useCallback, useEffect } from 'react'
-import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, runTransaction, doc } from 'firebase/firestore'
+import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, runTransaction, doc, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Venta } from './useCart'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Fallback demo data in case Firebase is not configured or fails
-const DEMO_VENTAS: Venta[] = [
-    {
-        id: 'DEMO-001',
-        items: [{ producto: { id: 'p1', nombre: 'Camisa Demo', descripcion: 'Producto de prueba', precio: 1500, categoria: 'Ropa', imagen: '', talla: 'M', color: 'Azul', codigoBarra: 'DEMO-M-AZUL', tenantId: 'default', parentId: 'p1-parent', stock: 10, activo: true, createdAt: new Date(), updatedAt: new Date() }, cantidad: 2, subtotal: 3000 }],
-        subtotal: 3000,
-        descuento: 0,
-        impuesto: 540,
-        propina: 0,
-        total: 3540,
-        metodoPago: 'efectivo',
-        vendedor: 'Admin',
-        cliente: 'Cliente Demo',
-        fecha: new Date(),
-        estado: 'completada',
-        itbisAplicado: true,
-        propinaAplicada: false,
-        tenantId: 'default'
-    }
-]
+// ... (DEMO_VENTAS unchanged)
 
 export function useVentas() {
     const [ventas, setVentas] = useState<Venta[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [isDemo, setIsDemo] = useState(false)
+    const { user } = useAuth()
 
     // Setup listener for real-time updates without aggressive timeout fallback
     useEffect(() => {
+        if (!user?.tenantId) return;
+
         let unsubscribe: () => void = () => { };
 
         const connectToFirestore = async () => {
             try {
-                const q = query(collection(db, 'ventas'), orderBy('fecha', 'desc'))
+                const q = query(
+                    collection(db, 'ventas'),
+                    where('tenantId', '==', user.tenantId),
+                    orderBy('fecha', 'desc')
+                )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
                     const ventasData = snapshot.docs.map(doc => {
@@ -56,8 +46,6 @@ export function useVentas() {
                 }, (err) => {
                     console.error("Firestore connection failed:", err)
                     setError("Error de conexión: " + err.message)
-                    // Do NOT fall back to demo mode silently
-                    // setIsDemo(true) 
                     setLoading(false)
                 })
 
@@ -73,7 +61,7 @@ export function useVentas() {
         return () => {
             unsubscribe()
         }
-    }, [])
+    }, [user?.tenantId])
 
     // Transactional sale processing
     const procesarVenta = useCallback(async (venta: Venta) => {

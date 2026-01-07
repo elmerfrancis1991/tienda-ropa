@@ -105,9 +105,9 @@ export function useCierreCaja() {
 
             const docRef = await addDoc(collection(db, 'cierres_caja'), nuevaCaja)
             return docRef.id
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error opening caja:', err)
-            throw new Error('Error al abrir caja')
+            throw new Error(`Error al abrir caja: ${err.message || 'Error desconocido'}`)
         }
     }, [user, cajaActual])
 

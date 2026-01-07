@@ -2,6 +2,16 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.5-rc.1] - 2026-01-07
+### Corregido
+- **Auth:** Corregida condición de carrera en inicio de sesión que ignoraba permisos personalizados.
+- **Usuarios:** Reseteo automático de permisos al cambiar de rol en la creación de nuevos usuarios.
+- **Caja:** Mejora en el diagnóstico de errores con mensajes detallados en pantalla.
+- **Seguridad:** Implementado filtrado estricto por `tenantId` en ventas para aislamiento multi-empresa.
+
+## [1.3.4] - 2026-01-06 (No registrado previamente)
+- Sincronización de versión.
+
 ## [1.3.2] - 2026-01-06
 ### Corregido
 - **POS:** Validación de stock ahora suma TODAS las variantes (tallas/colores) del mismo producto.

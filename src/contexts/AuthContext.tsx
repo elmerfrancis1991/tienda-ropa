@@ -114,7 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         role: userData.role || 'vendedor',
                         tenantId: userData.tenantId || 'default', // Multi-tenant
                         createdAt: userData.createdAt?.toDate() || new Date(),
-                        photoURL: userCredential.user.photoURL || undefined
+                        photoURL: userCredential.user.photoURL || undefined,
+                        permisos: userData.permisos || undefined
                     },
                     loading: false,
                     error: null

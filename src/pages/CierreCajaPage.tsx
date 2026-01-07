@@ -36,7 +36,7 @@ import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { useVentas } from '@/hooks/useVentas'
 
 export default function CierreCajaPage() {
-    const { cierres, cajaActual, loading, abrirCaja, cerrarCaja, isCajaAbierta } = useCierreCaja()
+    const { cierres, cajaActual, loading, error: hookError, abrirCaja, cerrarCaja, isCajaAbierta } = useCierreCaja()
     const { ventas } = useVentas()
 
     const [showAbrirModal, setShowAbrirModal] = useState(false)
@@ -205,6 +205,19 @@ export default function CierreCajaPage() {
                     )}
                 </div>
             </div>
+
+            {/* Error display from hook */}
+            {hookError && (
+                <Card className="border-destructive bg-destructive/10">
+                    <CardContent className="py-4 text-destructive flex items-center gap-2">
+                        <XCircle className="h-5 w-5 shrink-0" />
+                        <div className="flex-1">
+                            <p className="font-semibold text-sm">Error en el sistema de caja:</p>
+                            <p className="text-xs opacity-80">{hookError}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
 
             {/* Estado Actual */}
             {cajaActual && (

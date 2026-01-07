@@ -75,6 +75,14 @@ export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: User
 
     const currentRole = watch('role')
 
+    // Reset permissions when role changes (only for new users or if we want role defaults)
+    useEffect(() => {
+        if (open && !user) {
+            const rolePermisos = PERMISOS_POR_ROL[currentRole]
+            setSelectedPermisos(rolePermisos)
+        }
+    }, [currentRole, open, user])
+
     // Reset form when user changes
     useEffect(() => {
         if (open) {
