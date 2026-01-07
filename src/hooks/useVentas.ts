@@ -69,6 +69,7 @@ export function useVentas() {
     const procesarVenta = useCallback(async (venta: Venta) => {
         setLoading(true)
         setError(null)
+        let savedVentaId = ''
         try {
             await runTransaction(db, async (transaction) => {
                 // 1. Read all product documents first to get fresh stock
@@ -110,6 +111,8 @@ export function useVentas() {
                 // 3. Perform updates
                 // A. Create Sale Document (We need a ref for a new doc)
                 const newVentaRef = doc(collection(db, 'ventas'))
+                savedVentaId = newVentaRef.id
+
                 const ventaParaGuardar = {
                     ...venta,
                     id: newVentaRef.id,
@@ -132,7 +135,7 @@ export function useVentas() {
             })
 
             setLoading(false)
-            return newVentaRef.id // Return the ID after the transaction
+            return savedVentaId
         } catch (err) {
             console.error("Error processing sale transaction:", err)
             const msg = err instanceof Error ? err.message : "Error desconocido al procesar la venta"
