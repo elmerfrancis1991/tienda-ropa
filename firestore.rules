@@ -17,23 +17,27 @@ service cloud.firestore {
     // 3. Get User's Tenant ID (with default fallback)
     function getTenantId() {
       let data = getUserData();
-      return data.get('tenantId', 'default');
+      return data.tenantId == null ? 'default' : data.tenantId;
     }
 
     // 4. Verify User is Admin (within their tenant)
     function isAdmin() {
       let data = getUserData();
-      return isAuth() && data.get('role', 'vendedor') == 'admin';
+      return isAuth() && (data.role == 'admin');
     }
 
     // 5. Belongs to Tenant (Resource matches User's Tenant)
     function belongsToTenant(resourceData) {
-      return resourceData.get('tenantId', 'default') == getTenantId();
+      let userTenant = getTenantId();
+      let resTenant = resourceData.tenantId == null ? 'default' : resourceData.tenantId;
+      return resTenant == userTenant;
     }
 
     // 6. Creating in Tenant (New Data matches User's Tenant)
     function creatingInTenant() {
-      return request.resource.data.tenantId == getTenantId();
+      let userTenant = getTenantId();
+      let newTenant = request.resource.data.tenantId == null ? 'default' : request.resource.data.tenantId;
+      return newTenant == userTenant;
     }
 
     // 7. Is Owner of Document (User ID matches)

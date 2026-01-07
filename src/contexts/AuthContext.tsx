@@ -7,7 +7,7 @@ import {
     sendPasswordResetEmail,
     User as FirebaseUser
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, collection, getDocs, onSnapshot } from 'firebase/firestore'
+import { doc, getDoc, setDoc, collection, getDocs, onSnapshot, updateDoc } from 'firebase/firestore'
 import { auth, db } from '@/lib/firebase'
 import { User, UserRole, AuthState, Permiso, PERMISOS_POR_ROL } from '@/types'
 
@@ -106,6 +106,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (userDoc.exists()) {
                 const userData = userDoc.data()
+
+                // --- AUTO-REPAIR MISSING FIELDS ---
+                if (!userData.tenantId || !userData.role) {
+                    console.log('🔧 [LOGIN] Reparando documento de usuario (campos faltantes)...')
+                    await updateDoc(doc(db, 'users', userCredential.user.uid), {
+                        tenantId: userData.tenantId || 'default',
+                        role: userData.role || 'vendedor'
+                    })
+                }
+
                 setState({
                     user: {
                         uid: userCredential.user.uid,

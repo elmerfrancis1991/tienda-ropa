@@ -205,21 +205,14 @@ export default function CierreCajaPage() {
                     )}
                 </div>
             </div>
-
-            {/* Error display from hook */}
+            {/* Estado Actual */}
             {hookError && (
-                <Card className="border-destructive bg-destructive/10">
-                    <CardContent className="py-4 text-destructive flex items-center gap-2">
-                        <XCircle className="h-5 w-5 shrink-0" />
-                        <div className="flex-1">
-                            <p className="font-semibold text-sm">Error en el sistema de caja:</p>
-                            <p className="text-xs opacity-80">{hookError}</p>
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg text-red-600 dark:text-red-400 text-sm flex items-center gap-2 mb-4">
+                    <XCircle className="h-4 w-4 shrink-0" />
+                    <span>Error al cargar cierres de caja: {hookError}</span>
+                </div>
             )}
 
-            {/* Estado Actual */}
             {cajaActual && (
                 <Card className="border-green-500/50 bg-green-500/5">
                     <CardHeader>

@@ -2,6 +2,12 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.5-rc.3] - 2026-01-07
+### Corregido
+- **Root Fix (Permisos):** Implementada autoreparación de documentos de usuario en inicio de sesión (agrega `tenantId` y `role` faltantes).
+- **Security Rules:** Simplificadas las reglas de Firestore para permitir acceso a documentos antiguos sin `tenantId` (tratándolos como `'default'`).
+- **UI:** El mensaje de error en la Caja ya no es intrusivo y solo se muestra en caso de falla real del servidor.
+
 ## [1.3.5-rc.2] - 2026-01-07
 ### Corregido
 - **Seguridad (CRÍTICO):** Corregidas Reglas de Firestore para manejar correctamente el valor por defecto `'default'` cuando el campo `tenantId` está ausente.
