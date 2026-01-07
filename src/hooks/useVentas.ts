@@ -132,8 +132,7 @@ export function useVentas() {
             })
 
             setLoading(false)
-            return true
-
+            return newVentaRefId // Return the ID after the transaction
         } catch (err) {
             console.error("Error processing sale transaction:", err)
             const msg = err instanceof Error ? err.message : "Error desconocido al procesar la venta"

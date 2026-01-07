@@ -347,7 +347,7 @@ export default function POSPage() {
             }
 
             // 1. Process sale atomically in Firebase
-            await procesarVenta(venta)
+            const savedId = await procesarVenta(venta)
 
             // 2. Only clear cart if successful
             cart.clearCart()
@@ -356,7 +356,7 @@ export default function POSPage() {
             await fetchProductos()
 
             setShowCheckout(false)
-            setCompletedVenta(venta)
+            setCompletedVenta({ ...venta, id: savedId })
         } catch (error) {
             console.error("Error saving sale:", error)
             alert(error instanceof Error ? error.message : "Error al procesar la venta")

@@ -27,13 +27,16 @@ export function useUsuarios() {
 
         const loadUsers = async () => {
             try {
-                const q = query(
-                    collection(db, 'users'),
-                    where('tenantId', '==', user.tenantId)
-                )
+                // If tenant is 'default', we also show users without a tenantId (migration/fallback)
+                const q = user.tenantId === 'default'
+                    ? query(collection(db, 'users')) // Get all, then filter in memory for performance if needed
+                    : query(
+                        collection(db, 'users'),
+                        where('tenantId', '==', user.tenantId)
+                    )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
-                    const users = snapshot.docs.map(doc => {
+                    let users = snapshot.docs.map(doc => {
                         const data = doc.data();
                         return {
                             ...data,
@@ -41,6 +44,12 @@ export function useUsuarios() {
                             createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now())
                         }
                     }) as User[]
+
+                    // Secondary filter for 'default' tenant to ensure we only see 'default' or missing tenantId
+                    if (user.tenantId === 'default') {
+                        users = users.filter(u => !u.tenantId || u.tenantId === 'default')
+                    }
+
 
                     users.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
