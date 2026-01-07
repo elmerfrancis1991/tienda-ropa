@@ -24,8 +24,7 @@ export function useVentas() {
             try {
                 const q = query(
                     collection(db, 'ventas'),
-                    where('tenantId', '==', user.tenantId),
-                    orderBy('fecha', 'desc')
+                    where('tenantId', '==', user.tenantId)
                 )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
@@ -38,6 +37,9 @@ export function useVentas() {
                             fecha: data.fecha?.toDate ? data.fecha.toDate() : new Date(data.fecha)
                         }
                     }) as Venta[]
+
+                    // Sort in memory to avoid requiring a composite index
+                    ventasData.sort((a, b) => b.fecha.getTime() - a.fecha.getTime())
 
                     setVentas(ventasData)
                     setLoading(false)

@@ -2,6 +2,11 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.5-rc.4] - 2026-01-07
+### Corregido
+- **Definitive Root Fix:** Eliminados todos los requerimientos de índices compuestos mediante ordenamiento en cliente (memoria). Esto garantiza que el sistema funcione en cualquier entorno sin configuración manual.
+- **UI Polishing:** El mensaje de error ahora es totalmente dinámico y desaparece automáticamente cuando el sistema carga correctamente.
+
 ## [1.3.5-rc.3] - 2026-01-07
 ### Corregido
 - **Root Fix (Permisos):** Implementada autoreparación de documentos de usuario en inicio de sesión (agrega `tenantId` y `role` faltantes).

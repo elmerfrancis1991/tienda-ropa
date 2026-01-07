@@ -32,8 +32,7 @@ export function useUsuarios() {
                 // Usar colección 'users' para sincronizar con Auth
                 const q = query(
                     collection(db, 'users'),
-                    where('tenantId', '==', user.tenantId),
-                    orderBy('createdAt', 'desc')
+                    where('tenantId', '==', user.tenantId)
                 )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
@@ -45,6 +44,9 @@ export function useUsuarios() {
                             createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
                         }
                     }) as User[]
+
+                    // Sort in memory
+                    users.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
                     setUsuarios(users)
                     setLoading(false)

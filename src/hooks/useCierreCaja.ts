@@ -28,9 +28,8 @@ export function useCierreCaja() {
 
         const q = query(
             collection(db, 'cierres_caja'),
-            where('tenantId', '==', user.tenantId), // Add tenant filter
-            orderBy('createdAt', 'desc'),
-            limit(50)
+            where('tenantId', '==', user.tenantId),
+            limit(100) // Incremented limit to ensure enough data for in-memory sort
         )
 
         const unsubscribe = onSnapshot(q,
@@ -56,6 +55,9 @@ export function useCierreCaja() {
                         tenantId: data.tenantId
                     }
                 })
+
+                // Sort in memory to avoid requiring a composite index on Firestore
+                cierresData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
                 setCierres(cierresData)
 
