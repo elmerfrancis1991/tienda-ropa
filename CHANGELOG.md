@@ -2,6 +2,12 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.4.0] - 2026-01-07
+### fixed
+- **Multitenancy:** Asociación explícita del "Nombre de la Empresa" a los usuarios.
+- **Seguridad:** Los nuevos usuarios (vendedores) heredan automáticamente el nombre y ID de la empresa del administrador.
+- **UI:** El nombre de la empresa ahora es visible en la barra lateral para todos los usuarios.
+
 ## [1.3.8] - 2026-01-07
 ### fixed
 - **Multitenancy:** Blindaje total de aislamiento entre empresas.

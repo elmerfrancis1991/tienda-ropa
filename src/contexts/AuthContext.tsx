@@ -54,7 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                                 email: firebaseUser.email || '',
                                 nombre: userData.nombre || firebaseUser.displayName || 'Usuario',
                                 role: userData.role || 'vendedor',
-                                tenantId: userData.tenantId || 'default', // Multi-tenant
+                                tenantId: userData.tenantId || 'default',
+                                empresaNombre: userData.empresaNombre || undefined,
                                 createdAt: userData.createdAt?.toDate() || new Date(),
                                 photoURL: firebaseUser.photoURL || undefined,
                                 permisos: userData.permisos || undefined
@@ -123,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         nombre: userData.nombre || userCredential.user.displayName || 'Usuario',
                         role: userData.role || 'vendedor',
                         tenantId: userData.tenantId || 'default', // Multi-tenant
+                        empresaNombre: userData.empresaNombre || undefined,
                         createdAt: userData.createdAt?.toDate() || new Date(),
                         photoURL: userCredential.user.photoURL || undefined,
                         permisos: userData.permisos || undefined
@@ -188,9 +190,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const newUser: User = {
                 uid: userCredential.user.uid,
                 email: email,
-                nombre: nombre,
-                role: 'admin', // First user of a new registration is Admin
-                tenantId: userCredential.user.uid, // Unique company ID
+                nombre: 'Administrador', // User name default for admin
+                empresaNombre: nombre, // The "Nombre de la Empresa" from the form
+                role: 'admin',
+                tenantId: userCredential.user.uid,
                 createdAt: new Date()
             }
 

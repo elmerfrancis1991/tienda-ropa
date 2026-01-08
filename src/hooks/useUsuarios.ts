@@ -92,6 +92,7 @@ export function useUsuarios() {
                 uid: userCredential.user.uid,
                 email: userData.email,
                 nombre: userData.nombre,
+                empresaNombre: user?.empresaNombre || '', // Inherit company name
                 role: userData.role,
                 createdAt: new Date(),
                 permisos: userData.permisos,

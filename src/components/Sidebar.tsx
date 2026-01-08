@@ -100,7 +100,7 @@ export function Sidebar() {
                 {!collapsed && (
                     <div className="overflow-hidden">
                         <h1 className="font-bold text-base sm:text-lg gradient-text truncate">
-                            {settings.businessName || 'Tienda POS'}
+                            {user?.empresaNombre || settings.businessName || 'Tienda POS'}
                         </h1>
                         <p className="text-[10px] sm:text-xs text-muted-foreground">Sistema de Ventas</p>
                     </div>
@@ -180,7 +180,7 @@ export function Sidebar() {
                         <div className="flex-1 overflow-hidden">
                             <p className="text-xs sm:text-sm font-medium truncate">{user?.nombre}</p>
                             <p className="text-[10px] sm:text-xs text-muted-foreground capitalize">
-                                {user?.role}
+                                {user?.role} {user?.empresaNombre && `• ${user.empresaNombre}`}
                             </p>
                         </div>
                     )}

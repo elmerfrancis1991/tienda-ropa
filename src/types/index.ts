@@ -6,6 +6,7 @@ export interface User {
     uid: string
     email: string
     nombre: string
+    empresaNombre?: string
     role: UserRole
     tenantId: string // Multi-tenant: isolates data per company
     createdAt: Date
