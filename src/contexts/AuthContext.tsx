@@ -151,15 +151,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
 
                 // Crear documento para el usuario
-                const newUser = {
+                const newUser: User = {
                     uid: userCredential.user.uid,
                     email: userCredential.user.email || '',
                     nombre: userCredential.user.displayName || 'Administrador',
-                    role: isFirstUser ? 'admin' as const : 'vendedor' as const,
-                    tenantId: 'default', // Multi-tenant: default for now
+                    role: isFirstUser ? 'admin' : 'vendedor',
+                    empresaNombre: 'Mi Empresa', // Default for first user
+                    tenantId: userCredential.user.uid, // SEED TENANT ID WITH UID
                     createdAt: new Date()
                 }
-                console.log('🔐 [LOGIN] Creando usuario con rol:', newUser.role)
+                console.log('🔐 [LOGIN] Creando usuario con rol:', newUser.role, 'y tenantId:', newUser.tenantId)
                 await setDoc(doc(db, 'users', userCredential.user.uid), newUser)
                 setState({
                     user: newUser,

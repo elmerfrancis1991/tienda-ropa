@@ -59,24 +59,32 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
     const [settings, setSettings] = useState<ConfigSettings>(defaultSettings)
     const [isLoaded, setIsLoaded] = useState(false)
 
-    // Load settings when user is available
+    // Load settings when user is available or changes
     useEffect(() => {
-        if (user?.tenantId && !isLoaded) {
+        if (user?.tenantId) {
+            console.log('📦 [Config] Loading settings for tenant:', user.tenantId)
             const stored = localStorage.getItem(`pos-config-${user.tenantId}`)
             if (stored) {
                 try {
                     setSettings({ ...defaultSettings, ...JSON.parse(stored) })
                 } catch (e) {
                     console.error("Error loading config:", e)
+                    setSettings(defaultSettings)
                 }
+            } else {
+                setSettings(defaultSettings) // Reset to defaults for new tenant
             }
             setIsLoaded(true)
+        } else if (!user) {
+            setIsLoaded(false)
+            setSettings(defaultSettings)
         }
-    }, [user?.tenantId, isLoaded])
+    }, [user?.tenantId])
 
-    // Save settings when they change
+    // Save settings when they change (only if loaded to avoid overwriting with defaults)
     useEffect(() => {
         if (user?.tenantId && isLoaded) {
+            console.log('💾 [Config] Saving settings for tenant:', user.tenantId)
             localStorage.setItem(`pos-config-${user.tenantId}`, JSON.stringify(settings))
         }
     }, [settings, user?.tenantId, isLoaded])

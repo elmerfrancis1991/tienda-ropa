@@ -89,15 +89,19 @@ export function useUsuarios() {
                 userData.password
             )
 
+            if (!user?.tenantId) {
+                throw new Error('No se puede crear el usuario: No se pudo identificar la empresa del administrador. Por favor, reinicie sesión.')
+            }
+
             const newUser: User = {
                 uid: userCredential.user.uid,
                 email: userData.email,
                 nombre: userData.nombre,
-                empresaNombre: userData.empresaNombre || user?.empresaNombre || '', // Use provided or inherit
+                empresaNombre: user.empresaNombre || userData.empresaNombre || '', // Prefer admin's company name
                 role: userData.role,
                 createdAt: new Date(),
                 permisos: userData.permisos,
-                tenantId: user?.tenantId || 'default'
+                tenantId: user.tenantId // FORCED from logged in admin
             }
 
             await setDoc(doc(db, 'users', userCredential.user.uid), newUser)
