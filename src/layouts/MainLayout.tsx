@@ -1,3 +1,7 @@
+import { Outlet } from 'react-router-dom'
+import { Sidebar } from '@/components/Sidebar'
+import { TermsModal } from '@/components/TermsModal'
+import pkg from '../../package.json'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { WifiOff } from 'lucide-react'
