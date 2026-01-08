@@ -63,19 +63,19 @@ export default function HistorialFacturasPage() {
 
         // Filtro por fecha (Ultra-robusto)
         const now = new Date()
-        const startOfToday = new Date(now)
-        startOfToday.setHours(0, 0, 0, 0)
-
-        const endOfToday = new Date(now)
-        endOfToday.setHours(23, 59, 59, 999)
 
         if (dateFilter === 'hoy') {
+            const startOfToday = new Date(now)
+            startOfToday.setHours(0, 0, 0, 0)
+            const endOfToday = new Date(now)
+            endOfToday.setHours(23, 59, 59, 999)
+
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
                 return fecha >= startOfToday && fecha <= endOfToday
             })
         } else if (dateFilter === 'semana') {
-            const startOfWeek = new Date(startOfToday)
+            const startOfWeek = new Date(now)
             const day = startOfWeek.getDay()
             const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1) // Lunes
             startOfWeek.setDate(diff)
@@ -83,13 +83,13 @@ export default function HistorialFacturasPage() {
 
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfWeek && fecha <= endOfToday
+                return fecha >= startOfWeek && fecha <= now
             })
         } else if (dateFilter === 'mes') {
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfMonth && fecha <= endOfToday
+                return fecha >= startOfMonth && fecha <= now
             })
         }
 

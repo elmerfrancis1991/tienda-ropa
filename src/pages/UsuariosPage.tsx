@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils'
 const userSchema = z.object({
     nombre: z.string().min(3, 'Nombre muy corto').max(50),
     email: z.string().email('Email inválido'),
+    empresaNombre: z.string().min(2, 'Nombre de empresa muy corto').optional().or(z.literal('')),
     role: z.enum(['admin', 'vendedor']),
     password: z.string().min(6, 'Mínimo 6 caracteres').optional(),
 })
@@ -65,10 +66,12 @@ export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: User
         defaultValues: user ? {
             nombre: user.nombre,
             email: user.email,
+            empresaNombre: user.empresaNombre || '',
             role: user.role,
         } : {
             nombre: '',
             email: '',
+            empresaNombre: '',
             role: 'vendedor',
         },
     })
@@ -89,10 +92,12 @@ export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: User
             reset(user ? {
                 nombre: user.nombre,
                 email: user.email,
+                empresaNombre: user.empresaNombre || '',
                 role: user.role,
             } : {
                 nombre: '',
                 email: '',
+                empresaNombre: '',
                 role: 'vendedor',
                 password: '',
             })
@@ -152,6 +157,19 @@ export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: User
                     </div>
 
                     <div className="space-y-2">
+                        <Label htmlFor="empresaNombre">Nombre de la Empresa</Label>
+                        <Input
+                            id="empresaNombre"
+                            autoComplete="off"
+                            {...register('empresaNombre')}
+                            className={errors.empresaNombre ? 'border-destructive' : ''}
+                        />
+                        {errors.empresaNombre && (
+                            <p className="text-sm text-destructive">{errors.empresaNombre.message}</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
                         <Label htmlFor="email">Correo Electrónico *</Label>
                         <Input
                             id="email"
@@ -187,7 +205,7 @@ export function UserFormModal({ open, onClose, onSubmit, user, isLoading }: User
                             <Input
                                 id="password"
                                 type="password"
-                                autoComplete="off"
+                                autoComplete="new-password"
                                 {...register('password')}
                                 className={errors.password ? 'border-destructive' : ''}
                             />
@@ -295,6 +313,7 @@ export default function UsuariosPage() {
                 email: data.email,
                 password: data.password,
                 role: data.role as UserRole,
+                empresaNombre: data.empresaNombre,
                 permisos: permisos
             })
             setFormOpen(false)
@@ -321,6 +340,7 @@ export default function UsuariosPage() {
             await updateUser(editingUser.uid, {
                 nombre: data.nombre,
                 role: data.role as UserRole,
+                empresaNombre: data.empresaNombre,
                 permisos: permisos
             })
             setFormOpen(false)

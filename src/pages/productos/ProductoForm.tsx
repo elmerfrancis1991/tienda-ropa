@@ -48,6 +48,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
     const [selectedTallas, setSelectedTallas] = useState<string[]>([])
     const [selectedColores, setSelectedColores] = useState<string[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [variantStocks, setVariantStocks] = useState<Record<string, number>>({})
     const [generatedCount, setGeneratedCount] = useState(0)
 
     const isEditing = !!producto
@@ -112,6 +113,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             })
             setSelectedTallas([])
             setSelectedColores([])
+            setVariantStocks({})
             setGeneratedCount(0)
         }
     }, [open, producto, reset])
@@ -160,6 +162,11 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
         )
     }
 
+    const handleVariantStockChange = (talla: string, color: string, stock: number) => {
+        const key = `${talla}-${color}`
+        setVariantStocks(prev => ({ ...prev, [key]: stock }))
+    }
+
     const [submitError, setSubmitError] = useState<string | null>(null)
 
     const handleFormSubmit = async (data: ProductoFormData) => {
@@ -195,15 +202,16 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 const promises = []
                 for (const talla of selectedTallas) {
                     for (const color of selectedColores) {
-                        // Smart barcode generation: if base provided, append variant info
-                        // e.g. "SHIRT1" -> "SHIRT1-S-RED"
-                        // If empty, leave empty or backend assigns ID
+                        const variantKey = `${talla}-${color}`
+                        const specificStock = variantStocks[variantKey] ?? data.stock
+
                         const variantBarcode = baseBarcode
                             ? `${baseBarcode}-${talla}-${color}`.toUpperCase().replace(/\s+/g, '')
                             : ''
 
                         const variantData = {
                             ...data,
+                            stock: specificStock, // Use specific stock
                             talla,
                             color,
                             parentId,
@@ -211,9 +219,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             codigoBarra: variantBarcode,
                             tenantId: user?.tenantId || 'default',
                         }
-                        // Remove utility fields to avoid cluttering DB if they are not in schema
-                        // But TypeScript Omit takes care of id/dates.
-                        promises.push(onSubmit(variantData as any)) // Cast to any or implicit match if types align
+                        promises.push(onSubmit(variantData as any))
                     }
                 }
 
@@ -223,6 +229,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             reset()
             setSelectedTallas([])
             setSelectedColores([])
+            setVariantStocks({})
             onClose()
         } catch (error) {
             console.error('Error submitting product:', error)
@@ -454,6 +461,37 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                 )}
                             </div>
                         </div>
+
+                        {/* Inventory per Variant list */}
+                        {!isEditing && selectedTallas.length > 0 && selectedColores.length > 0 && (
+                            <div className="mt-4 space-y-3 bg-muted/50 p-4 rounded-lg">
+                                <Label className="text-sm font-semibold flex items-center gap-2">
+                                    <AlertCircle className="h-4 w-4 text-primary" />
+                                    Cantidades por Variante
+                                </Label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2">
+                                    {selectedTallas.map(t =>
+                                        selectedColores.map(c => {
+                                            const key = `${t}-${c}`
+                                            return (
+                                                <div key={key} className="flex items-center justify-between gap-3 p-2 bg-background rounded border">
+                                                    <span className="text-xs font-medium">
+                                                        {t} / {c}
+                                                    </span>
+                                                    <Input
+                                                        type="number"
+                                                        className="h-8 w-20 text-xs"
+                                                        placeholder="Stock"
+                                                        value={variantStocks[key] ?? watch('stock')}
+                                                        onChange={(e) => handleVariantStockChange(t, c, parseInt(e.target.value) || 0)}
+                                                    />
+                                                </div>
+                                            )
+                                        })
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {submitError && (

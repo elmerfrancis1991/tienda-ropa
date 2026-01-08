@@ -79,6 +79,7 @@ export function useUsuarios() {
         email: string
         password: string
         role: UserRole
+        empresaNombre?: string
         permisos?: Permiso[]
     }) => {
         try {
@@ -92,7 +93,7 @@ export function useUsuarios() {
                 uid: userCredential.user.uid,
                 email: userData.email,
                 nombre: userData.nombre,
-                empresaNombre: user?.empresaNombre || '', // Inherit company name
+                empresaNombre: userData.empresaNombre || user?.empresaNombre || '', // Use provided or inherit
                 role: userData.role,
                 createdAt: new Date(),
                 permisos: userData.permisos,

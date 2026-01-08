@@ -36,12 +36,12 @@ const defaultSettings: ConfigSettings = {
     soundEnabled: true,
     notificationsEnabled: true,
     printReceipt: true,
-    businessName: 'Tienda de Ropa Fashion',
-    rnc: '123456789',
-    telefono: '809-555-1234',
-    direccion: 'Av. Principal #123, Santo Domingo',
-    email: 'info@tiendaropa.com',
-    website: 'https://tiendaropa.com',
+    businessName: '',
+    rnc: '',
+    telefono: '',
+    direccion: '',
+    email: '',
+    website: '',
     logoUrl: '',
 }
 

@@ -21,12 +21,12 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
-                    font-size: 13px; 
+                    font-size: 15px; 
                     width: 58mm; 
                     max-width: 58mm;
                     padding: 2mm;
                     color: black;
-                    line-height: 1.4;
+                    line-height: 1.3;
                 }
                 .ticket-strip {
                     page-break-after: always;
@@ -45,15 +45,15 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                     border-bottom: 2px dashed #000; 
                     margin: 5px 0; 
                 }
-                .header { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
-                .small { font-size: 11px; }
+                .header { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
+                .small { font-size: 13px; }
                 table { width: 100%; border-collapse: collapse; }
                 td, th { padding: 2px 0; vertical-align: top; }
                 .col-qty { width: 15%; }
                 .col-desc { width: 50%; }
                 .col-price { width: 35%; text-align: right; }
                 .total-row td { padding-top: 4px; }
-                .grand-total { font-size: 15px; font-weight: bold; }
+                .grand-total { font-size: 17px; font-weight: bold; }
             </style>
         </head>
         <body>
