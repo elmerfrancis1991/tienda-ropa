@@ -311,7 +311,7 @@ export default function UsuariosPage() {
             await createUser({
                 nombre: data.nombre,
                 email: data.email,
-                password: data.password,
+                password: data.password || '',
                 role: data.role as UserRole,
                 empresaNombre: data.empresaNombre,
                 permisos: permisos

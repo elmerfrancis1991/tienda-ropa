@@ -14,19 +14,25 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
+    // 2b. Check if User Document exists
+    function hasUserData() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
     // 3. Get User's Tenant ID
     function getTenantId() {
-      return getUserData().tenantId;
+      return hasUserData() ? getUserData().tenantId : null;
     }
 
     // 4. Verify User is Admin
     function isAdmin() {
-      return getUserData().role == 'admin';
+      return hasUserData() && getUserData().role == 'admin';
     }
 
     // 5. Belongs to Tenant
     function belongsToTenant(resourceData) {
-      return isAuth() && resourceData.tenantId == getTenantId();
+      let tenantId = getTenantId();
+      return isAuth() && tenantId != null && resourceData.tenantId == tenantId;
     }
 
     // 6. Creating in Tenant

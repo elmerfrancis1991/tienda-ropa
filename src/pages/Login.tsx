@@ -142,7 +142,7 @@ export default function Login() {
                                 placeholder="tu@correo.com"
                                 className="bg-slate-800/50 border-white/10 text-white placeholder:text-slate-500 h-11 focus:ring-primary/50"
                                 {...register('email')}
-                                autoComplete="username"
+                                autoComplete="new-email"
                             />
                             {errors.email && (
                                 <p className="text-xs text-red-400 ml-1 font-medium">{errors.email.message as string}</p>
@@ -160,7 +160,7 @@ export default function Login() {
                                     placeholder="••••••••"
                                     className="bg-slate-800/50 border-white/10 text-white placeholder:text-slate-500 h-11 pr-10 focus:ring-primary/50"
                                     {...register('password')}
-                                    autoComplete="current-password"
+                                    autoComplete="new-password"
                                 />
                                 <button
                                     type="button"
