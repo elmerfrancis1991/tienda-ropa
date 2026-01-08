@@ -189,8 +189,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 uid: userCredential.user.uid,
                 email: email,
                 nombre: nombre,
-                role: 'vendedor', // Default to vendedor for security
-                tenantId: 'default', // Multi-tenant: default for now
+                role: 'admin', // First user of a new registration is Admin
+                tenantId: userCredential.user.uid, // Unique company ID
                 createdAt: new Date()
             }
 

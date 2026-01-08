@@ -2,6 +2,13 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.7] - 2026-01-07
+### fixed
+- **Multitenancy:** Implementación de IDs de empresa únicos por registro.
+- **Seguridad:** Ajuste de reglas de Firestore para prevenir errores de permisos.
+- **Usuarios:** Corrección de carga y visibilidad de vendedores por empresa.
+- **Historial:** Filtros de tiempo (Hoy/Semana) con precisión de milisegundos.
+
 ## [1.3.6-rc.3] - 2026-01-07
 ### fixed
 - **Historial:** Corregidos filtros de fecha (Hoy, Semana, Mes).

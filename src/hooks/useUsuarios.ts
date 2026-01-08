@@ -27,16 +27,14 @@ export function useUsuarios() {
 
         const loadUsers = async () => {
             try {
-                // If tenant is 'default', we also show users without a tenantId (migration/fallback)
-                const q = user.tenantId === 'default'
-                    ? query(collection(db, 'users'))
-                    : query(
-                        collection(db, 'users'),
-                        where('tenantId', '==', user.tenantId)
-                    )
+                // Strictly filter by tenantId to comply with security rules and ensure isolation
+                const q = query(
+                    collection(db, 'users'),
+                    where('tenantId', '==', user.tenantId)
+                )
 
                 unsubscribe = onSnapshot(q, (snapshot) => {
-                    let usersData = snapshot.docs.map(doc => {
+                    const usersData = snapshot.docs.map(doc => {
                         const data = doc.data();
                         return {
                             ...data,
@@ -45,19 +43,20 @@ export function useUsuarios() {
                         }
                     }) as User[]
 
-                    // For 'default' tenant, we also explicitly allow users with missing/empty tenantId
-                    if (user.tenantId === 'default') {
-                        usersData = usersData.filter(u => !u.tenantId || u.tenantId === 'default' || u.tenantId === '')
-                    }
-
                     usersData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
                     setUsuarios(usersData)
                     setLoading(false)
                     setError(null)
                 }, (err) => {
+                    // Permission errors usually mean the user doc isn't fully ready or doesn't match the query
                     console.error("Firestore users error:", err)
-                    setError("Error al cargar usuarios")
+                    if (err.code === 'permission-denied') {
+                        // Keep quiet about transient permission issues during login/refresh
+                        setUsuarios([])
+                    } else {
+                        setError("Error al sincronizar usuarios")
+                    }
                     setLoading(false)
                 })
 

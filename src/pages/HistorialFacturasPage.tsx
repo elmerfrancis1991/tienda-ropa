@@ -61,34 +61,35 @@ export default function HistorialFacturasPage() {
             })
         }
 
-        // Filtro por fecha
+        // Filtro por fecha (Ultra-robusto)
         const now = new Date()
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-        const startOfTomorrow = new Date(startOfToday)
-        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1)
+        const startOfToday = new Date(now)
+        startOfToday.setHours(0, 0, 0, 0)
+
+        const endOfToday = new Date(now)
+        endOfToday.setHours(23, 59, 59, 999)
 
         if (dateFilter === 'hoy') {
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfToday && fecha < startOfTomorrow
+                return fecha >= startOfToday && fecha <= endOfToday
             })
         } else if (dateFilter === 'semana') {
             const startOfWeek = new Date(startOfToday)
             const day = startOfWeek.getDay()
-            const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1) // Iniciar lunes
+            const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1) // Lunes
             startOfWeek.setDate(diff)
             startOfWeek.setHours(0, 0, 0, 0)
 
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                // De lunes a hoy (incluido el resto del día de hoy)
-                return fecha >= startOfWeek && fecha < startOfTomorrow
+                return fecha >= startOfWeek && fecha <= endOfToday
             })
         } else if (dateFilter === 'mes') {
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
             filtered = filtered.filter(v => {
                 const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
-                return fecha >= startOfMonth && fecha < startOfTomorrow
+                return fecha >= startOfMonth && fecha <= endOfToday
             })
         }
 
