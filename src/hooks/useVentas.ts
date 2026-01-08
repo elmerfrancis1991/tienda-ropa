@@ -117,6 +117,7 @@ export function useVentas() {
                     ...venta,
                     id: newVentaRef.id,
                     cajaId: venta.cajaId || null,
+                    tenantId: user?.tenantId, // Force current user's tenant
                     fecha: Timestamp.fromDate(venta.fecha)
                 }
                 transaction.set(newVentaRef, ventaParaGuardar)

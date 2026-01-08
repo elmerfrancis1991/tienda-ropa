@@ -152,19 +152,10 @@ export function useProductos(): UseProductosReturn {
 
                 unsubscribe = onSnapshot(q, async (snapshot) => {
                     if (snapshot.empty) {
-                        // One-time seed for new tenants
-                        const batch = writeBatch(db)
-                        DEMO_PRODUCTS.forEach(p => {
-                            const newRef = doc(collection(db, 'productos'))
-                            batch.set(newRef, {
-                                ...p,
-                                tenantId: user.tenantId,
-                                createdAt: Timestamp.now(),
-                                updatedAt: Timestamp.now()
-                            })
-                        })
-                        await batch.commit()
-                        return; // Snapshot will trigger again automatically
+                        setProductos([])
+                        setLoading(false)
+                        setError(null)
+                        return
                     }
 
                     const data = snapshot.docs.map(doc => ({

@@ -2,6 +2,12 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.3.8] - 2026-01-07
+### fixed
+- **Multitenancy:** Blindaje total de aislamiento entre empresas.
+- **Productos:** Eliminada la carga automática de demostración para empresas nuevas (empiezan vacías).
+- **Ventas:** Garantizada la asignación de `tenantId` en cada transacción de venta.
+
 ## [1.3.7] - 2026-01-07
 ### fixed
 - **Multitenancy:** Implementación de IDs de empresa únicos por registro.
