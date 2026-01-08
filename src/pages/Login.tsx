@@ -99,70 +99,79 @@ export default function Login() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 px-4 py-12 sm:px-6 lg:px-8">
-            <Card className="w-full max-w-md shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
+        <div className="flex min-h-screen items-center justify-center bg-[#0F172A] px-4 py-12 sm:px-6 lg:px-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0F172A] to-black">
+            <Card className="w-full max-w-md shadow-2xl border-white/5 bg-slate-900/80 backdrop-blur-md text-white">
                 <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-2xl font-bold tracking-tight">
-                        {isRegistering ? 'Crear una cuenta' : 'Iniciar sesión'}
+                    <CardTitle className="text-3xl font-bold tracking-tight text-white mb-2">
+                        {isRegistering ? 'Crear una Empresa' : 'Acceso al Sistema'}
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-slate-400">
                         {isRegistering
-                            ? 'Ingresa tus datos para registrarte'
-                            : 'Ingresa tus credenciales para acceder'}
+                            ? 'Registra tu negocio para comenzar'
+                            : 'Ingresa tus credenciales para continuar'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                         {isRegistering && (
                             <div className="space-y-2">
-                                <Label htmlFor="nombre">Nombre Completo</Label>
+                                <Label htmlFor="nombre" className="text-slate-200 font-semibold text-sm ml-1">
+                                    Nombre de la Empresa
+                                </Label>
                                 <Input
                                     id="nombre"
                                     type="text"
-                                    placeholder=""
+                                    placeholder="Ej. Mi Tienda de Ropa"
+                                    className="bg-slate-800/50 border-white/10 text-white placeholder:text-slate-500 h-11 focus:ring-primary/50"
                                     {...register('nombre')}
                                     autoComplete="off"
                                 />
                                 {errors.nombre && (
-                                    <p className="text-sm text-red-500">{errors.nombre.message as string}</p>
+                                    <p className="text-xs text-red-400 ml-1 font-medium">{errors.nombre.message as string}</p>
                                 )}
                             </div>
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">Correo electrónico</Label>
+                            <Label htmlFor="email" className="text-slate-200 font-semibold text-sm ml-1">
+                                Correo electrónico
+                            </Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder=""
+                                placeholder="tu@correo.com"
+                                className="bg-slate-800/50 border-white/10 text-white placeholder:text-slate-500 h-11 focus:ring-primary/50"
                                 {...register('email')}
                                 autoComplete="off"
                             />
                             {errors.email && (
-                                <p className="text-sm text-red-500">{errors.email.message as string}</p>
+                                <p className="text-xs text-red-400 ml-1 font-medium">{errors.email.message as string}</p>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="password">Contraseña</Label>
+                            <Label htmlFor="password" className="text-slate-200 font-semibold text-sm ml-1">
+                                Contraseña
+                            </Label>
                             <div className="relative">
                                 <Input
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
+                                    placeholder="••••••••"
+                                    className="bg-slate-800/50 border-white/10 text-white placeholder:text-slate-500 h-11 pr-10 focus:ring-primary/50"
                                     {...register('password')}
-                                    className="pr-10"
                                     autoComplete="off"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
                                 >
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                 </button>
                             </div>
                             {errors.password && (
-                                <p className="text-sm text-red-500">{errors.password.message as string}</p>
+                                <p className="text-xs text-red-400 ml-1 font-medium">{errors.password.message as string}</p>
                             )}
                         </div>
 
@@ -171,7 +180,7 @@ export default function Login() {
                                 <button
                                     type="button"
                                     onClick={() => setIsResetOpen(true)}
-                                    className="text-sm font-medium text-primary hover:text-primary/90"
+                                    className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
                                 >
                                     ¿Olvidaste tu contraseña?
                                 </button>
@@ -179,29 +188,33 @@ export default function Login() {
                         )}
 
                         {error && (
-                            <div className="p-3 rounded bg-red-50 text-red-500 text-sm">
+                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium">
                                 {error}
                             </div>
                         )}
 
-                        <Button className="w-full" type="submit" disabled={isSubmitting || loading}>
+                        <Button
+                            className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-bold transition-all shadow-lg shadow-primary/20"
+                            type="submit"
+                            disabled={isSubmitting || loading}
+                        >
                             {(isSubmitting || loading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {isRegistering ? 'Registrarse' : 'Ingresar'}
+                            {isRegistering ? 'Crear Empresa' : 'Iniciar Sesión'}
                         </Button>
                     </form>
 
-                    <div className="mt-4 text-center">
+                    <div className="mt-6 text-center">
                         <button
                             type="button"
                             onClick={() => {
                                 setIsRegistering(!isRegistering)
                                 reset({ email: '', password: '', nombre: '' })
                             }}
-                            className="text-sm text-gray-600 hover:text-gray-900"
+                            className="text-sm text-slate-400 hover:text-white transition-colors font-medium border-t border-white/5 pt-4 w-full"
                         >
                             {isRegistering
-                                ? '¿Ya tienes cuenta? Inicia sesión'
-                                : '¿No tienes cuenta? Regístrate'}
+                                ? '¿Ya tienes una empresa? Inicia sesión'
+                                : '¿No tienes cuenta? Registra tu empresa'}
                         </button>
                     </div>
                 </CardContent>
