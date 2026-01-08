@@ -1,10 +1,7 @@
-import { useEffect, useCallback } from 'react'
-import { Outlet } from 'react-router-dom'
-import { Sidebar } from '@/components/Sidebar'
-import { TermsModal } from '@/components/TermsModal'
-import pkg from '../../package.json'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
+import { WifiOff } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
 
 const INACTIVITY_LIMIT_MS = 10 * 60 * 1000 // 10 minutes
 
@@ -13,6 +10,20 @@ export default function MainLayout() {
     const version = pkg.version || '1.0.0';
     const { isCajaAbierta, loading } = useCierreCaja();
     const { logout } = useAuth(); // Import logout
+    const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+    useEffect(() => {
+        const handleOnline = () => setIsOffline(false);
+        const handleOffline = () => setIsOffline(true);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
 
     // Auto-logout logic
     const handleLogout = useCallback(() => {
@@ -54,6 +65,13 @@ export default function MainLayout() {
             {isStaging && (
                 <div className="fixed top-0 left-0 right-0 bg-orange-500 text-white text-xs font-bold text-center z-50 py-1 pointer-events-none opacity-90">
                     ⚠️ MODO STAGING (PRUEBAS) - DATOS SEPARADOS DE PRODUCCIÓN
+                </div>
+            )}
+
+            {isOffline && (
+                <div className="fixed top-0 left-0 right-0 bg-neutral-800 text-white text-[10px] font-bold text-center z-[60] py-0.5 flex items-center justify-center gap-2 border-b border-white/10">
+                    <WifiOff className="h-3 w-3 text-red-500" />
+                    MODO OFFLINE - LAS VENTAS SE SINCRONIZARÁN AL VOLVER LA CONEXIÓN
                 </div>
             )}
 

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, runTransaction, doc, where } from 'firebase/firestore'
+import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, runTransaction, doc, where, writeBatch, increment } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { Venta } from './useCart'
 import { useAuth } from '@/contexts/AuthContext'
@@ -137,14 +137,52 @@ export function useVentas() {
 
             setLoading(false)
             return savedVentaId
-        } catch (err) {
+        } catch (err: any) {
+            // FALLBACK FOR OFFLINE: Transactions fail when offline. 
+            // We retry with a batch write if we are offline.
+            if (!navigator.onLine || err.code === 'unavailable') {
+                console.warn("⚠️ Mode Offline: Processing sale via Batch instead of Transaction.")
+                try {
+                    const batch = writeBatch(db)
+
+                    // Create sale
+                    const newVentaRef = doc(collection(db, 'ventas'))
+                    savedVentaId = newVentaRef.id
+                    const ventaParaGuardar = {
+                        ...venta,
+                        id: newVentaRef.id,
+                        cajaId: venta.cajaId || null,
+                        tenantId: user?.tenantId,
+                        fecha: Timestamp.fromDate(venta.fecha),
+                        offline: true
+                    }
+                    batch.set(newVentaRef, ventaParaGuardar)
+
+                    // Update stocks (Locally)
+                    for (const item of venta.items) {
+                        const ref = doc(db, 'productos', item.producto.id)
+                        // Note: We use increment for better concurrent offline behavior
+                        batch.update(ref, {
+                            stock: increment(-item.cantidad),
+                            updatedAt: Timestamp.now()
+                        })
+                    }
+
+                    await batch.commit()
+                    setLoading(false)
+                    return savedVentaId
+                } catch (batchErr) {
+                    console.error("Error in offline batch:", batchErr)
+                }
+            }
+
             console.error("Error processing sale transaction:", err)
             const msg = err instanceof Error ? err.message : "Error desconocido al procesar la venta"
             setError(msg)
             setLoading(false)
             throw new Error(msg)
         }
-    }, [])
+    }, [user?.tenantId])
 
     // Kept for compatibility if used elsewhere, but simply aliases to simple addDoc (unsafe)
     // or better, remove it if not used. But the interface might expect it.
