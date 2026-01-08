@@ -61,9 +61,9 @@ export function useCierreCaja() {
 
                 setCierres(cierresData)
 
-                // Buscar caja abierta del usuario actual
+                // Buscar caja abierta de la empresa (tenant)
                 const cajaAbierta = cierresData.find(c =>
-                    c.estado === 'abierto' && c.usuarioId === user.uid
+                    c.estado === 'abierto'
                 )
                 setCajaActual(cajaAbierta || null)
 
@@ -85,7 +85,7 @@ export function useCierreCaja() {
         if (!user.tenantId) throw new Error('Error de configuración: Sin Tenant ID')
 
         if (cajaActual) {
-            throw new Error('Ya tiene una caja abierta. Debe cerrarla primero.')
+            throw new Error(`Ya existe una caja abierta para esta empresa por ${cajaActual.usuarioNombre}. Debe cerrarse primero.`)
         }
 
         try {

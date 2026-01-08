@@ -13,11 +13,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ErrorBoundary>
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <ThemeProvider>
-                    <ConfigProvider>
-                        <AuthProvider>
+                    <AuthProvider>
+                        <ConfigProvider>
                             <App />
-                        </AuthProvider>
-                    </ConfigProvider>
+                        </ConfigProvider>
+                    </AuthProvider>
                 </ThemeProvider>
             </BrowserRouter>
         </ErrorBoundary>

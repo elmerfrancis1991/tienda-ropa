@@ -24,7 +24,7 @@ const productoSchema = z.object({
     precio: z.number().min(1, 'El precio debe ser mayor a 0'),
     costo: z.number().min(0, 'El costo no puede ser negativo').optional(),
     ganancia: z.number().optional(),
-    stock: z.number().min(0, 'El stock no puede ser negativo'),
+    stock: z.number().min(1, 'El stock inicial debe ser mayor a 0'),
     minStock: z.number().min(1, 'Mínimo 1').optional(),
     categoria: z.string().min(1, 'Selecciona una categoría'),
     imagen: z.string().url('URL de imagen inválida').or(z.literal('')),
@@ -195,6 +195,34 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 if (selectedColores.length === 0) {
                     throw new Error('Selecciona al menos un color')
                 }
+
+                // --- CALCULAR SUMA DE VARIANTES ---
+                const totalVariants = selectedTallas.length * selectedColores.length
+                let totalStockAsignado = 0
+
+                // Si se asignaron stocks individuales, sumarlos
+                const assignedKeys = Object.keys(variantStocks)
+                if (assignedKeys.length > 0) {
+                    // Sumar los que tienen valor, para los que no, usar el default (data.stock)
+                    for (const talla of selectedTallas) {
+                        for (const color of selectedColores) {
+                            const key = `${talla}-${color}`
+                            totalStockAsignado += variantStocks[key] ?? data.stock
+                        }
+                    }
+                } else {
+                    // Si no hay stock individual, es stock * variantes
+                    totalStockAsignado = data.stock * totalVariants
+                }
+
+                if (totalStockAsignado > data.stock) {
+                    throw new Error(`La suma de las variantes (${totalStockAsignado}) no puede ser mayor al Stock Inicial (${data.stock})`)
+                }
+
+                // Si el usuario puso un stock inicial pero no asignó individuales, 
+                // tal vez quiere que el stock inicial se reparta? 
+                // Pero según el prompt: "no debe permitit que las cantidades de las variantes sean mas que el stock inicial"
+                // Así que validamos el techo.
 
                 const parentId = generateId()
                 const baseBarcode = data.codigoBarra?.trim() || ''
@@ -378,14 +406,14 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="stock">Stock Inicial *</Label>
+                            <Label htmlFor="stock">Stock Total Inicial *</Label>
                             <Input
                                 id="stock"
                                 type="number"
                                 {...register('stock', { valueAsNumber: true })}
-                                placeholder="Por variante"
+                                placeholder="Total de todas las variantes"
                             />
-                            <p className="text-[10px] text-muted-foreground">Cantidad para CADA variante</p>
+                            <p className="text-[10px] text-muted-foreground">La suma de variantes no puede exceder este total</p>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="minStock">Min. Stock</Label>

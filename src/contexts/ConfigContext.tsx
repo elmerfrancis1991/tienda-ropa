@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useAuth } from './AuthContext'
 
 interface ConfigSettings {
     // Tax settings
@@ -54,23 +55,31 @@ interface ConfigContextType {
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined)
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
-    const [settings, setSettings] = useState<ConfigSettings>(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem('pos-config')
+    const { user } = useAuth()
+    const [settings, setSettings] = useState<ConfigSettings>(defaultSettings)
+    const [isLoaded, setIsLoaded] = useState(false)
+
+    // Load settings when user is available
+    useEffect(() => {
+        if (user?.tenantId && !isLoaded) {
+            const stored = localStorage.getItem(`pos-config-${user.tenantId}`)
             if (stored) {
                 try {
-                    return { ...defaultSettings, ...JSON.parse(stored) }
-                } catch {
-                    return defaultSettings
+                    setSettings({ ...defaultSettings, ...JSON.parse(stored) })
+                } catch (e) {
+                    console.error("Error loading config:", e)
                 }
             }
+            setIsLoaded(true)
         }
-        return defaultSettings
-    })
+    }, [user?.tenantId, isLoaded])
 
+    // Save settings when they change
     useEffect(() => {
-        localStorage.setItem('pos-config', JSON.stringify(settings))
-    }, [settings])
+        if (user?.tenantId && isLoaded) {
+            localStorage.setItem(`pos-config-${user.tenantId}`, JSON.stringify(settings))
+        }
+    }, [settings, user?.tenantId, isLoaded])
 
     const updateSettings = (updates: Partial<ConfigSettings>) => {
         setSettings(prev => ({ ...prev, ...updates }))

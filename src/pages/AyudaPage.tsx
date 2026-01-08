@@ -78,9 +78,11 @@ export default function AyudaPage() {
                             </p>
                         </div>
                         <div className="pt-2">
-                            <Button variant="outline" className="w-full gap-2">
-                                <ExternalLink className="h-4 w-4" />
-                                Ver Documentación Completa
+                            <Button variant="outline" className="w-full gap-2" asChild>
+                                <a href="https://docs.google.com/document/d/1X-PLACEHOLDER" target="_blank" rel="noreferrer">
+                                    <ExternalLink className="h-4 w-4" />
+                                    Ver Documentación Completa
+                                </a>
                             </Button>
                         </div>
                     </CardContent>
