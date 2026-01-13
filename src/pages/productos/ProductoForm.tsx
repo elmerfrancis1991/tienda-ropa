@@ -195,6 +195,15 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
         setVariantStocks(prev => ({ ...prev, [key]: stock }))
     }
 
+    // Auto-calculate Stock Total from Variants
+    useEffect(() => {
+        if (tipoVariante !== 'unico') {
+            let total = 0
+            Object.values(variantStocks).forEach(qty => total += qty)
+            setValue('stock', total)
+        }
+    }, [variantStocks, tipoVariante, setValue])
+
     const [submitError, setSubmitError] = useState<string | null>(null)
 
     const handleFormSubmit = async (data: ProductoFormData) => {
@@ -237,7 +246,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 }
 
                 if (totalStockAsignado === 0 && data.stock > 0) {
-                    // If user set global stock but no individual, error? 
+                    // If user set global stock but no individual, error?
                     // Or distribute? Let's enforce manual assignment for precision
                     throw new Error('Debes asignar el stock a cada variante (Talla/Color) individualmente en la lista de abajo.')
                 }
@@ -470,12 +479,14 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="stock">Stock Global Esperado</Label>
+                            <Label htmlFor="stock">Stock Global {tipoVariante !== 'unico' ? '(Automático)' : ''}</Label>
                             <Input
                                 id="stock"
                                 type="number"
                                 {...register('stock', { valueAsNumber: true })}
                                 placeholder="Total unidades"
+                                readOnly={tipoVariante !== 'unico'}
+                                className={tipoVariante !== 'unico' ? 'bg-muted' : ''}
                             />
                         </div>
                         <div className="space-y-2">

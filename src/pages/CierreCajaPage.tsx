@@ -154,47 +154,49 @@ export default function CierreCajaPage() {
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
-                    font-size: 12px; 
+                    font-size: 14px; 
                     width: 58mm;
                     max-width: 58mm;
                     padding: 2mm;
                     color: black;
-                    line-height: 1.2;
+                    line-height: 1.3;
+                    font-weight: 500;
                 }
                 .center { text-align: center; }
                 .bold { font-weight: bold; }
                 .header { 
-                    font-size: 16px; 
+                    font-size: 18px; 
                     font-weight: bold; 
-                    margin-bottom: 4px;
-                    border-bottom: 1px solid #000;
-                    padding-bottom: 4px;
+                    margin-bottom: 6px;
+                    border-bottom: 2px solid #000;
+                    padding-bottom: 6px;
+                    text-transform: uppercase;
                 }
                 .line { 
                     border-bottom: 1px dashed #000; 
-                    margin: 4px 0; 
+                    margin: 6px 0; 
                 }
                 .section {
-                    margin: 4px 0;
+                    margin: 6px 0;
                     padding: 4px 0;
                 }
                 .row {
                     display: flex;
                     justify-content: space-between;
-                    padding: 2px 0;
-                    font-size: 12px;
+                    padding: 3px 0;
+                    font-size: 14px;
                 }
                 .row.total {
-                    font-size: 14px;
+                    font-size: 16px;
                     font-weight: bold;
-                    border-top: 1px solid #000;
-                    margin-top: 4px;
-                    padding-top: 4px;
+                    border-top: 2px solid #000;
+                    margin-top: 6px;
+                    padding-top: 6px;
                 }
                 .section-title {
                     font-weight: bold;
-                    font-size: 13px;
-                    margin-bottom: 2px;
+                    font-size: 15px;
+                    margin-bottom: 4px;
                     text-decoration: underline;
                 }
             </style>
