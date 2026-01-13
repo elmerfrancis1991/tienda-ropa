@@ -142,8 +142,8 @@ describe('5. Stock de Variantes sin Auto-relleno', () => {
     })
 
     it('debe detectar cuando no hay stock asignado', () => {
-        const variantStocks = {}
-        const totalAsignado = Object.values(variantStocks).reduce((sum, val) => sum + val, 0)
+        const variantStocks: Record<string, number> = {}
+        const totalAsignado = Object.values(variantStocks).reduce((sum: number, val: number) => sum + val, 0)
 
         expect(totalAsignado).toBe(0)
         // Esta condición debe generar error en la aplicación
