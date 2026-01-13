@@ -52,10 +52,10 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 td, th { padding: 3px 0; vertical-align: top; font-size: 14px; }
                 
                 /* Column Widths (Total 100%) */
-                .col-qty { width: 10%; text-align: center; }
-                .col-desc { width: 50%; text-align: left; padding-right: 2px; overflow: hidden; }
-                .col-price { width: 20%; text-align: right; white-space: nowrap; }
-                .col-total { width: 20%; text-align: right; white-space: nowrap; }
+                .col-qty { width: 12%; text-align: center; font-size: 13px; }
+                .col-desc { width: 44%; text-align: left; padding-right: 2px; overflow: hidden; font-size: 13px; }
+                .col-price { width: 22%; text-align: right; white-space: nowrap; font-size: 13px; }
+                .col-total { width: 22%; text-align: right; white-space: nowrap; font-size: 13px; }
                 
                 .total-row td { padding-top: 4px; font-weight: bold; }
                 .grand-total { font-size: 16px; font-weight: bold; border-top: 1px solid #000; }

@@ -177,14 +177,22 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
     }
 
     const toggleTalla = (talla: string) => {
-        if (isEditing) return
+        if (isEditing) {
+            // En edición, solo se permite UNA talla. Reemplazar selección.
+            setSelectedTallas([talla])
+            return
+        }
         setSelectedTallas((prev) =>
             prev.includes(talla) ? prev.filter((t) => t !== talla) : [...prev, talla]
         )
     }
 
     const toggleColor = (color: string) => {
-        if (isEditing) return
+        if (isEditing) {
+            // En edición, solo se permite UN color. Reemplazar selección.
+            setSelectedColores([color])
+            return
+        }
         setSelectedColores((prev) =>
             prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
         )
@@ -215,8 +223,8 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 // --- UPDATE SINGLE PRODUCT ---
                 const updatedProduct = {
                     ...data,
-                    talla: data.talla || producto.talla || 'Unica',
-                    color: data.color || producto.color || 'Unico',
+                    talla: selectedTallas[0] || producto.talla || 'Unica',
+                    color: selectedColores[0] || producto.color || 'Unico',
                     parentId: producto.parentId,
                     activo: true,
                     codigoBarra: data.codigoBarra || generateBarcode(data.nombre, data.precio, data.talla || 'VAR'),
@@ -504,9 +512,9 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                         <div className="space-y-4 border-t pt-4">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-1">
-                                    <Label className="text-base font-semibold text-primary">Variantes y Existencias</Label>
+                                    <Label className="text-base font-semibold text-primary">{isEditing ? 'Editar Variante' : 'Variantes y Existencias'}</Label>
                                     <p className="text-xs text-muted-foreground">
-                                        Seleccione {tipoVariante === 'numerico' ? 'números' : 'tallas'} y colores para asignar stock.
+                                        {isEditing ? 'Cambie la talla o color de este producto específico.' : `Seleccione ${tipoVariante === 'numerico' ? 'números' : 'tallas'} y colores para asignar stock.`}
                                     </p>
                                 </div>
                                 {!isEditing && generatedCount > 0 && (

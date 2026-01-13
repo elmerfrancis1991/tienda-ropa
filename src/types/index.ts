@@ -57,6 +57,7 @@ export const CATEGORIAS_ROPA: Categoria[] = [
     { id: 'accesorios', nombre: 'Accesorios', tipoVariante: 'unico' },
     { id: 'calzado', nombre: 'Calzado', tipoVariante: 'numerico' },
     { id: 'ropa_interior', nombre: 'Ropa Interior', tipoVariante: 'talla' },
+    { id: 'tenis', nombre: 'Tenis', tipoVariante: 'numerico' },
 ]
 
 export const TALLAS: string[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
