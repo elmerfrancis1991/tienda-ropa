@@ -48,10 +48,10 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 .header { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
                 .small { font-size: 13px; }
                 table { width: 100%; border-collapse: collapse; }
-                td, th { padding: 2px 0; vertical-align: top; }
-                .col-qty { width: 15%; }
-                .col-desc { width: 50%; }
-                .col-price { width: 35%; text-align: right; }
+                td, th { padding: 2px 1px; vertical-align: top; font-size: 13px; }
+                .col-qty { width: 12%; text-align: left; }
+                .col-desc { width: 40%; text-align: left; word-wrap: break-word; }
+                .col-price { width: 24%; text-align: right; }
                 .total-row td { padding-top: 4px; }
                 .grand-total { font-size: 17px; font-weight: bold; }
             </style>
@@ -78,6 +78,7 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                             <tr class="bold">
                                 <th class="col-qty">Cant</th>
                                 <th class="col-desc">Desc</th>
+                                <th class="col-price">P.Unit</th>
                                 <th class="col-price">Total</th>
                             </tr>
                         </thead>
@@ -85,7 +86,8 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                             ${venta.items.map(item => `
                                 <tr>
                                     <td class="col-qty">${item.cantidad}</td>
-                                    <td class="col-desc">${item.producto.nombre.substring(0, 20)}</td>
+                                    <td class="col-desc">${item.producto.nombre.substring(0, 18)}</td>
+                                    <td class="col-price">${item.producto.precio.toFixed(2)}</td>
                                     <td class="col-price">${item.subtotal.toFixed(2)}</td>
                                 </tr>
                             `).join('')}

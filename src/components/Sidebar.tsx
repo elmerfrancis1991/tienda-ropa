@@ -40,10 +40,10 @@ interface NavItem {
 const navItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { title: 'Punto de Venta', href: '/pos', icon: ShoppingCart, requiredPermiso: 'pos:vender' },
-    { title: 'Productos', href: '/productos', icon: Package, requiredPermiso: 'productos:ver' },
+    { title: 'Inventario', href: '/productos', icon: Package, requiredPermiso: 'productos:ver' },
     { title: 'Caja', href: '/caja', icon: Wallet, requiredPermiso: 'caja:abrir' },
     { title: 'Reportes', href: '/reportes', icon: BarChart3, requiredPermiso: 'reportes:ver' },
-    { title: 'Historial', href: '/historial', icon: FileText, requiredPermiso: 'caja:historial' },
+    { title: 'Historial de Ventas', href: '/historial', icon: FileText, requiredPermiso: 'caja:historial' },
     { title: 'Usuarios', href: '/usuarios', icon: Users, requiredPermiso: 'usuarios:ver' },
     { title: 'Configuración', href: '/configuracion', icon: Settings, requiredPermiso: 'configuracion:ver' },
     { title: 'Ayuda', href: '/ayuda', icon: HelpCircle },

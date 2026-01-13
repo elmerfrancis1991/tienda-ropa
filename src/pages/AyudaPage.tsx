@@ -34,10 +34,10 @@ export default function AyudaPage() {
                             <MessageCircle className="h-5 w-5 text-green-600" />
                             <div>
                                 <p className="font-medium">WhatsApp</p>
-                                <p className="text-sm text-muted-foreground">+1 (829) 555-0000</p>
+                                <p className="text-sm text-muted-foreground">809-853-2314</p>
                             </div>
                             <Button variant="ghost" size="sm" className="ml-auto" asChild>
-                                <a href="https://wa.me/18295550000" target="_blank" rel="noreferrer">Chat</a>
+                                <a href="https://wa.me/18098532314" target="_blank" rel="noreferrer">Chat</a>
                             </Button>
                         </div>
 
@@ -45,10 +45,10 @@ export default function AyudaPage() {
                             <Mail className="h-5 w-5 text-blue-600" />
                             <div>
                                 <p className="font-medium">Correo Electrónico</p>
-                                <p className="text-sm text-muted-foreground">soporte@tusistema.com</p>
+                                <p className="text-sm text-muted-foreground">Elmerfrancis1991@gmail.com</p>
                             </div>
                             <Button variant="ghost" size="sm" className="ml-auto" asChild>
-                                <a href="mailto:soporte@tusistema.com">Enviar</a>
+                                <a href="mailto:Elmerfrancis1991@gmail.com">Enviar</a>
                             </Button>
                         </div>
                     </CardContent>
@@ -78,11 +78,10 @@ export default function AyudaPage() {
                             </p>
                         </div>
                         <div className="pt-2">
-                            <Button variant="outline" className="w-full gap-2" asChild>
-                                <a href="https://docs.google.com/document/d/1X-PLACEHOLDER" target="_blank" rel="noreferrer">
-                                    <ExternalLink className="h-4 w-4" />
-                                    Ver Documentación Completa
-                                </a>
+                            <Button variant="outline" className="w-full gap-2" disabled>
+                                <ExternalLink className="h-4 w-4" />
+                                Ver Documentación Completa
+                                <span className="text-xs text-muted-foreground ml-2">(Próximamente)</span>
                             </Button>
                         </div>
                     </CardContent>

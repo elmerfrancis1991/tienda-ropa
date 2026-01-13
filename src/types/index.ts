@@ -77,6 +77,7 @@ export const COLORES: string[] = [
 export type Permiso =
     | 'pos:vender'           // Puede realizar ventas
     | 'pos:descuentos'       // Puede aplicar descuentos
+    | 'pos:toggle_impuesto'  // Puede activar/desactivar impuesto en ventas
     | 'productos:ver'        // Puede ver productos
     | 'productos:editar'     // Puede editar productos
     | 'productos:eliminar'   // Puede eliminar productos
@@ -95,7 +96,7 @@ export type Permiso =
 // Permisos por defecto según rol
 export const PERMISOS_POR_ROL: Record<UserRole, Permiso[]> = {
     admin: [
-        'pos:vender', 'pos:descuentos',
+        'pos:vender', 'pos:descuentos', 'pos:toggle_impuesto',
         'productos:ver', 'productos:editar', 'productos:eliminar',
         'inventario:ver', 'inventario:ajustar',
         'reportes:ver',
@@ -150,6 +151,7 @@ export const STOCK_MINIMO_DEFAULT = 5
 export const PERMISOS_INFO: Record<Permiso, { nombre: string; categoria: string }> = {
     'pos:vender': { nombre: 'Realizar ventas', categoria: 'Punto de Venta' },
     'pos:descuentos': { nombre: 'Aplicar descuentos', categoria: 'Punto de Venta' },
+    'pos:toggle_impuesto': { nombre: 'Activar/Desactivar impuesto', categoria: 'Punto de Venta' },
     'productos:ver': { nombre: 'Ver productos', categoria: 'Productos' },
     'productos:editar': { nombre: 'Editar productos', categoria: 'Productos' },
     'productos:eliminar': { nombre: 'Eliminar productos', categoria: 'Productos' },

@@ -200,23 +200,22 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 const totalVariants = selectedTallas.length * selectedColores.length
                 let totalStockAsignado = 0
 
-                // Si se asignaron stocks individuales, sumarlos
-                const assignedKeys = Object.keys(variantStocks)
-                if (assignedKeys.length > 0) {
-                    // Sumar los que tienen valor, para los que no, usar el default (data.stock)
-                    for (const talla of selectedTallas) {
-                        for (const color of selectedColores) {
-                            const key = `${talla}-${color}`
-                            totalStockAsignado += variantStocks[key] ?? data.stock
-                        }
+                // Sumar los stocks asignados manualmente
+                for (const talla of selectedTallas) {
+                    for (const color of selectedColores) {
+                        const key = `${talla}-${color}`
+                        // Usar 0 si no hay asignación manual (no auto-rellenar con data.stock)
+                        totalStockAsignado += variantStocks[key] ?? 0
                     }
-                } else {
-                    // Si no hay stock individual, es stock * variantes
-                    totalStockAsignado = data.stock * totalVariants
                 }
 
                 if (totalStockAsignado > data.stock) {
                     throw new Error(`La suma de las variantes (${totalStockAsignado}) no puede ser mayor al Stock Inicial (${data.stock})`)
+                }
+
+                // Si el usuario no asignó stock a ninguna variante, mostrar error
+                if (totalStockAsignado === 0) {
+                    throw new Error('Debes asignar stock a al menos una variante. El stock no se asigna automáticamente.')
                 }
 
                 // Si el usuario puso un stock inicial pero no asignó individuales, 
@@ -231,7 +230,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                 for (const talla of selectedTallas) {
                     for (const color of selectedColores) {
                         const variantKey = `${talla}-${color}`
-                        const specificStock = variantStocks[variantKey] ?? data.stock
+                        const specificStock = variantStocks[variantKey] ?? 0
 
                         const variantBarcode = baseBarcode
                             ? `${baseBarcode}-${talla}-${color}`.toUpperCase().replace(/\s+/g, '')
@@ -495,8 +494,11 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             <div className="mt-4 space-y-3 bg-muted/50 p-4 rounded-lg">
                                 <Label className="text-sm font-semibold flex items-center gap-2">
                                     <AlertCircle className="h-4 w-4 text-primary" />
-                                    Cantidades por Variante
+                                    Cantidades por Variante (Asignación Manual)
                                 </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Asigna manualmente el stock para cada variante. La suma no puede exceder el Stock Total Inicial.
+                                </p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2">
                                     {selectedTallas.map(t =>
                                         selectedColores.map(c => {
@@ -509,8 +511,8 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                                     <Input
                                                         type="number"
                                                         className="h-8 w-20 text-xs"
-                                                        placeholder="Stock"
-                                                        value={variantStocks[key] ?? watch('stock')}
+                                                        placeholder="0"
+                                                        value={variantStocks[key] ?? ''}
                                                         onChange={(e) => handleVariantStockChange(t, c, parseInt(e.target.value) || 0)}
                                                     />
                                                 </div>

@@ -30,7 +30,7 @@ import { APP_VERSION, LAST_UPDATE } from '@/version'
 
 const businessSchema = z.object({
     businessName: z.string().min(2, 'Nombre muy corto'),
-    rnc: z.string().min(9, 'RNC inválido').max(11),
+    rnc: z.string().min(9, 'RNC inválido').max(11).optional().or(z.literal('')),
     telefono: z.string().min(10, 'Teléfono inválido'),
     direccion: z.string().min(10, 'Dirección muy corta'),
     email: z.string().email('Email inválido'),
@@ -168,10 +168,11 @@ export default function ConfiguracionPage() {
 
                             <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="rnc" className="text-sm">RNC</Label>
+                                    <Label htmlFor="rnc" className="text-sm">RNC (Opcional)</Label>
                                     <Input
                                         id="rnc"
                                         {...register('rnc')}
+                                        placeholder="Ingresa el RNC si aplica"
                                         className={`text-sm ${errors.rnc ? 'border-destructive' : ''}`}
                                     />
                                 </div>
@@ -420,10 +421,7 @@ export default function ConfiguracionPage() {
                             <p className="text-xs sm:text-sm text-muted-foreground">Actualización</p>
                             <p className="font-semibold text-sm sm:text-base">{LAST_UPDATE}</p>
                         </div>
-                        <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                            <p className="text-xs sm:text-sm text-muted-foreground">Base de Datos</p>
-                            <p className="font-semibold text-sm sm:text-base">Demo Mode</p>
-                        </div>
+
                         <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
                             <p className="text-xs sm:text-sm text-muted-foreground">Estado</p>
                             <Badge variant="success" className="mt-1">Activo</Badge>

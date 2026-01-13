@@ -144,30 +144,142 @@ export default function CierreCajaPage() {
     }
 
     const handlePrintCierre = (cierre: any) => {
-        // Mock print - in production this would generate a PDF or receipt
-        console.log("Printing cierre:", cierre)
         const content = `
-        CIERRE DE CAJA
-        ----------------
-        Fecha: ${formatDate(cierre.fecha)}
-        Usuario: ${cierre.usuarioNombre}
-        
-        Apertura: ${formatCurrency(cierre.montoApertura)}
-        Cierre: ${formatCurrency(cierre.montoCierre)}
-        
-        Ventas Efectivo: ${formatCurrency(cierre.ventasEfectivo || 0)}
-        Ventas Tarjeta: ${formatCurrency(cierre.ventasTarjeta || 0)}
-        Transferencias: ${formatCurrency(cierre.ventasTransferencia || 0)}
-        
-        Total Ventas: ${formatCurrency(cierre.ventasTotal)}
-        Diferencia: ${formatCurrency(cierre.diferencia)}
-        ----------------
-        Observaciones: ${cierre.observaciones || 'N/A'}
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Cierre de Caja</title>
+            <style>
+                @page { margin: 15mm; size: 80mm auto; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                    font-family: 'Courier New', monospace; 
+                    font-size: 14px; 
+                    max-width: 80mm;
+                    padding: 5mm;
+                    color: black;
+                    line-height: 1.4;
+                }
+                .center { text-align: center; }
+                .bold { font-weight: bold; }
+                .header { 
+                    font-size: 20px; 
+                    font-weight: bold; 
+                    margin-bottom: 8px;
+                    border-bottom: 3px solid #000;
+                    padding-bottom: 5px;
+                }
+                .line { 
+                    border-bottom: 2px dashed #000; 
+                    margin: 8px 0; 
+                }
+                .section {
+                    margin: 10px 0;
+                    padding: 8px;
+                    background: #f5f5f5;
+                    border-radius: 3px;
+                }
+                .row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 4px 0;
+                    font-size: 14px;
+                }
+                .row.total {
+                    font-size: 16px;
+                    font-weight: bold;
+                    border-top: 2px solid #000;
+                    margin-top: 5px;
+                    padding-top: 5px;
+                }
+                .section-title {
+                    font-weight: bold;
+                    font-size: 15px;
+                    margin-bottom: 5px;
+                    text-decoration: underline;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="center header">CIERRE DE CAJA</div>
+            
+            <div class="section">
+                <div class="row">
+                    <span>Fecha:</span>
+                    <span class="bold">${formatDate(cierre.fecha)}</span>
+                </div>
+                <div class="row">
+                    <span>Usuario:</span>
+                    <span class="bold">${cierre.usuarioNombre}</span>
+                </div>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="section-title">APERTURA Y CIERRE</div>
+            <div class="row">
+                <span>Monto Apertura:</span>
+                <span>${formatCurrency(cierre.montoApertura)}</span>
+            </div>
+            <div class="row">
+                <span>Monto Cierre:</span>
+                <span class="bold">${formatCurrency(cierre.montoCierre)}</span>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="section-title">DESGLOSE DE VENTAS</div>
+            <div class="section">
+                <div class="row">
+                    <span>Efectivo:</span>
+                    <span>${formatCurrency(cierre.ventasEfectivo || 0)}</span>
+                </div>
+                <div class="row">
+                    <span>Tarjeta:</span>
+                    <span>${formatCurrency(cierre.ventasTarjeta || 0)}</span>
+                </div>
+                <div class="row">
+                    <span>Transferencia:</span>
+                    <span>${formatCurrency(cierre.ventasTransferencia || 0)}</span>
+                </div>
+                <div class="row total">
+                    <span>TOTAL VENTAS:</span>
+                    <span>${formatCurrency(cierre.ventasTotal)}</span>
+                </div>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="row total" style="font-size: 18px; color: ${cierre.diferencia < 0 ? '#d00' : '#080'}">
+                <span>DIFERENCIA:</span>
+                <span>${cierre.diferencia > 0 ? '+' : ''}${formatCurrency(cierre.diferencia)}</span>
+            </div>
+
+            ${cierre.observaciones ? `
+            <div class="line"></div>
+            <div class="section-title">OBSERVACIONES</div>
+            <div class="section">
+                <p style="font-style: italic; font-size: 13px;">${cierre.observaciones}</p>
+            </div>
+            ` : ''}
+
+            <div class="line"></div>
+            <div class="center" style="margin-top: 15px; font-size: 12px;">
+                <p>Sistema POS - Tienda de Ropa</p>
+            </div>
+        </body>
+        </html>
         `
-        const win = window.open('', '', 'width=300,height=600')
-        win?.document.write('<pre>' + content + '</pre>')
-        win?.print()
-        win?.close()
+        const win = window.open('', '', 'width=400,height=700')
+        if (win) {
+            win.document.write(content)
+            win.document.close()
+            win.focus()
+            setTimeout(() => {
+                win.print()
+                win.close()
+            }, 250)
+        }
     }
 
     if (loading) {

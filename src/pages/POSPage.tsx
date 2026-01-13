@@ -585,7 +585,7 @@ export default function POSPage() {
                         )}
 
                         {/* Tax toggles for this sale */}
-                        {hasPermiso('pos:descuentos') && (
+                        {hasPermiso('pos:toggle_impuesto') && (
                             <div className="space-y-1">
                                 <div className="flex items-center justify-between text-xs sm:text-sm">
                                     <label className="flex items-center gap-2 cursor-pointer">
