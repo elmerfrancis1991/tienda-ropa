@@ -194,27 +194,63 @@ export function useProductos(): UseProductosReturn {
     const addProducto = async (
         producto: Omit<Producto, 'id' | 'createdAt' | 'updatedAt'>
     ): Promise<string> => {
-        if (!user?.permisos?.includes('productos:editar') && user?.role !== 'admin') {
-            // We use hasPermiso logic implicitly here but since this is a hook, we can access AuthContext
-            // Actually, let's use the hasPermiso function from AuthContext if exposed, or replicate logic.
-            // user object has permissions array if we customized it.
-            // However, better to use the hasPermiso helper if available.
-            // Checks: user?.role === 'admin' OR user?.permisos?.includes('productos:editar')
-            // Wait, PERMISOS_POR_ROL also applies.
-            // I should probably expose `hasPermiso` from `useAuth` to make this clean.
+        if (!hasPermiso('productos:editar')) {
+            const msg = 'No tienes permisos para crear productos'
+            setError(msg)
+            throw new Error(msg)
         }
-        // Let's check if useAuth exposes hasPermiso.
-        // It usually does. Let's assume it does or I will check AuthContext again.
-        // If not, I will rely on manual check: role === 'admin' || (role === 'vendedor' && PERMISOS_POR_ROL.vendedor.includes('...')) || user.permisos?.includes
-
-        // Simpler: Just check logic.
-        // But checking AuthContext file previously (Step 290 viewed AuthContext), it exports `hasPermiso`.
-        // So I should destructure it from useAuth().
 
         try {
             const id = generateId()
-            // ...
-        } catch (err) { ... }
+            await setDoc(doc(db, 'productos', id), {
+                ...producto,
+                tenantId: user?.tenantId || 'default',
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now(),
+            })
+            return id
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Error al crear producto'
+            setError(message)
+            throw new Error(message)
+        }
+    }
+
+    const updateProducto = async (id: string, updates: Partial<Producto>): Promise<void> => {
+        if (!hasPermiso('productos:editar')) {
+            const msg = 'No tienes permisos para editar productos'
+            setError(msg)
+            throw new Error(msg)
+        }
+
+        try {
+            const docRef = doc(db, 'productos', id)
+            await updateDoc(docRef, {
+                ...updates,
+                updatedAt: Timestamp.now(),
+            })
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Error al actualizar producto'
+            setError(message)
+            throw new Error(message)
+        }
+    }
+
+    const deleteProducto = async (id: string): Promise<void> => {
+        if (!hasPermiso('productos:eliminar')) {
+            const msg = 'No tienes permisos para eliminar productos'
+            setError(msg)
+            throw new Error(msg)
+        }
+
+        try {
+            const docRef = doc(db, 'productos', id)
+            await deleteDoc(docRef)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Error al eliminar producto'
+            setError(message)
+            throw new Error(message)
+        }
     }
 
     const searchProductos = useCallback(
