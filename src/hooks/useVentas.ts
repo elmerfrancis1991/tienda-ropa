@@ -12,7 +12,7 @@ export function useVentas() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [isDemo, setIsDemo] = useState(false)
-    const { user } = useAuth()
+    const { user, hasPermiso } = useAuth()
 
     // Setup listener for real-time updates without aggressive timeout fallback
     useEffect(() => {
@@ -67,6 +67,12 @@ export function useVentas() {
 
     // Transactional sale processing
     const procesarVenta = useCallback(async (venta: Venta) => {
+        if (!hasPermiso('pos:vender')) {
+            const msg = 'No tienes permisos para realizar ventas'
+            setError(msg)
+            throw new Error(msg)
+        }
+
         setLoading(true)
         setError(null)
         let savedVentaId = ''

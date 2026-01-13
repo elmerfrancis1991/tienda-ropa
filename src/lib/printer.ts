@@ -21,18 +21,18 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
-                    font-size: 15px; 
+                    font-size: 12px; 
                     width: 58mm; 
                     max-width: 58mm;
-                    padding: 2mm;
+                    padding: 1mm 2mm; 
                     color: black;
-                    line-height: 1.3;
+                    line-height: 1.2;
                 }
                 .ticket-strip {
                     page-break-after: always;
-                    border-bottom: 2px solid #000;
-                    margin-bottom: 20px;
-                    padding-bottom: 20px;
+                    border-bottom: 1px dotted #000;
+                    margin-bottom: 5mm;
+                    padding-bottom: 5mm;
                 }
                 .ticket-strip:last-child {
                     page-break-after: auto;
@@ -42,24 +42,28 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 .right { text-align: right; }
                 .bold { font-weight: bold; }
                 .line { 
-                    border-bottom: 2px dashed #000; 
-                    margin: 5px 0; 
+                    border-bottom: 1px dashed #000; 
+                    margin: 2mm 0; 
                 }
-                .header { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
-                .small { font-size: 13px; }
-                table { width: 100%; border-collapse: collapse; }
-                td, th { padding: 2px 1px; vertical-align: top; font-size: 13px; }
-                .col-qty { width: 12%; text-align: left; }
-                .col-desc { width: 40%; text-align: left; word-wrap: break-word; }
-                .col-price { width: 24%; text-align: right; }
-                .total-row td { padding-top: 4px; }
-                .grand-total { font-size: 17px; font-weight: bold; }
+                .header { font-size: 16px; font-weight: bold; margin-bottom: 2px; }
+                .small { font-size: 11px; }
+                table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+                td, th { padding: 2px 0; vertical-align: top; font-size: 12px; }
+                
+                /* Column Widths (Total 100%) */
+                .col-qty { width: 10%; text-align: center; }
+                .col-desc { width: 50%; text-align: left; padding-right: 2px; overflow: hidden; }
+                .col-price { width: 20%; text-align: right; white-space: nowrap; }
+                .col-total { width: 20%; text-align: right; white-space: nowrap; }
+                
+                .total-row td { padding-top: 4px; font-weight: bold; }
+                .grand-total { font-size: 16px; font-weight: bold; border-top: 1px solid #000; }
             </style>
         </head>
         <body>
             ${Array(copies).fill(0).map(() => `
                 <div class="ticket-strip">
-                    ${settings.logoUrl ? `<div class="center" style="margin-bottom: 8px;"><img src="${settings.logoUrl}" style="max-width: 50px; max-height: 50px;" /></div>` : ''}
+                    ${settings.logoUrl ? `<div class="center" style="margin-bottom: 4px;"><img src="${settings.logoUrl}" style="max-width: 40px; max-height: 40px;" /></div>` : ''}
                     <div class="center header">${settings.businessName}</div>
                     <div class="center small">RNC: ${settings.rnc}</div>
                     <div class="center small">${settings.direccion}</div>
@@ -67,28 +71,34 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                     
                     <div class="line"></div>
                     
-                    <div>Fecha: ${new Date(venta.fecha).toLocaleString('es-DO', { hour12: true })}</div>
-                    <div class="bold">Ticket #: ${venta.id?.slice(-8).toUpperCase() || 'N/A'}</div>
-                    <div>Cliente: ${venta.cliente || 'Cliente General'}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                        <span>${new Date(venta.fecha).toLocaleDateString('es-DO')}</span>
+                        <span>${new Date(venta.fecha).toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                    </div>
+                    <div class="bold" style="font-size: 12px; margin-top: 2px;">Ticket: ${venta.id?.slice(-8).toUpperCase() || 'N/A'}</div>
+                    <div style="font-size: 12px;">Cliente: ${venta.cliente || 'Contado'}</div>
                     
                     <div class="line"></div>
 
                     <table>
                         <thead>
-                            <tr class="bold">
+                            <tr class="bold" style="border-bottom: 1px solid #000;">
                                 <th class="col-qty">Cant</th>
                                 <th class="col-desc">Desc</th>
-                                <th class="col-price">P.Unit</th>
-                                <th class="col-price">Total</th>
+                                <th class="col-price">Precio</th>
+                                <th class="col-total">Total</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="margin-top: 4px;">
                             ${venta.items.map(item => `
                                 <tr>
                                     <td class="col-qty">${item.cantidad}</td>
-                                    <td class="col-desc">${item.producto.nombre.substring(0, 18)}</td>
-                                    <td class="col-price">${item.producto.precio.toFixed(2)}</td>
-                                    <td class="col-price">${item.subtotal.toFixed(2)}</td>
+                                    <td class="col-desc">
+                                        ${item.producto.nombre}
+                                        ${item.producto.talla ? `<br/><span style="font-size: 10px; color: #333;">Talla: ${item.producto.talla}</span>` : ''}
+                                    </td>
+                                    <td class="col-price">${item.producto.precio.toFixed(0)}</td>
+                                    <td class="col-total">${item.subtotal.toFixed(0)}</td>
                                 </tr>
                             `).join('')}
                         </tbody>

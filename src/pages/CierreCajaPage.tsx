@@ -150,52 +150,51 @@ export default function CierreCajaPage() {
         <head>
             <title>Cierre de Caja</title>
             <style>
-                @page { margin: 15mm; size: 80mm auto; }
+                @page { margin: 0; size: 58mm auto; }
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
-                    font-size: 14px; 
-                    max-width: 80mm;
-                    padding: 5mm;
+                    font-size: 12px; 
+                    width: 58mm;
+                    max-width: 58mm;
+                    padding: 2mm;
                     color: black;
-                    line-height: 1.4;
+                    line-height: 1.2;
                 }
                 .center { text-align: center; }
                 .bold { font-weight: bold; }
                 .header { 
-                    font-size: 20px; 
+                    font-size: 16px; 
                     font-weight: bold; 
-                    margin-bottom: 8px;
-                    border-bottom: 3px solid #000;
-                    padding-bottom: 5px;
+                    margin-bottom: 4px;
+                    border-bottom: 1px solid #000;
+                    padding-bottom: 4px;
                 }
                 .line { 
-                    border-bottom: 2px dashed #000; 
-                    margin: 8px 0; 
+                    border-bottom: 1px dashed #000; 
+                    margin: 4px 0; 
                 }
                 .section {
-                    margin: 10px 0;
-                    padding: 8px;
-                    background: #f5f5f5;
-                    border-radius: 3px;
+                    margin: 4px 0;
+                    padding: 4px 0;
                 }
                 .row {
                     display: flex;
                     justify-content: space-between;
-                    padding: 4px 0;
-                    font-size: 14px;
+                    padding: 2px 0;
+                    font-size: 12px;
                 }
                 .row.total {
-                    font-size: 16px;
+                    font-size: 14px;
                     font-weight: bold;
-                    border-top: 2px solid #000;
-                    margin-top: 5px;
-                    padding-top: 5px;
+                    border-top: 1px solid #000;
+                    margin-top: 4px;
+                    padding-top: 4px;
                 }
                 .section-title {
                     font-weight: bold;
-                    font-size: 15px;
-                    margin-bottom: 5px;
+                    font-size: 13px;
+                    margin-bottom: 2px;
                     text-decoration: underline;
                 }
             </style>

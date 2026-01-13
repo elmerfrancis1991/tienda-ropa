@@ -1,434 +1,313 @@
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import {
-    Settings,
-    Building2,
-    Receipt,
-    Palette,
-    Bell,
-    Save,
-    Loader2,
-    Check,
-    Store,
-    Phone,
-    MapPin,
-    Globe,
-    Percent,
-    DollarSign,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Save, Building2, Receipt, Palette, Database, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { useConfig } from '@/contexts/ConfigContext'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useToast } from '@/hooks/use-toast'
+import { useConfiguracion } from '@/hooks/useConfiguracion'
+import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
-import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
 import { APP_VERSION, LAST_UPDATE } from '@/version'
 
+// Schema de validación
 const businessSchema = z.object({
-    businessName: z.string().min(2, 'Nombre muy corto'),
+    businessName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
     rnc: z.string().min(9, 'RNC inválido').max(11).optional().or(z.literal('')),
-    telefono: z.string().min(10, 'Teléfono inválido'),
-    direccion: z.string().min(10, 'Dirección muy corta'),
-    email: z.string().email('Email inválido'),
-    website: z.string().url('URL inválida').optional().or(z.literal('')),
-    logoUrl: z.string().url('URL inválida').optional().or(z.literal('')),
+    telefono: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
+    direccion: z.string().optional(),
+    impuestoPorcentaje: z.coerce.number().min(0).max(100),
+    propinaPorcentaje: z.coerce.number().min(0).max(100),
+    moneda: z.string().default('RD$'),
+    // Campos opcionales para evitar errores si vienen del hook
+    email: z.string().optional(),
+    website: z.string().optional(),
+    logoUrl: z.string().optional()
 })
 
-type BusinessFormData = z.infer<typeof businessSchema>
+type BusinessFormValues = z.infer<typeof businessSchema>
 
-interface ToggleSwitchProps {
-    checked: boolean
-    onChange: (checked: boolean) => void
-    label: string
-    description?: string
-}
-
-function ToggleSwitch({ checked, onChange, label, description }: ToggleSwitchProps) {
-    return (
-        <div className="flex items-center justify-between py-3">
-            <div className="flex-1 min-w-0 pr-4">
-                <p className="font-medium text-sm sm:text-base">{label}</p>
-                {description && (
-                    <p className="text-xs sm:text-sm text-muted-foreground">{description}</p>
-                )}
-            </div>
-            <button
-                type="button"
-                onClick={() => onChange(!checked)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${checked ? 'bg-primary' : 'bg-muted'
-                    }`}
-            >
-                <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${checked ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                />
-            </button>
-        </div>
-    )
-}
-
-export default function ConfiguracionPage() {
-    const { settings, updateSettings } = useConfig()
+export function ConfiguracionPage() {
+    const { toast } = useToast()
+    const { config, loading, saveConfig } = useConfiguracion()
+    const { user } = useAuth()
     const { theme, toggleTheme } = useTheme()
-    const [saving, setSaving] = useState(false)
-    const [saved, setSaved] = useState(false)
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<BusinessFormData>({
+    const form = useForm<BusinessFormValues>({
         resolver: zodResolver(businessSchema),
         defaultValues: {
-            businessName: settings.businessName,
-            rnc: settings.rnc,
-            telefono: settings.telefono,
-            direccion: settings.direccion,
-            email: settings.email,
-            website: settings.website,
-            logoUrl: settings.logoUrl || '',
-        },
+            businessName: '',
+            rnc: '',
+            telefono: '',
+            direccion: '',
+            impuestoPorcentaje: 18,
+            propinaPorcentaje: 10,
+            moneda: 'RD$'
+        }
     })
 
-    const handleSave = async () => {
-        setSaving(true)
-        await new Promise(resolve => setTimeout(resolve, 500))
-        setSaving(false)
-        setSaved(true)
-        setTimeout(() => setSaved(false), 2000)
-    }
+    // Cargar configuración cuando esté lista
+    useEffect(() => {
+        if (!loading && config) {
+            form.reset({
+                businessName: config.businessName || '',
+                rnc: config.rnc || '',
+                telefono: config.telefono || '',
+                direccion: config.direccion || '',
+                impuestoPorcentaje: config.impuestoPorcentaje ?? 18,
+                propinaPorcentaje: config.propinaPorcentaje ?? 10,
+                moneda: config.moneda || 'RD$',
+                logoUrl: config.logoUrl || ''
+            })
+        }
+    }, [config, loading, form])
 
-    const handleBusinessSubmit = async (data: BusinessFormData) => {
-        updateSettings(data)
-        await handleSave()
-    }
-
-    const handleTaxSave = async () => {
-        await handleSave()
-    }
-
-    // Handle theme toggle
-    const handleDarkModeToggle = (checked: boolean) => {
-        updateSettings({ darkMode: checked })
-        if ((checked && theme === 'light') || (!checked && theme === 'dark')) {
-            toggleTheme()
+    const onSubmit = async (data: BusinessFormValues) => {
+        try {
+            await saveConfig(data)
+            toast({
+                title: "Configuración guardada",
+                description: "Los cambios se han actualizado correctamente en el sistema.",
+            })
+        } catch (error) {
+            console.error(error)
+            toast({
+                title: "Error al guardar",
+                description: "No se pudieron guardar los cambios. Intente nuevamente.",
+                variant: "destructive"
+            })
         }
     }
 
+    if (loading) {
+        return <div className="p-8 text-center">Cargando configuración...</div>
+    }
+
     return (
-        <div className="space-y-4 sm:space-y-6 p-2 sm:p-0">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
-                        <Settings className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                        Configuración
-                    </h1>
-                    <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                        Personaliza la configuración del sistema
-                    </p>
-                </div>
-                {saved && (
-                    <Badge variant="success" className="h-fit self-start sm:self-auto">
-                        <Check className="h-3 w-3 mr-1" />
-                        Guardado
-                    </Badge>
-                )}
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Configuración</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">
+                    Gestiona la información de tu negocio y preferencias del sistema.
+                </p>
             </div>
 
-            <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-                {/* Business Information */}
-                <Card>
-                    <CardHeader className="p-4 sm:p-6">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                            <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            Información del Negocio
-                        </CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">
-                            Datos de la empresa para facturas
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-                        <form onSubmit={handleSubmit(handleBusinessSubmit)} className="space-y-3 sm:space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="businessName" className="flex items-center gap-2 text-sm">
-                                    <Store className="h-3 w-3 sm:h-4 sm:w-4" />
-                                    Nombre del Negocio
-                                </Label>
-                                <Input
-                                    id="businessName"
-                                    {...register('businessName')}
-                                    className={`text-sm ${errors.businessName ? 'border-destructive' : ''}`}
-                                />
+            <Tabs defaultValue="general" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+                    <TabsTrigger value="general">General</TabsTrigger>
+                    <TabsTrigger value="sistema">Sistema</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="general" className="space-y-6">
+                    {/* Información del Negocio */}
+                    <Card className="border-t-4 border-t-blue-600 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Building2 className="h-5 w-5 text-blue-600" />
+                                Información del Negocio
+                            </CardTitle>
+                            <CardDescription>
+                                Datos principales de la empresa que aparecerán en los reportes y tickets.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="businessName">Nombre del Negocio</Label>
+                                        <Input
+                                            id="businessName"
+                                            {...form.register('businessName')}
+                                            placeholder="Ej: Tienda de Ropa Elite"
+                                        />
+                                        {form.formState.errors.businessName && (
+                                            <p className="text-sm text-red-500">{form.formState.errors.businessName.message}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="rnc">RNC (Opcional)</Label>
+                                        <Input
+                                            id="rnc"
+                                            {...form.register('rnc')}
+                                            placeholder="Ingresa el RNC si aplica"
+                                        />
+                                        {form.formState.errors.rnc && (
+                                            <p className="text-sm text-red-500">{form.formState.errors.rnc.message}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="telefono">Teléfono</Label>
+                                        <Input
+                                            id="telefono"
+                                            {...form.register('telefono')}
+                                            placeholder="Ej: 809-555-0123"
+                                        />
+                                        {form.formState.errors.telefono && (
+                                            <p className="text-sm text-red-500">{form.formState.errors.telefono.message}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="direccion">Dirección</Label>
+                                        <Input
+                                            id="direccion"
+                                            {...form.register('direccion')}
+                                            placeholder="Ej: Av. Winston Churchill #123"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="logoUrl">URL del Logo (Opcional)</Label>
+                                        <Input
+                                            id="logoUrl"
+                                            {...form.register('logoUrl')}
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-end pt-4">
+                                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Guardar Información
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Configuración Fiscal */}
+                    <Card className="border-t-4 border-t-green-600 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Receipt className="h-5 w-5 text-green-600" />
+                                Impuestos y Moneda
+                            </CardTitle>
+                            <CardDescription>
+                                Configuración de valores fiscales y formato de moneda.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="impuesto">ITBIS / Impuesto (%)</Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="impuesto"
+                                                type="number"
+                                                {...form.register('impuestoPorcentaje')}
+                                                min="0"
+                                                max="100"
+                                            />
+                                            <span className="absolute right-3 top-2.5 text-gray-500">%</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="propina">Propina Legal (%)</Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="propina"
+                                                type="number"
+                                                {...form.register('propinaPorcentaje')}
+                                                min="0"
+                                                max="100"
+                                            />
+                                            <span className="absolute right-3 top-2.5 text-gray-500">%</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="moneda">Moneda</Label>
+                                        <Select
+                                            onValueChange={(value) => form.setValue('moneda', value)}
+                                            defaultValue={form.getValues('moneda')}
+                                            value={form.watch('moneda')}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Seleccionar moneda" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="RD$">Peso Dominicano (RD$)</SelectItem>
+                                                <SelectItem value="USD$">Dólar Estadounidense (USD$)</SelectItem>
+                                                <SelectItem value="€">Euro (€)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end pt-4">
+                                    <Button type="submit" className="bg-green-600 hover:bg-green-700">
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Guardar Fiscal
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Apariencia */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Palette className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                                Apariencia
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="font-medium">Tema Oscuro</p>
+                                    <p className="text-sm text-gray-500">Activar modo oscuro para la interfaz</p>
+                                </div>
+                                <Button variant="outline" onClick={toggleTheme}>
+                                    {theme === 'dark' ? 'Desactivar' : 'Activar'}
+                                </Button>
                             </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
-                            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="rnc" className="text-sm">RNC (Opcional)</Label>
-                                    <Input
-                                        id="rnc"
-                                        {...register('rnc')}
-                                        placeholder="Ingresa el RNC si aplica"
-                                        className={`text-sm ${errors.rnc ? 'border-destructive' : ''}`}
-                                    />
+                <TabsContent value="sistema" className="space-y-6">
+                    <Card className="border-t-4 border-t-purple-600 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Database className="h-5 w-5 text-purple-600" />
+                                Información del Sistema
+                            </CardTitle>
+                            <CardDescription>
+                                Detalles técnicos de la instalación actual.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-sm text-gray-500">Versión del Sistema</div>
+                                    <div className="font-medium text-lg">{APP_VERSION}</div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="telefono" className="flex items-center gap-2 text-sm">
-                                        <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        Teléfono
-                                    </Label>
-                                    <Input
-                                        id="telefono"
-                                        {...register('telefono')}
-                                        className="text-sm"
-                                    />
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-sm text-gray-500">Tenant ID</div>
+                                    <div className="font-mono text-sm break-all">{user?.tenantId}</div>
                                 </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="direccion" className="flex items-center gap-2 text-sm">
-                                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                                    Dirección
-                                </Label>
-                                <Input
-                                    id="direccion"
-                                    {...register('direccion')}
-                                    className="text-sm"
-                                />
-                            </div>
-
-                            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-sm">Email</Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        {...register('email')}
-                                        className="text-sm"
-                                    />
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-sm text-gray-500">Estado</div>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                        <span className="font-medium text-green-600">Activo</span>
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="website" className="flex items-center gap-2 text-sm">
-                                        <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        Sitio Web
-                                    </Label>
-                                    <Input
-                                        id="website"
-                                        {...register('website')}
-                                        className="text-sm"
-                                    />
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-sm text-gray-500">Última Actualización</div>
+                                    <div className="font-medium">{LAST_UPDATE}</div>
                                 </div>
                             </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="logoUrl" className="text-sm">URL del Logo (Opcional)</Label>
-                                <Input
-                                    id="logoUrl"
-                                    {...register('logoUrl')}
-                                    placeholder="https://ejemplo.com/logo.png"
-                                    className="text-sm"
-                                />
-                                <p className="text-[10px] text-muted-foreground">Pega la dirección de imagen de tu logo</p>
-                            </div>
-
-                            <Button type="submit" className="w-full" disabled={saving}>
-                                {saving ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                ) : (
-                                    <Save className="mr-2 h-4 w-4" />
-                                )}
-                                Guardar Cambios
-                            </Button>
-                        </form>
-                    </CardContent>
-                </Card>
-
-                {/* Tax Configuration */}
-                <Card>
-                    <CardHeader className="p-4 sm:p-6">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                            <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            Configuración de Impuestos
-                        </CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">
-                            Ajusta los impuestos y moneda del sistema
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-4">
-                        {/* ITBIS Toggle */}
-                        <div className="space-y-3">
-                            <ToggleSwitch
-                                checked={settings.itbisEnabled}
-                                onChange={(checked) => updateSettings({ itbisEnabled: checked })}
-                                label="Aplicar ITBIS"
-                                description="Habilitar impuesto a las ventas"
-                            />
-
-                            {settings.itbisEnabled && (
-                                <div className="space-y-2 pl-0 sm:pl-4">
-                                    <Label htmlFor="itbis" className="flex items-center gap-2 text-sm">
-                                        <Percent className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        ITBIS (%)
-                                    </Label>
-                                    <Input
-                                        id="itbis"
-                                        type="number"
-                                        step="0.1"
-                                        value={settings.itbisRate}
-                                        onChange={(e) => updateSettings({ itbisRate: parseFloat(e.target.value) || 0 })}
-                                        className="text-sm"
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <Separator />
-
-                        {/* Propina Toggle */}
-                        <div className="space-y-3">
-                            <ToggleSwitch
-                                checked={settings.propinaEnabled}
-                                onChange={(checked) => updateSettings({ propinaEnabled: checked })}
-                                label="Aplicar Propina Legal"
-                                description="Agregar propina obligatoria"
-                            />
-
-                            {settings.propinaEnabled && (
-                                <div className="space-y-2 pl-0 sm:pl-4">
-                                    <Label htmlFor="propina" className="flex items-center gap-2 text-sm">
-                                        <Percent className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        Propina (%)
-                                    </Label>
-                                    <Input
-                                        id="propina"
-                                        type="number"
-                                        step="0.1"
-                                        value={settings.propinaRate}
-                                        onChange={(e) => updateSettings({ propinaRate: parseFloat(e.target.value) || 0 })}
-                                        className="text-sm"
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <Separator />
-
-                        <div className="space-y-2">
-                            <Label htmlFor="moneda" className="flex items-center gap-2 text-sm">
-                                <DollarSign className="h-3 w-3 sm:h-4 sm:w-4" />
-                                Moneda
-                            </Label>
-                            <select
-                                id="moneda"
-                                value={settings.moneda}
-                                onChange={(e) => updateSettings({ moneda: e.target.value as 'DOP' | 'USD' | 'EUR' })}
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="DOP">RD$ - Peso Dominicano</option>
-                                <option value="USD">$ - Dólar Estadounidense</option>
-                                <option value="EUR">€ - Euro</option>
-                            </select>
-                        </div>
-
-                        <Button onClick={handleTaxSave} className="w-full" disabled={saving}>
-                            {saving ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <Save className="mr-2 h-4 w-4" />
-                            )}
-                            Guardar Impuestos
-                        </Button>
-                    </CardContent>
-                </Card>
-
-                {/* Appearance */}
-                <Card>
-                    <CardHeader className="p-4 sm:p-6">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                            <Palette className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            Apariencia
-                        </CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">
-                            Personaliza el aspecto visual
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-                        <div className="space-y-1">
-                            <ToggleSwitch
-                                checked={theme === 'dark'}
-                                onChange={handleDarkModeToggle}
-                                label="Modo Oscuro"
-                                description="Usar tema oscuro por defecto"
-                            />
-                            <Separator />
-                            <ToggleSwitch
-                                checked={settings.soundEnabled}
-                                onChange={(checked) => updateSettings({ soundEnabled: checked })}
-                                label="Sonidos"
-                                description="Reproducir sonidos en eventos"
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Notifications & Receipts */}
-                <Card>
-                    <CardHeader className="p-4 sm:p-6">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                            <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            Notificaciones y Recibos
-                        </CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">
-                            Configura alertas e impresión
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-                        <div className="space-y-1">
-                            <ToggleSwitch
-                                checked={settings.notificationsEnabled}
-                                onChange={(checked) => updateSettings({ notificationsEnabled: checked })}
-                                label="Notificaciones"
-                                description="Mostrar alertas de bajo stock"
-                            />
-                            <Separator />
-                            <ToggleSwitch
-                                checked={settings.printReceipt}
-                                onChange={(checked) => updateSettings({ printReceipt: checked })}
-                                label="Imprimir Recibo"
-                                description="Imprimir al completar venta"
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* System Info */}
-            <Card>
-                <CardHeader className="p-4 sm:p-6">
-                    <CardTitle className="text-base sm:text-lg">Información del Sistema</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-                    <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
-                        <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                            <p className="text-xs sm:text-sm text-muted-foreground">Versión</p>
-                            <p className="font-semibold text-sm sm:text-base">{APP_VERSION}</p>
-                        </div>
-                        <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                            <p className="text-xs sm:text-sm text-muted-foreground">Actualización</p>
-                            <p className="font-semibold text-sm sm:text-base">{LAST_UPDATE}</p>
-                        </div>
-
-                        <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                            <p className="text-xs sm:text-sm text-muted-foreground">Estado</p>
-                            <Badge variant="success" className="mt-1">Activo</Badge>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }
+
+export default ConfiguracionPage;

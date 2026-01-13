@@ -39,6 +39,7 @@ export interface Categoria {
     id: string
     nombre: string
     descripcion?: string
+    tipoVariante?: 'talla' | 'numerico' | 'unico' // talla (XS-XL), numerico (35-45), unico (sin variantes)
 }
 
 export interface AuthState {
@@ -48,14 +49,14 @@ export interface AuthState {
 }
 
 export const CATEGORIAS_ROPA: Categoria[] = [
-    { id: 'camisas', nombre: 'Camisas' },
-    { id: 'pantalones', nombre: 'Pantalones' },
-    { id: 'vestidos', nombre: 'Vestidos' },
-    { id: 'faldas', nombre: 'Faldas' },
-    { id: 'chaquetas', nombre: 'Chaquetas' },
-    { id: 'accesorios', nombre: 'Accesorios' },
-    { id: 'calzado', nombre: 'Calzado' },
-    { id: 'ropa_interior', nombre: 'Ropa Interior' },
+    { id: 'camisas', nombre: 'Camisas', tipoVariante: 'talla' },
+    { id: 'pantalones', nombre: 'Pantalones', tipoVariante: 'talla' }, // O numérico dependiendo del negocio
+    { id: 'vestidos', nombre: 'Vestidos', tipoVariante: 'talla' },
+    { id: 'faldas', nombre: 'Faldas', tipoVariante: 'talla' },
+    { id: 'chaquetas', nombre: 'Chaquetas', tipoVariante: 'talla' },
+    { id: 'accesorios', nombre: 'Accesorios', tipoVariante: 'unico' },
+    { id: 'calzado', nombre: 'Calzado', tipoVariante: 'numerico' },
+    { id: 'ropa_interior', nombre: 'Ropa Interior', tipoVariante: 'talla' },
 ]
 
 export const TALLAS: string[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL']

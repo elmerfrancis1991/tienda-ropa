@@ -18,6 +18,7 @@ import {
     Barcode,
 } from 'lucide-react'
 import { printTicket } from '@/lib/printer'
+import { useBarcodeScan } from '@/hooks/useBarcodeScan'
 import { useProductos } from '@/hooks/useProductos'
 import { useCart, Venta } from '@/hooks/useCart'
 import { useVentas } from '@/hooks/useVentas'
@@ -252,32 +253,18 @@ export default function POSPage() {
         })
     }, [settings.itbisEnabled, settings.itbisRate, settings.propinaEnabled, settings.propinaRate])
 
-    // Auto-focus search on load
-    useEffect(() => {
-        // Simple barcode scanner listener: focus input if not focused
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!searchInputRef.current) return;
-            // If user types but not modifying any other input, focus search
-            if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-                searchInputRef.current.focus();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    // Barcode Scanner Hook
+    useBarcodeScan((barcode) => {
+        setSearchTerm(barcode)
+        // Auto-submit search when scan detects completion
+        const scannedProduct = productos.find(p => p.codigoBarra === barcode && p.activo && p.stock > 0)
 
-    // Barcode Search Logic: Check for direct match
-    useEffect(() => {
-        if (!searchTerm) return
-
-        // 1. Strict exact match for barcode (Instant Add)
-        const exactMatch = productos.find(p => p.codigoBarra === searchTerm && p.activo && p.stock > 0)
-
-        // If exact match found and it's a barcode-like scan (usually fast input?)
-        // For now, let's just use Enter key or a dedicated function.
-        // Actually, if using a scanner, it often sends 'Enter' at the end.
-        // Let's implement handlesearch submit.
-    }, [searchTerm, productos])
+        if (scannedProduct) {
+            handleAddToCart(scannedProduct)
+            setSearchTerm('') // Clear after successful add
+            // Toast or sound could go here
+        }
+    })
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault()
