@@ -132,7 +132,7 @@ interface UseProductosReturn {
 }
 
 export function useProductos(): UseProductosReturn {
-    const { user } = useAuth() // Get current user for tenantId
+    const { user, hasPermiso } = useAuth() // Get current user for tenantId and permissions
     const [productos, setProductos] = useState<Producto[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
