@@ -222,7 +222,7 @@ export function ConfiguracionPage() {
                                     <div className="space-y-2">
                                         <Label htmlFor="moneda">Moneda</Label>
                                         <Select
-                                            onValueChange={(value) => form.setValue('moneda', value)}
+                                            onValueChange={(value: string) => form.setValue('moneda', value)}
                                             defaultValue={form.getValues('moneda')}
                                             value={form.watch('moneda')}
                                         >

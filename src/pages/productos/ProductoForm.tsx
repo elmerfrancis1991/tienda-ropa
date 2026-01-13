@@ -348,7 +348,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             <Label htmlFor="nombre">Nombre del Producto *</Label>
                             <Input
                                 id="nombre"
-                                placeholder={tipoVariante === 'calzado' ? "Ej: Nike Air Force 1" : "Ej: Camisa Polo Clásica"}
+                                placeholder={tipoVariante === 'numerico' ? "Ej: Nike Air Force 1" : "Ej: Camisa Polo Clásica"}
                                 {...register('nombre')}
                                 className={errors.nombre ? 'border-destructive' : ''}
                             />
