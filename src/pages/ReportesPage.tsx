@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { downloadCSV } from '@/lib/csv-helper'
 import {
     BarChart3,
     TrendingUp,
@@ -58,7 +59,6 @@ export default function ReportesPage() {
         setExporting(true)
         await new Promise(resolve => setTimeout(resolve, 1000))
 
-        // CSV with REAL data
         const headers = ['ID', 'Fecha', 'Cliente', 'Total', 'Metodo', 'Items']
         const rows = filteredData.recentSales.map(v => [
             v.id,
@@ -68,18 +68,8 @@ export default function ReportesPage() {
             v.metodoPago,
             v.items.length
         ])
-        const csvContent = "\uFEFFdata:text/csv;charset=utf-8,"
-            + headers.join(";") + "\n"
-            + rows.map(e => e.join(";")).join("\n")
 
-        const encodedUri = encodeURI(csvContent)
-        const link = document.createElement("a")
-        link.setAttribute("href", encodedUri)
-        link.setAttribute("download", `reporte_ventas_${periodo}_${new Date().toISOString().split('T')[0]}.csv`)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-
+        downloadCSV(`reporte_ventas_${periodo}_${new Date().toISOString().split('T')[0]}.csv`, headers, rows)
         setExporting(false)
     }
 

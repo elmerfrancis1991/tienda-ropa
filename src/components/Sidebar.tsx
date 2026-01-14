@@ -38,7 +38,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, requiredRole: 'admin' },
     { title: 'Punto de Venta', href: '/pos', icon: ShoppingCart, requiredPermiso: 'pos:vender' },
     { title: 'Inventario', href: '/productos', icon: Package, requiredPermiso: 'productos:ver' },
     { title: 'Caja', href: '/caja', icon: Wallet, requiredPermiso: 'caja:abrir' },

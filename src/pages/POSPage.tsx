@@ -152,10 +152,11 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
     if (!venta) return null
 
     const [copies, setCopies] = useState(1)
+    const { user } = useAuth()
 
     const handlePrint = () => {
         printTicket(venta, {
-            businessName: settings.businessName,
+            businessName: settings.businessName || user?.empresaNombre || 'Negocio',
             rnc: settings.rnc,
             direccion: settings.direccion,
             telefono: settings.telefono,

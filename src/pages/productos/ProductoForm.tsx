@@ -549,8 +549,8 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                 type="number"
                                 {...register('stock', { valueAsNumber: true })}
                                 placeholder="Total unidades"
-                                readOnly={tipoVariante !== 'unico'}
-                                className={tipoVariante !== 'unico' ? 'bg-muted' : ''}
+                                readOnly={tipoVariante !== 'unico' && !isEditing}
+                                className={tipoVariante !== 'unico' && !isEditing ? 'bg-muted' : ''}
                             />
                         </div>
                         <div className="space-y-2">

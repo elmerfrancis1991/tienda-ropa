@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { downloadCSV } from '@/lib/csv-helper'
 import {
     FileText,
     Search,
@@ -142,17 +143,7 @@ export default function HistorialFacturasPage() {
             ]
         })
 
-        const csvContent = "\uFEFFdata:text/csv;charset=utf-8,"
-            + headers.join(";") + "\n"
-            + rows.map(e => e.map(cell => `"${cell}"`).join(";")).join("\n")
-
-        const encodedUri = encodeURI(csvContent)
-        const link = document.createElement("a")
-        link.setAttribute("href", encodedUri)
-        link.setAttribute("download", `historial_facturas_${new Date().toISOString().split('T')[0]}.csv`)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        downloadCSV(`historial_facturas_${new Date().toISOString().split('T')[0]}.csv`, headers, rows)
     }
 
     const formatDate = (date: Date | string) => {
