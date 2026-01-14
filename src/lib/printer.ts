@@ -21,12 +21,12 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
-                    font-size: 14px; 
+                    font-size: 13px; 
                     width: 58mm; 
                     max-width: 58mm;
-                    padding: 1mm 2mm; 
+                    padding: 2mm; 
                     color: black;
-                    line-height: 1.3;
+                    line-height: 1.2;
                     font-weight: 500;
                 }
                 .ticket-strip {
@@ -46,19 +46,19 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                     border-bottom: 1px dashed #000; 
                     margin: 3mm 0; 
                 }
-                .header { font-size: 18px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
-                .small { font-size: 12px; }
+                .header { font-size: 16px; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+                .small { font-size: 11px; }
                 table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-                td, th { padding: 3px 0; vertical-align: top; font-size: 14px; }
+                td, th { padding: 2px 0; vertical-align: top; font-size: 11px; }
                 
-                /* Column Widths (Total 100%) */
-                .col-qty { width: 12%; text-align: center; font-size: 13px; }
-                .col-desc { width: 44%; text-align: left; padding-right: 2px; overflow: hidden; font-size: 13px; }
-                .col-price { width: 22%; text-align: right; white-space: nowrap; font-size: 13px; }
-                .col-total { width: 22%; text-align: right; white-space: nowrap; font-size: 13px; }
+                /* Adjusted Column Widths for spacing */
+                .col-qty { width: 10%; text-align: center; }
+                .col-desc { width: 45%; text-align: left; padding-right: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                .col-price { width: 20%; text-align: right; }
+                .col-total { width: 25%; text-align: right; font-weight: bold; }
                 
-                .total-row td { padding-top: 4px; font-weight: bold; }
-                .grand-total { font-size: 16px; font-weight: bold; border-top: 1px solid #000; }
+                .total-row td { padding-top: 4px; font-weight: bold; font-size: 12px; }
+                .grand-total td { font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 4px; }
             </style>
         </head>
         <body>
@@ -66,9 +66,9 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                 <div class="ticket-strip">
                     ${settings.logoUrl ? `<div class="center" style="margin-bottom: 4px;"><img src="${settings.logoUrl}" style="max-width: 40px; max-height: 40px;" /></div>` : ''}
                     <div class="center header">${settings.businessName}</div>
-                    <div class="center small">RNC: ${settings.rnc}</div>
-                    <div class="center small">${settings.direccion}</div>
-                    <div class="center small">Tel: ${settings.telefono}</div>
+                    ${settings.rnc ? `<div class="center small">RNC: ${settings.rnc}</div>` : ''}
+                    ${settings.direccion ? `<div class="center small">${settings.direccion}</div>` : ''}
+                    ${settings.telefono ? `<div class="center small">Tel: ${settings.telefono}</div>` : ''}
                     
                     <div class="line"></div>
                     
@@ -96,7 +96,7 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                                     <td class="col-qty">${item.cantidad}</td>
                                     <td class="col-desc">
                                         ${item.producto.nombre}
-                                        ${item.producto.talla ? `<br/><span style="font-size: 10px; color: #333;">Talla: ${item.producto.talla}</span>` : ''}
+                                        ${item.producto.talla ? `<div style="font-size: 9px; color: #555;">${item.producto.talla === 'Unica' ? '' : item.producto.talla}</div>` : ''}
                                     </td>
                                     <td class="col-price">${item.producto.precio.toFixed(0)}</td>
                                     <td class="col-total">${item.subtotal.toFixed(0)}</td>

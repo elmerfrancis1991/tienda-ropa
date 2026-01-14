@@ -16,7 +16,7 @@ import {
     DialogDescription,
 } from '@/components/ui/dialog'
 import { Producto, CATEGORIAS_ROPA, TALLAS, COLORES } from '@/types'
-import { generateId } from '@/lib/utils'
+import { generateId, cn } from '@/lib/utils'
 import { generateBarcode } from '@/lib/barcode-generator'
 import { printLabels } from '@/lib/label-printer'
 
@@ -83,8 +83,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
         },
     })
 
-    const categoriaSeleccionada = watch('categoria')
-    const tipoVariante = CATEGORIAS_ROPA.find(c => c.nombre === categoriaSeleccionada)?.tipoVariante || 'talla'
+    const [tipoVarianteManual, setTipoVarianteManual] = useState<string | null>(null)
 
     // Load data
     useEffect(() => {
@@ -107,6 +106,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             // Set initial selections
             setSelectedTallas([producto.talla || ''])
             setSelectedColores([producto.color || ''])
+            setTipoVarianteManual(null) // Reset manual override on edit load (or determine from existing data if possible, but schema doesn't save it explicitly. Usually safe to rely on category)
         } else if (open && !producto) {
             // Create Mode
             reset({
@@ -125,9 +125,28 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
             setSelectedColores([])
             setVariantStocks({})
             setGeneratedCount(0)
-            setAutoBarcode(true) // Default to auto-generate for new products
+            setAutoBarcode(true)
+            setTipoVarianteManual(null)
         }
     }, [open, producto, reset])
+
+    // Detect Category Change to reset or set default?
+    // Actually we want the user to be able to change it AFTER selecting category.
+    // So if category changes, we might want to reset manual to null so it picks up new category default?
+    // Let's do that via a separate effect or just logic.
+
+    const categoriaSeleccionada = watch('categoria')
+    const categoriaDefaultTipo = CATEGORIAS_ROPA.find(c => c.nombre === categoriaSeleccionada)?.tipoVariante || 'talla'
+
+    // Effective Variant Type: Manual > Category Default
+    const tipoVariante = tipoVarianteManual || categoriaDefaultTipo
+
+    // Reset manual type when category changes (optional, but good UX to avoid stale manual overrides)
+    useEffect(() => {
+        if (!isEditing) {
+            setTipoVarianteManual(null)
+        }
+    }, [categoriaSeleccionada, isEditing])
 
     // Update generated count
     useEffect(() => {
@@ -391,6 +410,43 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             {errors.categoria && (
                                 <p className="text-sm text-destructive">{errors.categoria.message}</p>
                             )}
+                        </div>
+
+                        {/* Manual Variant Type Override */}
+                        <div className="space-y-2">
+                            <Label>Tipo de Tamaños</Label>
+                            <div className="flex bg-muted rounded-md p-1 gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setTipoVarianteManual('talla')}
+                                    className={cn(
+                                        "flex-1 text-xs py-1.5 rounded-sm font-medium transition-all",
+                                        tipoVariante === 'talla' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:bg-background/50"
+                                    )}
+                                >
+                                    Letras (S, M, L)
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTipoVarianteManual('numerico')}
+                                    className={cn(
+                                        "flex-1 text-xs py-1.5 rounded-sm font-medium transition-all",
+                                        tipoVariante === 'numerico' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:bg-background/50"
+                                    )}
+                                >
+                                    Numérico (36, 37...)
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setTipoVarianteManual('unico')}
+                                    className={cn(
+                                        "flex-1 text-xs py-1.5 rounded-sm font-medium transition-all",
+                                        tipoVariante === 'unico' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:bg-background/50"
+                                    )}
+                                >
+                                    Sin Tallas
+                                </button>
+                            </div>
                         </div>
                     </div>
 
