@@ -59,6 +59,12 @@ describe('Dashboard Access', () => {
     it('should allow everyone if no role required', () => {
         expect(checkAccess('vendedor', undefined)).toBe(true)
     })
+
+    it('should verify granular dashboard:ver permission', () => {
+        const hasGranularAccess = (permisos: string[], required: string) => permisos.includes(required)
+        expect(hasGranularAccess(['pos:vender'], 'dashboard:ver')).toBe(false)
+        expect(hasGranularAccess(['dashboard:ver', 'pos:vender'], 'dashboard:ver')).toBe(true)
+    })
 })
 
 // --- Ticket Business Name Logic Tests ---

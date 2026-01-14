@@ -77,6 +77,7 @@ export const COLORES: string[] = [
 
 // Sistema de Permisos Granulares
 export type Permiso =
+    | 'dashboard:ver'         // Puede ver el dashboard
     | 'pos:vender'           // Puede realizar ventas
     | 'pos:descuentos'       // Puede aplicar descuentos
     | 'pos:toggle_impuesto'  // Puede activar/desactivar impuesto en ventas
@@ -98,6 +99,7 @@ export type Permiso =
 // Permisos por defecto según rol
 export const PERMISOS_POR_ROL: Record<UserRole, Permiso[]> = {
     admin: [
+        'dashboard:ver',
         'pos:vender', 'pos:descuentos', 'pos:toggle_impuesto',
         'productos:ver', 'productos:editar', 'productos:eliminar',
         'inventario:ver', 'inventario:ajustar',
@@ -107,6 +109,7 @@ export const PERMISOS_POR_ROL: Record<UserRole, Permiso[]> = {
         'configuracion:ver', 'configuracion:editar'
     ],
     vendedor: [
+        'dashboard:ver',
         'pos:vender',
         'productos:ver',
         'inventario:ver',
@@ -151,6 +154,7 @@ export const STOCK_MINIMO_DEFAULT = 5
 
 // Información de permisos para UI
 export const PERMISOS_INFO: Record<Permiso, { nombre: string; categoria: string }> = {
+    'dashboard:ver': { nombre: 'Ver Dashboard', categoria: 'Dashboard' },
     'pos:vender': { nombre: 'Realizar ventas', categoria: 'Punto de Venta' },
     'pos:descuentos': { nombre: 'Aplicar descuentos', categoria: 'Punto de Venta' },
     'pos:toggle_impuesto': { nombre: 'Activar/Desactivar impuesto', categoria: 'Punto de Venta' },

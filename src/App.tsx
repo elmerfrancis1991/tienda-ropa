@@ -13,6 +13,7 @@ import ConfiguracionPage from './pages/ConfiguracionPage'
 import AyudaPage from './pages/AyudaPage'
 
 import { useState } from 'react'
+import { useAuth } from './contexts/AuthContext'
 
 export default function App() {
     // Staging Gate - persist in localStorage
@@ -59,8 +60,15 @@ export default function App() {
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route index element={<LandingRedirect />} />
+                <Route
+                    path="dashboard"
+                    element={
+                        <ProtectedRoute requiredPermiso="dashboard:ver">
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="pos" element={<POSPage />} />
                 <Route path="productos" element={<ProductosPage />} />
                 <Route
@@ -100,7 +108,22 @@ export default function App() {
             </Route>
 
             {/* Catch all */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<LandingRedirect />} />
         </Routes>
     )
+}
+
+function LandingRedirect() {
+    const { hasPermiso } = useAuth()
+
+    if (hasPermiso('dashboard:ver')) return <Navigate to="/dashboard" replace />
+    if (hasPermiso('pos:vender')) return <Navigate to="/pos" replace />
+    if (hasPermiso('productos:ver')) return <Navigate to="/productos" replace />
+    if (hasPermiso('caja:abrir')) return <Navigate to="/caja" replace />
+    if (hasPermiso('reportes:ver')) return <Navigate to="/reportes" replace />
+    if (hasPermiso('caja:historial')) return <Navigate to="/historial" replace />
+    if (hasPermiso('usuarios:ver')) return <Navigate to="/usuarios" replace />
+    if (hasPermiso('configuracion:ver')) return <Navigate to="/configuracion" replace />
+
+    return <Navigate to="/ayuda" replace />
 }

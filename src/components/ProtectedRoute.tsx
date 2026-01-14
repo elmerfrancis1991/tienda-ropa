@@ -67,12 +67,12 @@ export function ProtectedRoute({ children, requiredRole, requiredPermiso }: Prot
 
     // 2. Redirigir por rol si es necesario
     if (requiredRole && !hasRole(requiredRole)) {
-        return <Navigate to="/dashboard" replace />
+        return <Navigate to="/" replace />
     }
 
     // 3. Redirigir por permiso granular si es necesario
     if (requiredPermiso && !hasPermiso(requiredPermiso)) {
-        return <Navigate to="/dashboard" replace />
+        return <Navigate to="/" replace />
     }
 
     return <CashDrawerGuard>{children}</CashDrawerGuard>

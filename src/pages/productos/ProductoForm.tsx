@@ -83,6 +83,9 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
         },
     })
 
+    const watchedTalla = watch('talla')
+    const watchedColor = watch('color')
+
     const [tipoVarianteManual, setTipoVarianteManual] = useState<string | null>(null)
 
     // Load data
@@ -586,25 +589,22 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                     {tipoVariante === 'numerico' ? 'Size' : 'Tallas Disponibles'}
                                 </Label>
                                 <div className="flex flex-wrap gap-2">
-                                    {isEditing ? (
-                                        <select
-                                            {...register('talla')}
-                                            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+                                    {opcionesTallas.map((talla) => (
+                                        <Badge
+                                            key={talla}
+                                            variant={(isEditing ? watchedTalla === talla : selectedTallas.includes(talla)) ? 'default' : 'outline'}
+                                            className="cursor-pointer hover:scale-110 transition-transform h-8 w-8 flex items-center justify-center p-0"
+                                            onClick={() => {
+                                                if (isEditing) {
+                                                    setValue('talla', talla)
+                                                } else {
+                                                    toggleTalla(talla)
+                                                }
+                                            }}
                                         >
-                                            {opcionesTallas.map(t => <option key={t} value={t}>{t}</option>)}
-                                        </select>
-                                    ) : (
-                                        opcionesTallas.map((talla) => (
-                                            <Badge
-                                                key={talla}
-                                                variant={selectedTallas.includes(talla) ? 'default' : 'outline'}
-                                                className="cursor-pointer hover:scale-110 transition-transform h-8 w-8 flex items-center justify-center p-0"
-                                                onClick={() => toggleTalla(talla)}
-                                            >
-                                                {talla}
-                                            </Badge>
-                                        ))
-                                    )}
+                                            {talla}
+                                        </Badge>
+                                    ))}
                                 </div>
                             </div>
 
@@ -612,25 +612,22 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             <div className="space-y-2">
                                 <Label className="text-xs font-medium">Colores Disponibles</Label>
                                 <div className="flex flex-wrap gap-2">
-                                    {isEditing ? (
-                                        <select
-                                            {...register('color')}
-                                            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+                                    {COLORES.map((color) => (
+                                        <Badge
+                                            key={color}
+                                            variant={(isEditing ? watchedColor === color : selectedColores.includes(color)) ? 'default' : 'outline'}
+                                            className="cursor-pointer hover:opacity-80 px-3 py-1.5"
+                                            onClick={() => {
+                                                if (isEditing) {
+                                                    setValue('color', color)
+                                                } else {
+                                                    toggleColor(color)
+                                                }
+                                            }}
                                         >
-                                            {COLORES.map(c => <option key={c} value={c}>{c}</option>)}
-                                        </select>
-                                    ) : (
-                                        COLORES.map((color) => (
-                                            <Badge
-                                                key={color}
-                                                variant={selectedColores.includes(color) ? 'default' : 'outline'}
-                                                className="cursor-pointer hover:opacity-80 px-3 py-1.5"
-                                                onClick={() => toggleColor(color)}
-                                            >
-                                                {color}
-                                            </Badge>
-                                        ))
-                                    )}
+                                            {color}
+                                        </Badge>
+                                    ))}
                                 </div>
                             </div>
 
