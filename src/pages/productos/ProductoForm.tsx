@@ -514,7 +514,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                                 <div className="space-y-1">
                                     <Label className="text-base font-semibold text-primary">{isEditing ? 'Editar Variante' : 'Variantes y Existencias'}</Label>
                                     <p className="text-xs text-muted-foreground">
-                                        {isEditing ? 'Cambie la talla o color de este producto específico.' : `Seleccione ${tipoVariante === 'numerico' ? 'números' : 'tallas'} y colores para asignar stock.`}
+                                        {isEditing ? 'Cambie la talla o color de este producto específico.' : `Seleccione ${tipoVariante === 'numerico' ? 'Size' : 'tallas'} y colores para asignar stock.`}
                                     </p>
                                 </div>
                                 {!isEditing && generatedCount > 0 && (
@@ -527,7 +527,7 @@ export function ProductoForm({ open, onClose, onSubmit, producto }: ProductoForm
                             {/* Tallas/Numeros */}
                             <div className="space-y-2">
                                 <Label className="text-xs font-medium">
-                                    {tipoVariante === 'numerico' ? 'Números Disponibles' : 'Tallas Disponibles'}
+                                    {tipoVariante === 'numerico' ? 'Size' : 'Tallas Disponibles'}
                                 </Label>
                                 <div className="flex flex-wrap gap-2">
                                     {isEditing ? (

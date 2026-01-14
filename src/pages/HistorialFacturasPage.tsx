@@ -142,9 +142,9 @@ export default function HistorialFacturasPage() {
             ]
         })
 
-        const csvContent = "data:text/csv;charset=utf-8,"
-            + headers.join(",") + "\n"
-            + rows.map(e => e.map(cell => `"${cell}"`).join(",")).join("\n")
+        const csvContent = "\uFEFFdata:text/csv;charset=utf-8,"
+            + headers.join(";") + "\n"
+            + rows.map(e => e.map(cell => `"${cell}"`).join(";")).join("\n")
 
         const encodedUri = encodeURI(csvContent)
         const link = document.createElement("a")
