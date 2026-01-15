@@ -63,9 +63,8 @@ service cloud.firestore {
       // Create: Allow creating if it's the first user (bootstrap) or by Admin of same tenant (conceptually tricky during signup)
       // For simplicity/MVP: Authenticated users can create their own profile with a tenantId. 
       // Ideally this is done via Cloud Functions to prevent spoofing tenantId, but for client-side app:
-      // NUCLEAR OPTION: Allow any auth user to create a doc. 
-      // This confirms if the UID check was the issue.
-      allow create: if request.auth != null;
+      // Create: Allow valid users to create their own profile.
+      allow create: if isAuth() && request.auth.uid == userId;
       
       // Admin creation of other users overrides this rule? No, separate logic needed?
       // For now, let's keep it simple. If Admin needs to create users, they should rely on `request.auth.uid == userId` logic (self-signup)
