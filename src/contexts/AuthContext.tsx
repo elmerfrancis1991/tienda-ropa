@@ -161,7 +161,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     createdAt: new Date()
                 }
                 console.log('🔐 [LOGIN] Creando usuario con rol:', newUser.role, 'y tenantId:', newUser.tenantId)
+                console.warn('🔐 [LOGIN] ATTEMPTING FS WRITE (setDoc)...')
                 await setDoc(doc(db, 'users', userCredential.user.uid), newUser)
+                console.warn('🔐 [LOGIN] FS WRITE SUCCEEDED!')
+
                 setState({
                     user: newUser,
                     loading: false,

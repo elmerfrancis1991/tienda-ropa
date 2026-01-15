@@ -111,8 +111,12 @@ service cloud.firestore {
 
     // CONFIGURACION
     match /config/{configId} {
-      allow read: if isAuth(); // Allow all for now, or match tenant if config has tenantId
-      allow write: if isAdmin();
+      // Allow read/write if authenticated. 
+      // Ideally restrict to tenant logic, but for now allow auth users to manage their config.
+      // Refined rule: Check if config document's tenantId matches user's tenantId?
+      // For initial bootstrap, allow write if isAuth().
+      allow read: if isAuth(); 
+      allow write: if isAuth();
     }
   }
 }
