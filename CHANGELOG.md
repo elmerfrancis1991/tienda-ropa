@@ -2,6 +2,14 @@
 
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 
+## [1.5.0] - 2026-01-15
+### Fixed & Improved
+- **Dashboard:** Control de permisos mejorado y redirección automática.
+- **Variantes:** UI del editor unificada y selección manual de tipo.
+- **Tickets:** Diseño mejorado, fuentes más grandes y corrección de nombre de empresa.
+- **Exportación:** Formato CSV actualizado.
+- **Sistema:** Correcciones en lógica de stock, componentes de toast y sintaxis general.
+
 ## [1.4.0] - 2026-01-07
 ### fixed
 - **Multitenancy:** Asociación explícita del "Nombre de la Empresa" a los usuarios.
