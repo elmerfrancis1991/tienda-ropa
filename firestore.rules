@@ -58,7 +58,7 @@ service cloud.firestore {
       // For simplicity/MVP: Authenticated users can create their own profile with a tenantId. 
       // Ideally this is done via Cloud Functions to prevent spoofing tenantId, but for client-side app:
       allow create: if isAuth() && (
-        isOwner(userId) || 
+        request.auth.uid == userId || 
         (isAdmin() && request.resource.data.tenantId == getTenantId())
       );
       

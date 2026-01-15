@@ -145,8 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     isFirstUser = usersSnapshot.empty
                     console.log('🔐 [LOGIN] Verificación de usuarios exitosa. Es primer usuario?', isFirstUser)
                 } catch (checkError) {
-                    // If we can't list users (permission denied), assume first user for bootstrap
-                    console.log('🔐 [LOGIN] No se pudo verificar usuarios (normal si es bootstrap). Asumiendo primer usuario.')
+                    // If we can't list users (permission denied or other error), assume first user for bootstrap
+                    console.warn('🔐 [LOGIN] No se pudo verificar usuarios. Asumiendo primer usuario para permitir acceso.', checkError)
                     isFirstUser = true
                 }
 
