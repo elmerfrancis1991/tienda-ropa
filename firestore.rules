@@ -26,18 +26,24 @@ service cloud.firestore {
 
     // 4. Verify User is Admin
     function isAdmin() {
-      return hasUserData() && getUserData().role == 'admin';
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // 5. Belongs to Tenant
     function belongsToTenant(resourceData) {
-      let tenantId = getTenantId();
-      return isAuth() && tenantId != null && resourceData.tenantId == tenantId;
+      // Inline tenant check to avoid recursing carelessly
+      return isAuth() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.tenantId == resourceData.tenantId;
     }
 
     // 6. Creating in Tenant
     function creatingInTenant() {
-      return isAuth() && request.resource.data.tenantId == getTenantId();
+      // Check if the user CREATING the doc matches the tenant of the new doc
+       return isAuth() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.tenantId == request.resource.data.tenantId;
     }
 
     // 7. Is Owner of Document (User ID matches)
@@ -57,10 +63,17 @@ service cloud.firestore {
       // Create: Allow creating if it's the first user (bootstrap) or by Admin of same tenant (conceptually tricky during signup)
       // For simplicity/MVP: Authenticated users can create their own profile with a tenantId. 
       // Ideally this is done via Cloud Functions to prevent spoofing tenantId, but for client-side app:
-      allow create: if isAuth() && (
-        request.auth.uid == userId || 
-        (isAdmin() && request.resource.data.tenantId == getTenantId())
-      );
+      // Create: Allow valid users to create their own profile.
+      allow create: if isAuth() && request.auth.uid == userId;
+      
+      // Admin creation of other users overrides this rule? No, separate logic needed?
+      // For now, let's keep it simple. If Admin needs to create users, they should rely on `request.auth.uid == userId` logic (self-signup)
+      // OR we add a secondary clause that is SAFE.
+      
+      // allow create: if isAuth() && (
+      //   request.auth.uid == userId || 
+      //   (isAdmin() && request.resource.data.tenantId == getTenantId())
+      // );
       
       allow update: if (isAdmin() && belongsToTenant(resource.data)) || isOwner(userId);
       allow delete: if isAdmin() && belongsToTenant(resource.data);
