@@ -318,7 +318,7 @@ export default function POSPage() {
     const { settings } = useConfig()
     const { isOnline } = useOnlineStatus()
     const { productos, loading, fetchProductos } = useProductos()
-    const { ventas, procesarVenta, pendingSyncCount, syncOfflineSales } = useVentas()
+    const { ventas, agregarVenta, pendingSyncCount, syncOfflineSales } = useVentas()
     const { cajaActual } = useCierreCaja()
     const cart = useCart({
         itbisEnabled: settings.itbisEnabled,
@@ -426,8 +426,10 @@ export default function POSPage() {
                 throw new Error("No se puede procesar la venta: La caja está cerrada.")
             }
 
-            // 1. Process sale atomically in Firebase
-            const savedId = await procesarVenta(venta)
+            // 1. Process sale (handles offline queue automatically)
+            const result = await agregarVenta(venta)
+            const isOfflineSale = result === 'offline-queued'
+            const savedId = isOfflineSale ? `offline-${Date.now()}` : result as string
 
             // 2. Only clear cart if successful
             cart.clearCart()
