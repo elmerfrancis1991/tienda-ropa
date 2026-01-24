@@ -414,8 +414,8 @@ export default function POSPage() {
                 estado: 'completada',
                 itbisAplicado: cart.itbisEnabled,
                 propinaAplicada: cart.propinaEnabled,
-                montoRecibido: recibio,
-                cambio: cambio
+                ...(recibio !== undefined && { montoRecibido: recibio }),
+                ...(cambio !== undefined && { cambio: cambio })
             }
 
             // Final safety check
