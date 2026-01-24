@@ -155,7 +155,12 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
                                         type="number"
                                         placeholder="0.00"
                                         value={montoRecibido}
-                                        onChange={(e) => setMontoRecibido(e.target.value)}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val.length <= 10) {
+                                                setMontoRecibido(val);
+                                            }
+                                        }}
                                         className="pl-7 text-lg font-semibold"
                                         autoFocus
                                         min="0"
@@ -165,12 +170,12 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
                             </div>
 
                             {montoRecibidoNum > 0 && (
-                                <div className={`p-3 rounded-lg ${cambioValido ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800'}`}>
-                                    <div className="flex justify-between items-center">
-                                        <span className={`text-sm font-medium ${cambioValido ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+                                <div className={`p-3 rounded-lg overflow-hidden ${cambioValido ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800'}`}>
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1">
+                                        <span className={`text-sm font-medium shrink-0 ${cambioValido ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
                                             {cambioValido ? 'Cambio a devolver:' : 'Monto insuficiente:'}
                                         </span>
-                                        <span className={`text-lg font-bold ${cambioValido ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                        <span className={`text-lg font-bold break-all ${cambioValido ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                                             {cambioValido ? formatCurrency(cambio) : formatCurrency(Math.abs(cambio))}
                                         </span>
                                     </div>
