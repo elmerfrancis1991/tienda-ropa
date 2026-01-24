@@ -89,16 +89,34 @@ export function useCart(initialTaxConfig?: TaxConfig): UseCartReturn {
         cantidad: number = 1
     ) => {
         setItems(prev => {
-            // Check total quantity of this SKU in cart for stock validation
-            const totalInCart = prev
-                .filter(item => item.producto.id === producto.id)
-                .reduce((sum, item) => sum + item.cantidad, 0)
+            // Find existing item with same product ID
+            const existingItemIndex = prev.findIndex(item => item.producto.id === producto.id)
+
+            // Total quantity check
+            const totalInCart = prev.reduce((sum, item) =>
+                item.producto.id === producto.id ? sum + item.cantidad : sum, 0
+            )
 
             if (totalInCart + cantidad > producto.stock) {
                 alert(`No hay suficiente stock. Disponible: ${producto.stock}. En carrito: ${totalInCart}`)
                 return prev
             }
 
+            if (existingItemIndex > -1) {
+                // Update existing item
+                const newItems = [...prev]
+                const existingItem = newItems[existingItemIndex]
+                const newQuantity = existingItem.cantidad + cantidad
+
+                newItems[existingItemIndex] = {
+                    ...existingItem,
+                    cantidad: newQuantity,
+                    subtotal: newQuantity * producto.precio
+                }
+                return newItems
+            }
+
+            // Add new item
             return [...prev, {
                 cartItemId: generateId(),
                 producto,
