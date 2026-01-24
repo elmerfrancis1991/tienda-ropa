@@ -38,7 +38,8 @@ export function useVentas() {
                             ...data,
                             id: doc.id,
                             // Handle Timestamp vs Date compatibility
-                            fecha: data.fecha?.toDate ? data.fecha.toDate() : new Date(data.fecha)
+                            fecha: data.fecha?.toDate ? data.fecha.toDate() : new Date(data.fecha),
+                            fechaAnulacion: data.fechaAnulacion?.toDate ? data.fechaAnulacion.toDate() : (data.fechaAnulacion ? new Date(data.fechaAnulacion) : undefined)
                         }
                     }) as Venta[]
 
