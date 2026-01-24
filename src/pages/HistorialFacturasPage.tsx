@@ -155,8 +155,19 @@ export default function HistorialFacturasPage() {
         downloadCSV(`historial_facturas_${new Date().toISOString().split('T')[0]}.csv`, headers, rows)
     }
 
-    const formatDate = (date: Date | string) => {
-        const d = date instanceof Date ? date : new Date(date)
+    const formatDate = (date: any) => {
+        if (!date) return 'N/A'
+        let d: Date
+        if (date instanceof Date) {
+            d = date
+        } else if (typeof date?.toDate === 'function') {
+            d = date.toDate()
+        } else {
+            d = new Date(date)
+        }
+
+        if (isNaN(d.getTime())) return 'Fecha inválida'
+
         return new Intl.DateTimeFormat('es-DO', {
             dateStyle: 'medium',
             timeStyle: 'short'
