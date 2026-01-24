@@ -29,6 +29,9 @@ export interface Venta {
     propinaAplicada: boolean
     montoRecibido?: number
     cambio?: number
+    motivoAnulacion?: string
+    fechaAnulacion?: Date
+    anuladaPor?: string
 }
 
 interface TaxConfig {

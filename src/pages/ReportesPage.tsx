@@ -19,6 +19,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, cn } from '@/lib/utils'
 import { useReportes, Periodo } from '@/hooks/useReportes'
+import { useVentas } from '@/hooks/useVentas'
+import { useProductos } from '@/hooks/useProductos'
+import { AnularVentaModal } from '@/components/AnularVentaModal'
+import { Venta } from '@/hooks/useCart'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface StatCardProps {
     title: string
@@ -49,8 +54,13 @@ function StatCard({ title, value, description, icon: Icon }: StatCardProps) {
 
 export default function ReportesPage() {
     const { getStatsByPeriod, loading } = useReportes()
+    const { anularVenta } = useVentas()
+    const { revertirStock } = useProductos()
+    const { hasPermiso } = useAuth()
     const [periodo, setPeriodo] = useState<Periodo>('semana')
     const [exporting, setExporting] = useState(false)
+    const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null)
+    const [showAnularModal, setShowAnularModal] = useState(false)
 
     const filteredData = useMemo(() => getStatsByPeriod(periodo), [periodo, getStatsByPeriod])
     const maxChartValue = Math.max(...filteredData.chartData.map(d => d.value), 100)
@@ -71,6 +81,16 @@ export default function ReportesPage() {
 
         downloadCSV(`reporte_ventas_${periodo}_${new Date().toISOString().split('T')[0]}.csv`, headers, rows)
         setExporting(false)
+    }
+
+    const handleAnularClick = (venta: Venta) => {
+        setSelectedVenta(venta)
+        setShowAnularModal(true)
+    }
+
+    const handleConfirmAnulacion = async (motivo: string) => {
+        if (!selectedVenta) return
+        await anularVenta(selectedVenta.id, motivo, revertirStock)
     }
 
     const getPeriodoLabel = (p: Periodo): string => {
@@ -298,22 +318,46 @@ export default function ReportesPage() {
                                 filteredData.recentSales.map((venta) => (
                                     <div
                                         key={venta.id}
-                                        className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                                        className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors relative group"
                                     >
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-sm sm:text-base">{venta.cliente || 'Cliente General'}</p>
                                             <p className="text-xs text-muted-foreground truncate">
-                                                {venta.id.slice(0, 8)}... • {venta.fecha.toLocaleDateString()}
+                                                {venta.id.slice(-8).toUpperCase()} • {venta.fecha.toLocaleDateString()}
                                             </p>
                                         </div>
                                         <div className="text-right shrink-0">
-                                            <p className="font-semibold text-primary text-sm sm:text-base">
+                                            <p className={cn(
+                                                "font-semibold text-sm sm:text-base",
+                                                venta.estado === 'cancelada' ? "text-muted-foreground line-through" : "text-primary"
+                                            )}>
                                                 {formatCurrency(venta.total)}
                                             </p>
-                                            <Badge variant="outline" className="text-[10px] sm:text-xs capitalize">
-                                                {venta.metodoPago}
-                                            </Badge>
+                                            <div className="flex items-center justify-end gap-2">
+                                                {venta.estado === 'cancelada' && (
+                                                    <Badge variant="destructive" className="text-[10px] sm:text-xs">
+                                                        Anulada
+                                                    </Badge>
+                                                )}
+                                                <Badge variant="outline" className="text-[10px] sm:text-xs capitalize">
+                                                    {venta.metodoPago}
+                                                </Badge>
+                                            </div>
                                         </div>
+
+                                        {/* Acciones de Admin */}
+                                        {hasPermiso('ventas:anular') && venta.estado !== 'cancelada' && (
+                                            <div className="absolute inset-y-0 right-0 items-center pr-3 hidden group-hover:flex bg-muted/90 rounded-r-lg">
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    className="h-8 px-2 text-[10px]"
+                                                    onClick={() => handleAnularClick(venta)}
+                                                >
+                                                    Anular
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 ))
                             ) : (
@@ -323,6 +367,13 @@ export default function ReportesPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            <AnularVentaModal
+                open={showAnularModal}
+                onClose={() => setShowAnularModal(false)}
+                venta={selectedVenta}
+                onConfirm={handleConfirmAnulacion}
+            />
         </div>
     )
 }

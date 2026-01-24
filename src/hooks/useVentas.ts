@@ -197,12 +197,63 @@ export function useVentas() {
         return procesarVenta(venta)
     }, [procesarVenta])
 
+    const anularVenta = useCallback(async (ventaId: string, motivo: string, revertirStockFn: (items: Array<{ productoId: string, cantidad: number }>) => Promise<void>) => {
+        if (!hasPermiso('ventas:anular')) {
+            const msg = 'No tienes permisos para anular ventas'
+            setError(msg)
+            throw new Error(msg)
+        }
+
+        setLoading(true)
+        setError(null)
+
+        try {
+            const venta = ventas.find(v => v.id === ventaId)
+            if (!venta) {
+                throw new Error('Venta no encontrada')
+            }
+
+            if (venta.estado === 'cancelada') {
+                throw new Error('Esta venta ya fue anulada')
+            }
+
+            // Prepare stock reversal items
+            const stockItems = venta.items.map(item => ({
+                productoId: item.producto.id,
+                cantidad: item.cantidad
+            }))
+
+            // Revert stock first
+            await revertirStockFn(stockItems)
+
+            // Update sale status
+            const ventaRef = doc(db, 'ventas', ventaId)
+            await runTransaction(db, async (transaction) => {
+                transaction.update(ventaRef, {
+                    estado: 'cancelada',
+                    motivoAnulacion: motivo,
+                    fechaAnulacion: Timestamp.now(),
+                    anuladaPor: user?.nombre || 'Usuario'
+                })
+            })
+
+            setLoading(false)
+        } catch (err: any) {
+            console.error('Error anulando venta:', err)
+            const msg = err instanceof Error ? err.message : 'Error al anular la venta'
+            setError(msg)
+            setLoading(false)
+            throw new Error(msg)
+        }
+    }, [ventas, user, hasPermiso])
+
     return {
         ventas,
         loading,
         error,
         agregarVenta,
         procesarVenta,
+        anularVenta,
         isDemo
     }
 }

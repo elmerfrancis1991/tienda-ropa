@@ -63,7 +63,7 @@ export default function CierreCajaPage() {
                 ? cajaActual.createdAt
                 : new Date(cajaActual.createdAt)
             return fechaVenta >= fechaApertura
-        })
+        }).filter(v => v.estado !== 'cancelada')
 
         const efectivo = ventasHoy
             .filter(v => v.metodoPago === 'efectivo')
