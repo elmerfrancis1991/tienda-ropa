@@ -87,6 +87,7 @@ export type Permiso =
     | 'inventario:ver'       // Puede ver inventario
     | 'inventario:ajustar'   // Puede ajustar stock
     | 'reportes:ver'         // Puede ver reportes
+    | 'ventas:anular'        // Puede anular ventas
     | 'usuarios:ver'         // Puede ver usuarios
     | 'usuarios:editar'      // Puede editar usuarios
     | 'usuarios:eliminar'    // Puede eliminar usuarios
@@ -104,6 +105,7 @@ export const PERMISOS_POR_ROL: Record<UserRole, Permiso[]> = {
         'productos:ver', 'productos:editar', 'productos:eliminar',
         'inventario:ver', 'inventario:ajustar',
         'reportes:ver',
+        'ventas:anular',
         'usuarios:ver', 'usuarios:editar', 'usuarios:eliminar',
         'caja:abrir', 'caja:cerrar', 'caja:historial',
         'configuracion:ver', 'configuracion:editar'
@@ -172,6 +174,7 @@ export const PERMISOS_INFO: Record<Permiso, { nombre: string; categoria: string 
     'caja:historial': { nombre: 'Ver historial caja', categoria: 'Caja' },
     'configuracion:ver': { nombre: 'Ver configuración', categoria: 'Configuración' },
     'configuracion:editar': { nombre: 'Editar configuración', categoria: 'Configuración' },
+    'ventas:anular': { nombre: 'Anular ventas', categoria: 'Ventas' },
 }
 
 // Lista de todos los permisos

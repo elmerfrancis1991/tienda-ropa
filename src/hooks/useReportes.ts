@@ -22,10 +22,13 @@ export function useReportes() {
         if (periodo === 'anio') startDate = startOfYear
 
         // Filter sales by date
-        const ventasPeriodo = ventas.filter(v => {
+        const ventasPorFecha = ventas.filter(v => {
             const fecha = v.fecha instanceof Date ? v.fecha : (v.fecha as any).toDate()
             return fecha >= startDate
         })
+
+        // Filter valid sales for stats (not cancelled)
+        const ventasPeriodo = ventasPorFecha.filter(v => v.estado !== 'cancelada')
 
         // Calculate totals
         const ventasTotal = ventasPeriodo.reduce((sum, v) => sum + v.total, 0)

@@ -129,6 +129,7 @@ interface UseProductosReturn {
     deleteProducto: (id: string) => Promise<void>
     searchProductos: (term: string) => Producto[]
     decrementStock: (id: string, quantity: number) => Promise<void>
+    revertirStock: (items: Array<{ productoId: string, cantidad: number }>) => Promise<void>
 }
 
 export function useProductos(): UseProductosReturn {
@@ -321,6 +322,42 @@ export function useProductos(): UseProductosReturn {
         }
     }
 
+    const revertirStock = async (items: Array<{ productoId: string, cantidad: number }>): Promise<void> => {
+        try {
+            const batch = writeBatch(db)
+
+            for (const item of items) {
+                const product = productos.find(p => p.id === item.productoId)
+                if (!product) {
+                    console.warn(`Producto ${item.productoId} no encontrado para revertir stock`)
+                    continue
+                }
+
+                const newStock = product.stock + item.cantidad
+                const docRef = doc(db, 'productos', item.productoId)
+
+                batch.update(docRef, {
+                    stock: newStock,
+                    updatedAt: Timestamp.now()
+                })
+            }
+
+            await batch.commit()
+
+            // Update local state
+            setProductos((prev) =>
+                prev.map((p) => {
+                    const item = items.find(i => i.productoId === p.id)
+                    return item ? { ...p, stock: p.stock + item.cantidad } : p
+                })
+            )
+
+        } catch (err) {
+            console.error("Error revirtiendo stock:", err)
+            throw err
+        }
+    }
+
     return {
         productos,
         loading,
@@ -330,6 +367,7 @@ export function useProductos(): UseProductosReturn {
         updateProducto,
         deleteProducto,
         searchProductos,
-        decrementStock
+        decrementStock,
+        revertirStock
     }
 }
