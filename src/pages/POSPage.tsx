@@ -73,14 +73,38 @@ interface CheckoutModalProps {
 function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps) {
     const [selectedMethod, setSelectedMethod] = useState<'efectivo' | 'tarjeta' | 'transferencia' | null>(null)
     const [processing, setProcessing] = useState(false)
+    const [montoRecibido, setMontoRecibido] = useState('')
+
+    // Calcular cambio
+    const montoRecibidoNum = parseFloat(montoRecibido) || 0
+    const cambio = montoRecibidoNum - total
+    const cambioValido = cambio >= 0
+    const efectivoListo = selectedMethod === 'efectivo' ? (montoRecibidoNum >= total) : true
 
     const handleCheckout = async () => {
         if (!selectedMethod) return
+        if (selectedMethod === 'efectivo' && !efectivoListo) return
         setProcessing(true)
         // Simulate processing time but logic is handled by parent
         await onCheckout(selectedMethod)
         setProcessing(false)
         setSelectedMethod(null)
+        setMontoRecibido('')
+    }
+
+    // Reset monto recibido al cambiar método
+    const handleMethodSelect = (method: 'efectivo' | 'tarjeta' | 'transferencia') => {
+        setSelectedMethod(method)
+        if (method !== 'efectivo') {
+            setMontoRecibido('')
+        }
+    }
+
+    // Reset al cerrar
+    const handleClose = () => {
+        setSelectedMethod(null)
+        setMontoRecibido('')
+        onClose()
     }
 
     const paymentMethods = [
@@ -90,7 +114,7 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
     ]
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="max-w-[95vw] sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="text-base sm:text-lg">Procesar Pago</DialogTitle>
@@ -105,7 +129,7 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
                         {paymentMethods.map((method) => (
                             <button
                                 key={method.id}
-                                onClick={() => setSelectedMethod(method.id)}
+                                onClick={() => handleMethodSelect(method.id)}
                                 className={`flex flex-col items-center gap-1 sm:gap-2 p-3 sm:p-4 rounded-lg border-2 transition-all ${selectedMethod === method.id
                                     ? 'border-primary bg-primary/10'
                                     : 'border-border hover:border-primary/50'
@@ -116,13 +140,60 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
                             </button>
                         ))}
                     </div>
+
+                    {/* Cálculo de Cambio para Efectivo */}
+                    {selectedMethod === 'efectivo' && (
+                        <div className="space-y-3 p-4 bg-muted/50 rounded-lg border">
+                            <div className="space-y-2">
+                                <Label htmlFor="monto-recibido" className="text-sm font-medium">
+                                    Monto Recibido
+                                </Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                                    <Input
+                                        id="monto-recibido"
+                                        type="number"
+                                        placeholder="0.00"
+                                        value={montoRecibido}
+                                        onChange={(e) => setMontoRecibido(e.target.value)}
+                                        className="pl-7 text-lg font-semibold"
+                                        autoFocus
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                </div>
+                            </div>
+
+                            {montoRecibidoNum > 0 && (
+                                <div className={`p-3 rounded-lg ${cambioValido ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800'}`}>
+                                    <div className="flex justify-between items-center">
+                                        <span className={`text-sm font-medium ${cambioValido ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+                                            {cambioValido ? 'Cambio a devolver:' : 'Monto insuficiente:'}
+                                        </span>
+                                        <span className={`text-lg font-bold ${cambioValido ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                                            {cambioValido ? formatCurrency(cambio) : formatCurrency(Math.abs(cambio))}
+                                        </span>
+                                    </div>
+                                    {!cambioValido && (
+                                        <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                                            Faltan {formatCurrency(Math.abs(cambio))} para completar el pago
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <DialogFooter className="flex-col sm:flex-row gap-2">
-                    <Button variant="outline" onClick={onClose} disabled={processing} className="w-full sm:w-auto">
+                    <Button variant="outline" onClick={handleClose} disabled={processing} className="w-full sm:w-auto">
                         Cancelar
                     </Button>
-                    <Button onClick={handleCheckout} disabled={!selectedMethod || processing} className="w-full sm:w-auto">
+                    <Button
+                        onClick={handleCheckout}
+                        disabled={!selectedMethod || processing || !efectivoListo}
+                        className="w-full sm:w-auto"
+                    >
                         {processing ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -131,7 +202,10 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
                         ) : (
                             <>
                                 <Check className="h-4 w-4 mr-2" />
-                                Confirmar
+                                {selectedMethod === 'efectivo' && cambioValido && montoRecibidoNum > 0
+                                    ? `Confirmar (Cambio: ${formatCurrency(cambio)})`
+                                    : 'Confirmar'
+                                }
                             </>
                         )}
                     </Button>

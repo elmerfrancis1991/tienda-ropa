@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from '@/components/Sidebar'
 import { TermsModal } from '@/components/TermsModal'
-import pkg from '../../package.json'
+import { APP_VERSION } from '@/version'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { WifiOff } from 'lucide-react'
@@ -11,7 +11,7 @@ const INACTIVITY_LIMIT_MS = 10 * 60 * 1000 // 10 minutes
 
 export default function MainLayout() {
     const isStaging = import.meta.env.MODE === 'staging';
-    const version = pkg.version || '1.0.0';
+    const version = APP_VERSION;
     const { isCajaAbierta, loading } = useCierreCaja();
     const { logout } = useAuth(); // Import logout
     const [isOffline, setIsOffline] = useState(!navigator.onLine);
