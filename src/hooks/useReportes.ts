@@ -121,7 +121,7 @@ export function useReportes() {
             chartData,
             topProductos,
             categorias,
-            recentSales: ventasPeriodo.slice(0, 10),
+            recentSales: ventasPorFecha.slice(0, 10),
             ventasPeriodo
         }
     }

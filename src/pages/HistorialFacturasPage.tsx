@@ -28,6 +28,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogDescription,
+    DialogFooter,
 } from '@/components/ui/dialog'
 import { formatCurrency, cn } from '@/lib/utils'
 import { useVentas } from '@/hooks/useVentas'
@@ -42,6 +43,7 @@ export default function HistorialFacturasPage() {
     const { settings } = useConfig()
     const [searchTerm, setSearchTerm] = useState('')
     const [dateFilter, setDateFilter] = useState<'hoy' | 'semana' | 'mes' | 'todo'>('todo')
+    const [statusFilter, setStatusFilter] = useState<'todo' | 'completada' | 'cancelada'>('todo')
     const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
 
@@ -51,9 +53,8 @@ export default function HistorialFacturasPage() {
 
         // Filtro por término de búsqueda
         if (searchTerm) {
-            const term = searchTerm.toLowerCase().replace('#', '') // Remove # if user includes it
+            const term = searchTerm.toLowerCase().replace('#', '')
             filtered = filtered.filter(v => {
-                // Match full ID or shortened ID (last 8 chars)
                 const shortId = v.id.slice(-8).toLowerCase()
                 return v.id.toLowerCase().includes(term) ||
                     shortId.includes(term) ||
@@ -62,7 +63,7 @@ export default function HistorialFacturasPage() {
             })
         }
 
-        // Filtro por fecha (Ultra-robusto)
+        // Filtro por fecha
         const now = new Date()
 
         if (dateFilter === 'hoy') {
@@ -78,7 +79,7 @@ export default function HistorialFacturasPage() {
         } else if (dateFilter === 'semana') {
             const startOfWeek = new Date(now)
             const day = startOfWeek.getDay()
-            const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1) // Lunes
+            const diff = startOfWeek.getDate() - (day === 0 ? 6 : day - 1)
             startOfWeek.setDate(diff)
             startOfWeek.setHours(0, 0, 0, 0)
 
@@ -94,12 +95,17 @@ export default function HistorialFacturasPage() {
             })
         }
 
+        // Filtro por estado
+        if (statusFilter !== 'todo') {
+            filtered = filtered.filter(v => v.estado === statusFilter)
+        }
+
         return filtered.sort((a, b) => {
             const fechaA = a.fecha instanceof Date ? a.fecha : new Date(a.fecha)
             const fechaB = b.fecha instanceof Date ? b.fecha : new Date(b.fecha)
             return fechaB.getTime() - fechaA.getTime()
         })
-    }, [ventas, searchTerm, dateFilter])
+    }, [ventas, searchTerm, dateFilter, statusFilter])
 
     // Paginación
     const totalPages = Math.ceil(filteredVentas.length / ITEMS_PER_PAGE)
@@ -110,10 +116,12 @@ export default function HistorialFacturasPage() {
 
     // Estadísticas
     const stats = useMemo(() => {
-        const total = filteredVentas.reduce((sum, v) => sum + v.total, 0)
-        const transacciones = filteredVentas.length
+        // Solo sumamos ventas completadas para los totales financieros
+        const completadas = filteredVentas.filter(v => v.estado !== 'cancelada')
+        const total = completadas.reduce((sum, v) => sum + v.total, 0)
+        const transacciones = completadas.length
         const promedioTicket = transacciones > 0 ? total / transacciones : 0
-        return { total, transacciones, promedioTicket }
+        return { total, transacciones, promedioTicket, totalFiltradas: filteredVentas.length }
     }, [filteredVentas])
 
     const handlePrint = (venta: Venta) => {
@@ -127,7 +135,7 @@ export default function HistorialFacturasPage() {
     }
 
     const handleExportCSV = () => {
-        const headers = ['ID Factura', 'Fecha', 'Cliente', 'Productos', 'Subtotal', 'Descuento', 'ITBIS', 'Total', 'Método Pago']
+        const headers = ['ID Factura', 'Fecha', 'Cliente', 'Productos', 'Subtotal', 'Descuento', 'ITBIS', 'Total', 'Método Pago', 'Estado']
         const rows = filteredVentas.map(v => {
             const fecha = v.fecha instanceof Date ? v.fecha : new Date(v.fecha)
             return [
@@ -139,7 +147,8 @@ export default function HistorialFacturasPage() {
                 v.descuento.toFixed(2),
                 v.impuesto.toFixed(2),
                 v.total.toFixed(2),
-                v.metodoPago
+                v.metodoPago,
+                v.estado || 'completada'
             ]
         })
 
@@ -190,7 +199,7 @@ export default function HistorialFacturasPage() {
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-green-500" />
-                            Total Ventas
+                            Total Ventas (Válidas)
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -223,7 +232,7 @@ export default function HistorialFacturasPage() {
 
             {/* Filters */}
             <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 space-y-4">
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -237,8 +246,8 @@ export default function HistorialFacturasPage() {
                                 className="pl-9"
                             />
                         </div>
-                        <div className="flex p-1 bg-muted rounded-lg">
-                            {(['hoy', 'semana', 'mes', 'todo'] as const).map((periodo) => (
+                        <div className="flex p-1 bg-muted rounded-lg w-fit">
+                            {(['todo', 'hoy', 'semana', 'mes'] as const).map((periodo) => (
                                 <button
                                     key={periodo}
                                     onClick={() => {
@@ -253,6 +262,29 @@ export default function HistorialFacturasPage() {
                                     )}
                                 >
                                     {periodo === 'hoy' ? 'Hoy' : periodo === 'semana' ? 'Semana' : periodo === 'mes' ? 'Mes' : 'Todo'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-4 border-t overflow-x-auto pb-2">
+                        <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">Estado:</span>
+                        <div className="flex p-1 bg-muted rounded-lg">
+                            {(['todo', 'completada', 'cancelada'] as const).map((status) => (
+                                <button
+                                    key={status}
+                                    onClick={() => {
+                                        setStatusFilter(status)
+                                        setCurrentPage(1)
+                                    }}
+                                    className={cn(
+                                        "px-3 py-1 text-sm font-medium rounded-md transition-all whitespace-nowrap",
+                                        statusFilter === status
+                                            ? "bg-background text-foreground shadow-sm"
+                                            : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                >
+                                    {status === 'todo' ? 'Todas' : status === 'completada' ? 'Completadas' : 'Anuladas'}
                                 </button>
                             ))}
                         </div>
@@ -277,6 +309,9 @@ export default function HistorialFacturasPage() {
                                                 <Badge variant={venta.metodoPago === 'efectivo' ? 'default' : 'secondary'}>
                                                     {venta.metodoPago}
                                                 </Badge>
+                                                {venta.estado === 'cancelada' && (
+                                                    <Badge variant="destructive">ANULADA</Badge>
+                                                )}
                                             </div>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
                                                 <span className="flex items-center gap-1">
@@ -295,7 +330,10 @@ export default function HistorialFacturasPage() {
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <div className="text-right">
-                                                <p className="font-bold text-lg text-primary">
+                                                <p className={cn(
+                                                    "font-bold text-lg",
+                                                    venta.estado === 'cancelada' ? "text-muted-foreground line-through" : "text-primary"
+                                                )}>
                                                     {formatCurrency(venta.total)}
                                                 </p>
                                             </div>
@@ -327,7 +365,7 @@ export default function HistorialFacturasPage() {
                             <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                             <h3 className="font-semibold text-lg">No hay facturas</h3>
                             <p className="text-muted-foreground mt-1">
-                                {searchTerm || dateFilter !== 'todo'
+                                {searchTerm || dateFilter !== 'todo' || statusFilter !== 'todo'
                                     ? 'No se encontraron facturas con los filtros aplicados'
                                     : 'Aún no hay transacciones registradas'}
                             </p>
@@ -392,7 +430,25 @@ export default function HistorialFacturasPage() {
                                     <p className="text-muted-foreground">Método de Pago</p>
                                     <Badge>{selectedVenta.metodoPago}</Badge>
                                 </div>
+                                <div>
+                                    <p className="text-muted-foreground">Estado</p>
+                                    <Badge variant={selectedVenta.estado === 'cancelada' ? 'destructive' : 'default'}>
+                                        {(selectedVenta.estado || 'completada').toUpperCase()}
+                                    </Badge>
+                                </div>
                             </div>
+
+                            {selectedVenta.estado === 'cancelada' && (
+                                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg space-y-1">
+                                    <p className="text-sm font-bold text-destructive flex items-center gap-1">
+                                        Detalles de Anulación
+                                    </p>
+                                    <p className="text-sm"><span className="font-medium">Motivo:</span> {selectedVenta.motivoAnulacion || 'N/A'}</p>
+                                    <p className="text-sm">
+                                        <span className="font-medium">Por:</span> {selectedVenta.anuladaPor || 'Sistema'} • {selectedVenta.fechaAnulacion ? formatDate(selectedVenta.fechaAnulacion) : ''}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Items */}
                             <div className="border rounded-lg overflow-hidden">
@@ -436,12 +492,13 @@ export default function HistorialFacturasPage() {
                                 )}
                                 <div className="flex justify-between font-bold text-lg pt-2 border-t">
                                     <span>Total</span>
-                                    <span className="text-primary">{formatCurrency(selectedVenta.total)}</span>
+                                    <span className={cn(
+                                        selectedVenta.estado === 'cancelada' ? "text-muted-foreground line-through" : "text-primary"
+                                    )}>{formatCurrency(selectedVenta.total)}</span>
                                 </div>
                             </div>
 
-                            {/* Actions */}
-                            <div className="flex gap-2 pt-2">
+                            <DialogFooter className="gap-2">
                                 <Button className="flex-1" onClick={() => handlePrint(selectedVenta)}>
                                     <Printer className="h-4 w-4 mr-2" />
                                     Reimprimir
@@ -449,7 +506,7 @@ export default function HistorialFacturasPage() {
                                 <Button variant="outline" onClick={() => setSelectedVenta(null)}>
                                     Cerrar
                                 </Button>
-                            </div>
+                            </DialogFooter>
                         </div>
                     )}
                 </DialogContent>
