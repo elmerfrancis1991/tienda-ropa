@@ -131,6 +131,25 @@ export const printTicket = (venta: Venta, settings: PrintSettings, copies: numbe
                     </table>
 
                     <div class="line"></div>
+
+                    <div style="font-size: 11px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Método de Pago:</span>
+                            <span class="capitalize">${venta.metodoPago}</span>
+                        </div>
+                        ${venta.metodoPago === 'efectivo' && venta.montoRecibido !== undefined ? `
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Monto Recibido:</span>
+                            <span>${venta.montoRecibido.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;" class="bold">
+                            <span>Cambio:</span>
+                            <span>${(venta.cambio || 0).toFixed(2)}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="line"></div>
                     
                     <div class="center bold" style="margin-top: 8px; font-size: 14px;">¡Gracias por su compra!</div>
                 </div>

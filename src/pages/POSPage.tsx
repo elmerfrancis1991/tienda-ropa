@@ -67,7 +67,7 @@ interface CheckoutModalProps {
     open: boolean
     onClose: () => void
     total: number
-    onCheckout: (metodo: 'efectivo' | 'tarjeta' | 'transferencia') => void
+    onCheckout: (metodo: 'efectivo' | 'tarjeta' | 'transferencia', montoRecibido?: number, cambio?: number) => void
 }
 
 function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps) {
@@ -86,7 +86,7 @@ function CheckoutModal({ open, onClose, total, onCheckout }: CheckoutModalProps)
         if (selectedMethod === 'efectivo' && !efectivoListo) return
         setProcessing(true)
         // Simulate processing time but logic is handled by parent
-        await onCheckout(selectedMethod)
+        await onCheckout(selectedMethod, selectedMethod === 'efectivo' ? montoRecibidoNum : undefined, selectedMethod === 'efectivo' ? cambio : undefined)
         setProcessing(false)
         setSelectedMethod(null)
         setMontoRecibido('')
@@ -269,6 +269,19 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
                         <span>Total:</span>
                         <span className="text-primary">{formatCurrency(venta.total)}</span>
                     </div>
+                    {venta.metodoPago === 'efectivo' && venta.montoRecibido !== undefined && (
+                        <>
+                            <Separator />
+                            <div className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">Efectivo Recibido:</span>
+                                <span>{formatCurrency(venta.montoRecibido)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm font-bold text-green-600 dark:text-green-400">
+                                <span>Cambio:</span>
+                                <span>{formatCurrency(venta.cambio || 0)}</span>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-3 justify-center py-2">
@@ -381,7 +394,7 @@ export default function POSPage() {
         cart.addToCart(producto)
     }
 
-    const handleCheckout = async (metodoPago: 'efectivo' | 'tarjeta' | 'transferencia') => {
+    const handleCheckout = async (metodoPago: 'efectivo' | 'tarjeta' | 'transferencia', recibio?: number, cambio?: number) => {
         try {
             // Construct sale object manually to avoid clearing cart before success
             const venta: Venta = {
@@ -400,7 +413,9 @@ export default function POSPage() {
                 fecha: new Date(),
                 estado: 'completada',
                 itbisAplicado: cart.itbisEnabled,
-                propinaAplicada: cart.propinaEnabled
+                propinaAplicada: cart.propinaEnabled,
+                montoRecibido: recibio,
+                cambio: cambio
             }
 
             // Final safety check

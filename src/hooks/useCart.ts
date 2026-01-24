@@ -27,6 +27,8 @@ export interface Venta {
     estado: 'completada' | 'pendiente' | 'cancelada'
     itbisAplicado: boolean
     propinaAplicada: boolean
+    montoRecibido?: number
+    cambio?: number
 }
 
 interface TaxConfig {
