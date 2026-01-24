@@ -3,6 +3,8 @@ import { collection, addDoc, query, orderBy, onSnapshot, Timestamp, runTransacti
 import { db } from '@/lib/firebase'
 import { Venta } from './useCart'
 import { useAuth } from '@/contexts/AuthContext'
+import { offlineQueue } from '@/lib/offlineQueue'
+import { useOnlineStatus } from './useOnlineStatus'
 
 // Fallback demo data in case Firebase is not configured or fails
 // ... (DEMO_VENTAS unchanged)
@@ -12,7 +14,9 @@ export function useVentas() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [isDemo, setIsDemo] = useState(false)
+    const [pendingSyncCount, setPendingSyncCount] = useState(0)
     const { user, hasPermiso } = useAuth()
+    const { isOnline } = useOnlineStatus()
 
     // Setup listener for real-time updates without aggressive timeout fallback
     useEffect(() => {
@@ -190,12 +194,60 @@ export function useVentas() {
         }
     }, [user?.tenantId])
 
-    // Kept for compatibility if used elsewhere, but simply aliases to simple addDoc (unsafe)
-    // or better, remove it if not used. But the interface might expect it.
-    // Let's deprecate it or make it just a wrapper.
+    const syncOfflineSales = useCallback(async () => {
+        if (!isOnline || loading) return
+
+        try {
+            const pendingSales = await offlineQueue.getVentasPendientes()
+            if (pendingSales.length === 0) {
+                setPendingSyncCount(0)
+                return
+            }
+
+            console.log(`🔄 Sincronizando ${pendingSales.length} ventas offline...`)
+            for (const offlineVenta of pendingSales) {
+                try {
+                    // Remove offline metadata before saving to Firebase
+                    const { offlineId, ...ventaData } = offlineVenta
+                    await procesarVenta(ventaData as Venta)
+                    await offlineQueue.removeVenta(offlineId!)
+                } catch (err) {
+                    console.error("Error sincronizando venta individual:", err)
+                    // Continue with next one
+                }
+            }
+
+            const remaining = await offlineQueue.getVentasPendientes()
+            setPendingSyncCount(remaining.length)
+        } catch (err) {
+            console.error("Error general en sincronización offline:", err)
+        }
+    }, [isOnline, loading, procesarVenta])
+
+    // Auto-sync when coming back online
+    useEffect(() => {
+        if (isOnline) {
+            syncOfflineSales()
+        }
+    }, [isOnline, syncOfflineSales])
+
+    // Regular check for pending count
+    useEffect(() => {
+        offlineQueue.getVentasPendientes().then(pending => {
+            setPendingSyncCount(pending.length)
+        })
+    }, [ventas]) // Re-check when sales list updates
+
     const agregarVenta = useCallback(async (venta: Venta) => {
+        if (!isOnline) {
+            // Guardar en cola local
+            await offlineQueue.addVenta(venta)
+            setPendingSyncCount(prev => prev + 1)
+            // Emitir evento local o actualizar estado si es necesario
+            return 'offline-queued'
+        }
         return procesarVenta(venta)
-    }, [procesarVenta])
+    }, [procesarVenta, isOnline])
 
     const anularVenta = useCallback(async (ventaId: string, motivo: string, revertirStockFn: (items: Array<{ productoId: string, cantidad: number }>) => Promise<void>) => {
         if (!hasPermiso('ventas:anular')) {
@@ -254,6 +306,8 @@ export function useVentas() {
         agregarVenta,
         procesarVenta,
         anularVenta,
+        pendingSyncCount,
+        syncOfflineSales,
         isDemo
     }
 }

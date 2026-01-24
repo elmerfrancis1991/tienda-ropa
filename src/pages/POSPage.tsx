@@ -25,6 +25,8 @@ import { useVentas } from '@/hooks/useVentas'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { useAuth } from '@/contexts/AuthContext'
 import { useConfig } from '@/contexts/ConfigContext'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
+import { Wifi, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -40,7 +42,7 @@ import {
 } from '@/components/ui/dialog'
 import { Producto } from '@/types'
 import { Label } from '@/components/ui/label'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, cn } from '@/lib/utils'
 
 const ProductImage = ({ src, alt }: { src?: string; alt: string }) => {
     const [error, setError] = useState(false)
@@ -314,8 +316,9 @@ function SaleCompleteModal({ open, onClose, venta, settings }: SaleCompleteModal
 export default function POSPage() {
     const { user, hasPermiso } = useAuth()
     const { settings } = useConfig()
+    const { isOnline } = useOnlineStatus()
     const { productos, loading, fetchProductos } = useProductos()
-    const { procesarVenta } = useVentas()
+    const { ventas, procesarVenta, pendingSyncCount, syncOfflineSales } = useVentas()
     const { cajaActual } = useCierreCaja()
     const cart = useCart({
         itbisEnabled: settings.itbisEnabled,
@@ -467,19 +470,47 @@ export default function POSPage() {
                         <span className="sm:hidden">POS</span>
                     </h1>
 
-                    {/* Mobile cart toggle */}
-                    <Button
-                        variant="outline"
-                        className="lg:hidden relative"
-                        onClick={() => setShowCart(!showCart)}
-                    >
-                        <ShoppingCart className="h-4 w-4" />
-                        {cart.items.length > 0 && (
-                            <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                                {cart.items.length}
+                    <div className="flex items-center gap-2">
+                        {/* Status Connection */}
+                        <Badge
+                            variant={isOnline ? "outline" : "destructive"}
+                            className={cn(
+                                "gap-1 py-1 px-3 border-2 transition-all duration-300",
+                                isOnline ? "text-green-600 border-green-200" : "animate-pulse"
+                            )}
+                        >
+                            {isOnline ? (
+                                <><Wifi className="h-3 w-3" /> <span className="text-[10px] sm:text-xs">Online</span></>
+                            ) : (
+                                <><WifiOff className="h-3 w-3" /> <span className="text-[10px] sm:text-xs">Offline</span></>
+                            )}
+                        </Badge>
+
+                        {pendingSyncCount > 0 && (
+                            <Badge
+                                variant="secondary"
+                                className="gap-1 py-1 px-3 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 cursor-pointer hover:bg-blue-200 transition-colors"
+                                onClick={() => syncOfflineSales()}
+                            >
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                <span className="text-[10px] sm:text-xs">{pendingSyncCount} Pendientes</span>
                             </Badge>
                         )}
-                    </Button>
+
+                        {/* Mobile cart toggle */}
+                        <Button
+                            variant="outline"
+                            className="lg:hidden relative"
+                            onClick={() => setShowCart(!showCart)}
+                        >
+                            <ShoppingCart className="h-4 w-4" />
+                            {cart.items.length > 0 && (
+                                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                                    {cart.items.length}
+                                </Badge>
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Search */}
