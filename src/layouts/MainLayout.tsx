@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCierreCaja } from '@/hooks/useCierreCaja'
 import { WifiOff } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
+import ReloadPrompt from '@/components/ReloadPrompt'
 
 const INACTIVITY_LIMIT_MS = 10 * 60 * 1000 // 10 minutes
 
@@ -97,6 +98,7 @@ export default function MainLayout() {
                 <Outlet />
             </main>
             <TermsModal />
+            <ReloadPrompt />
         </div>
     )
 }
