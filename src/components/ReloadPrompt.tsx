@@ -10,7 +10,7 @@ function ReloadPrompt() {
         needRefresh: [needRefresh, setNeedRefresh],
         updateServiceWorker,
     } = useRegisterSW({
-        onRegistered(r: ServiceWorkerRegistration | undefined) {
+        onRegistered(r: any) {
             console.log('SW Registered: ', r)
         },
         onRegisterError(error: any) {
