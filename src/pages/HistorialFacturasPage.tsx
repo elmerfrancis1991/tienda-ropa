@@ -35,16 +35,21 @@ import { useVentas } from '@/hooks/useVentas'
 import { Venta } from '@/hooks/useCart'
 import { useConfig } from '@/contexts/ConfigContext'
 import { printTicket } from '@/lib/printer'
+import { useProductos } from '@/hooks/useProductos'
+import { AnularVentaModal } from '@/components/AnularVentaModal'
 
 const ITEMS_PER_PAGE = 10
 
 export default function HistorialFacturasPage() {
-    const { ventas, loading } = useVentas()
+    const { ventas, loading, anularVenta } = useVentas()
+    const { revertirStock } = useProductos()
     const { settings } = useConfig()
     const [searchTerm, setSearchTerm] = useState('')
     const [dateFilter, setDateFilter] = useState<'hoy' | 'semana' | 'mes' | 'todo'>('todo')
     const [statusFilter, setStatusFilter] = useState<'todo' | 'completada' | 'cancelada'>('todo')
     const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null)
+    const [showAnularModal, setShowAnularModal] = useState(false)
+    const [ventaToAnular, setVentaToAnular] = useState<Venta | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
 
     // Filtrar ventas
@@ -172,6 +177,20 @@ export default function HistorialFacturasPage() {
             dateStyle: 'medium',
             timeStyle: 'short'
         }).format(d)
+    }
+
+    const handleAnularClick = (venta: Venta) => {
+        setVentaToAnular(venta)
+        setShowAnularModal(true)
+    }
+
+    const handleConfirmAnulacion = async (motivo: string) => {
+        if (!ventaToAnular) return
+        await anularVenta(ventaToAnular.id, motivo, revertirStock)
+        // Refresh local state if needed, though useVentas listener handles it
+        if (selectedVenta?.id === ventaToAnular.id) {
+            setSelectedVenta(null) // Close detail modal if anulling from there
+        }
     }
 
     if (loading) {
@@ -517,11 +536,28 @@ export default function HistorialFacturasPage() {
                                 <Button variant="outline" onClick={() => setSelectedVenta(null)}>
                                     Cerrar
                                 </Button>
+                                {selectedVenta.estado !== 'cancelada' && (
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => {
+                                            handleAnularClick(selectedVenta)
+                                        }}
+                                    >
+                                        Anular Venta
+                                    </Button>
+                                )}
                             </DialogFooter>
                         </div>
                     )}
                 </DialogContent>
             </Dialog>
+
+            <AnularVentaModal
+                open={showAnularModal}
+                onClose={() => setShowAnularModal(false)}
+                venta={ventaToAnular}
+                onConfirm={handleConfirmAnulacion}
+            />
         </div>
     )
 }
