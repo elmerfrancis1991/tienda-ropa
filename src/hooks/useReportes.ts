@@ -9,9 +9,17 @@ export function useReportes() {
 
     const getStatsByPeriod = (periodo: Periodo) => {
         const now = new Date()
+
+        // Calculate start of dates without mutating 'now'
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)) // Monday
+
+        const currentDay = now.getDay() // 0 = Sun, 1 = Mon...
+        // Adjust to Monday (1) being start of week, moving back 'currentDay - 1' days.
+        // If Sunday (0), we want to move back 6 days.
+        const dayDiff = currentDay === 0 ? 6 : currentDay - 1
+        const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayDiff)
         startOfWeek.setHours(0, 0, 0, 0)
+
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
         const startOfYear = new Date(now.getFullYear(), 0, 1)
 

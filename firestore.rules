@@ -98,7 +98,8 @@ service cloud.firestore {
     match /ventas/{ventaId} {
       allow read: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); // Allow viewing sales history?
       allow create: if isAuth() && creatingInTenant();
-      allow update, delete: if isAdmin() && belongsToTenant(resource.data);
+      allow update: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data));
+      allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
 
     // CIERRES DE CAJA

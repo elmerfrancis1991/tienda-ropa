@@ -345,19 +345,7 @@ export default function ReportesPage() {
                                             </div>
                                         </div>
 
-                                        {/* Acciones de Admin */}
-                                        {hasPermiso('ventas:anular') && venta.estado !== 'cancelada' && (
-                                            <div className="absolute inset-y-0 right-0 items-center pr-3 hidden group-hover:flex bg-muted/90 rounded-r-lg">
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    className="h-8 px-2 text-[10px]"
-                                                    onClick={() => handleAnularClick(venta)}
-                                                >
-                                                    Anular
-                                                </Button>
-                                            </div>
-                                        )}
+
                                     </div>
                                 ))
                             ) : (
