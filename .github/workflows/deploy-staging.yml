@@ -29,10 +29,3 @@ jobs:
           channelId: live
           projectId: tienda-ropa-staging-demo
 
-      # Manual Force Deploy of Rules using npx to ensure Project ID alignment
-      - name: Deploy Firestore Rules (Manual)
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
-        run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}' > /tmp/service-account.json
-          npx firebase-tools deploy --only firestore:rules --project tienda-ropa-staging-demo --non-interactive --json
