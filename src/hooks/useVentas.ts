@@ -240,14 +240,33 @@ export function useVentas() {
     }, [ventas]) // Re-check when sales list updates
 
     const agregarVenta = useCallback(async (venta: Venta) => {
-        if (!isOnline) {
-            // Guardar en cola local
-            await offlineQueue.addVenta(venta)
-            setPendingSyncCount(prev => prev + 1)
-            // Emitir evento local o actualizar estado si es necesario
-            return 'offline-queued'
+        try {
+            if (!isOnline) {
+                console.log("💾 Offline detectado por hook. Encolando venta...")
+                await offlineQueue.addVenta(venta)
+                setPendingSyncCount(prev => prev + 1)
+                return 'offline-queued'
+            }
+
+            // Intentar procesar online
+            return await procesarVenta(venta)
+        } catch (err: any) {
+            // Si el error es de red (incluso si isOnline decía true), encolar
+            const isNetworkError = !navigator.onLine ||
+                err.code === 'unavailable' ||
+                err.message?.toLowerCase().includes('network') ||
+                err.message?.toLowerCase().includes('offline')
+
+            if (isNetworkError) {
+                console.warn("⚠️ Error de red detectado durante venta online. Guardando en cola local...")
+                await offlineQueue.addVenta(venta)
+                setPendingSyncCount(prev => prev + 1)
+                return 'offline-queued'
+            }
+
+            // Si es otro tipo de error (permisos, stock), relanzar
+            throw err
         }
-        return procesarVenta(venta)
     }, [procesarVenta, isOnline])
 
     const anularVenta = useCallback(async (ventaId: string, motivo: string, revertirStockFn: (items: Array<{ productoId: string, cantidad: number }>) => Promise<void>) => {
