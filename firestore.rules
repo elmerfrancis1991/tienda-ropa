@@ -119,5 +119,11 @@ service cloud.firestore {
       allow read: if isAuth(); 
       allow write: if isAuth();
     }
+
+    // AUDITORIA INVENTARIO
+    match /movimientos_inventario/{movId} {
+      allow read: if isAuth() && belongsToTenant(resource.data);
+      allow create: if isAuth() && creatingInTenant();
+    }
   }
 }
