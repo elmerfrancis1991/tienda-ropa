@@ -65,6 +65,21 @@ export default function MainLayout() {
         };
     }, [handleLogout]);
 
+    const forceUpdate = () => {
+        if (confirm('¿Deseas forzar la actualización del sistema? Esto limpiará la memoria caché.')) {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then((registrations) => {
+                    for (const registration of registrations) {
+                        registration.unregister()
+                    }
+                    window.location.reload()
+                })
+            } else {
+                window.location.reload()
+            }
+        }
+    }
+
     return (
         <div className="flex min-h-screen bg-background relative">
             {isStaging && (
@@ -91,6 +106,13 @@ export default function MainLayout() {
             <div className="fixed top-3 right-4 z-40 hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-[10px] font-medium text-muted-foreground border shadow-sm select-none hover:bg-accent/80 transition-colors">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 v{version}
+                <button
+                    onClick={forceUpdate}
+                    className="ml-2 pl-2 border-l border-muted-foreground/30 hover:text-primary transition-colors cursor-pointer"
+                    title="Forzar actualización de caché"
+                >
+                    Actualizar
+                </button>
             </div>
 
             <Sidebar />
