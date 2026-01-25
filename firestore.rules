@@ -85,9 +85,9 @@ service cloud.firestore {
     match /productos/{productoId} {
       allow read: if isAuth() && belongsToTenant(resource.data);
       allow create: if (isAdmin() && creatingInTenant()) || (isAuth() && creatingInTenant()); 
-      // Update: Relaxed for v1.7.3 to fix permission blocking issues. Trusting Auth users.
-      // allow update: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); 
-      allow update: if isAuth(); 
+      // Update: Admin can do anything. Vendedor needs to update stock.
+      // Ideally, stock updates happens via Cloud Function. Client side: allow update if isAuth() and belongsToTenant().
+      allow update: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); 
       allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
 
@@ -98,8 +98,7 @@ service cloud.firestore {
     match /ventas/{ventaId} {
       allow read: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data)); 
       allow create: if isAuth() && creatingInTenant();
-      // Update: Relaxed for v1.7.3
-      allow update: if isAuth();
+      allow update: if (isAdmin() && belongsToTenant(resource.data)) || (isAuth() && belongsToTenant(resource.data));
       allow delete: if isAdmin() && belongsToTenant(resource.data);
     }
 
@@ -124,7 +123,7 @@ service cloud.firestore {
     // AUDITORIA INVENTARIO
     match /movimientos_inventario/{movId} {
       allow read: if isAuth() && belongsToTenant(resource.data);
-      allow create: if isAuth(); // Relaxed to ensure functionality. Logic handles tenantId.
+      allow create: if isAuth() && creatingInTenant();
     }
   }
 }
