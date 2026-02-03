@@ -16,22 +16,25 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Badge } from '@/components/ui/badge'
 import { APP_VERSION, LAST_UPDATE } from '@/version'
 
-// Schema de validación
+// Schemas de validación separados
 const businessSchema = z.object({
     businessName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
     rnc: z.string().min(9, 'RNC inválido').max(11).optional().or(z.literal('')),
     telefono: z.string().min(10, 'El teléfono debe tener al menos 10 dígitos'),
     direccion: z.string().optional(),
-    impuestoPorcentaje: z.coerce.number().min(0).max(100),
-    propinaPorcentaje: z.coerce.number().min(0).max(100),
-    moneda: z.string().default('RD$'),
-    // Campos opcionales para evitar errores si vienen del hook
     email: z.string().optional(),
     website: z.string().optional(),
     logoUrl: z.string().optional()
 })
 
+const fiscalSchema = z.object({
+    impuestoPorcentaje: z.coerce.number().min(0).max(100),
+    propinaPorcentaje: z.coerce.number().min(0).max(100),
+    moneda: z.string().default('RD$')
+})
+
 type BusinessFormValues = z.infer<typeof businessSchema>
+type FiscalFormValues = z.infer<typeof fiscalSchema>
 
 export function ConfiguracionPage() {
     const { toast } = useToast()
@@ -39,13 +42,19 @@ export function ConfiguracionPage() {
     const { user } = useAuth()
     const { theme, toggleTheme } = useTheme()
 
-    const form = useForm<BusinessFormValues>({
+    const businessForm = useForm<BusinessFormValues>({
         resolver: zodResolver(businessSchema),
         defaultValues: {
             businessName: '',
             rnc: '',
             telefono: '',
-            direccion: '',
+            direccion: ''
+        }
+    })
+
+    const fiscalForm = useForm<FiscalFormValues>({
+        resolver: zodResolver(fiscalSchema),
+        defaultValues: {
             impuestoPorcentaje: 18,
             propinaPorcentaje: 10,
             moneda: 'RD$'
@@ -55,31 +64,51 @@ export function ConfiguracionPage() {
     // Cargar configuración cuando esté lista
     useEffect(() => {
         if (!loading && config) {
-            form.reset({
+            businessForm.reset({
                 businessName: config.businessName || '',
                 rnc: config.rnc || '',
                 telefono: config.telefono || '',
                 direccion: config.direccion || '',
-                impuestoPorcentaje: config.impuestoPorcentaje ?? 18,
-                propinaPorcentaje: config.propinaPorcentaje ?? 10,
-                moneda: config.moneda || 'RD$',
                 logoUrl: config.logoUrl || ''
             })
-        }
-    }, [config, loading, form])
 
-    const onSubmit = async (data: BusinessFormValues) => {
+            fiscalForm.reset({
+                impuestoPorcentaje: config.impuestoPorcentaje ?? 18,
+                propinaPorcentaje: config.propinaPorcentaje ?? 10,
+                moneda: config.moneda || 'RD$'
+            })
+        }
+    }, [config, loading, businessForm, fiscalForm])
+
+    const onBusinessSubmit = async (data: BusinessFormValues) => {
         try {
             await saveConfig(data)
             toast({
-                title: "Configuración guardada",
-                description: "Los cambios se han actualizado correctamente en el sistema.",
+                title: "Información del negocio guardada",
+                description: "Los cambios se han actualizado correctamente.",
             })
         } catch (error) {
             console.error(error)
             toast({
                 title: "Error al guardar",
-                description: "No se pudieron guardar los cambios. Intente nuevamente.",
+                description: "No se pudieron guardar los cambios.",
+                variant: "destructive"
+            })
+        }
+    }
+
+    const onFiscalSubmit = async (data: FiscalFormValues) => {
+        try {
+            await saveConfig(data)
+            toast({
+                title: "Configuración fiscal guardada",
+                description: "Los cambios se han actualizado correctamente.",
+            })
+        } catch (error) {
+            console.error(error)
+            toast({
+                title: "Error al guardar",
+                description: "No se pudieron guardar los cambios.",
                 variant: "destructive"
             })
         }
@@ -117,46 +146,46 @@ export function ConfiguracionPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <form onSubmit={businessForm.handleSubmit(onBusinessSubmit)} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="businessName">Nombre del Negocio</Label>
                                         <Input
                                             id="businessName"
-                                            {...form.register('businessName')}
+                                            {...businessForm.register('businessName')}
                                             placeholder="Ej: Tienda de Ropa Elite"
                                         />
-                                        {form.formState.errors.businessName && (
-                                            <p className="text-sm text-red-500">{form.formState.errors.businessName.message}</p>
+                                        {businessForm.formState.errors.businessName && (
+                                            <p className="text-sm text-red-500">{businessForm.formState.errors.businessName.message}</p>
                                         )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="rnc">RNC (Opcional)</Label>
                                         <Input
                                             id="rnc"
-                                            {...form.register('rnc')}
+                                            {...businessForm.register('rnc')}
                                             placeholder="Ingresa el RNC si aplica"
                                         />
-                                        {form.formState.errors.rnc && (
-                                            <p className="text-sm text-red-500">{form.formState.errors.rnc.message}</p>
+                                        {businessForm.formState.errors.rnc && (
+                                            <p className="text-sm text-red-500">{businessForm.formState.errors.rnc.message}</p>
                                         )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="telefono">Teléfono</Label>
                                         <Input
                                             id="telefono"
-                                            {...form.register('telefono')}
+                                            {...businessForm.register('telefono')}
                                             placeholder="Ej: 809-555-0123"
                                         />
-                                        {form.formState.errors.telefono && (
-                                            <p className="text-sm text-red-500">{form.formState.errors.telefono.message}</p>
+                                        {businessForm.formState.errors.telefono && (
+                                            <p className="text-sm text-red-500">{businessForm.formState.errors.telefono.message}</p>
                                         )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="direccion">Dirección</Label>
                                         <Input
                                             id="direccion"
-                                            {...form.register('direccion')}
+                                            {...businessForm.register('direccion')}
                                             placeholder="Ej: Av. Winston Churchill #123"
                                         />
                                     </div>
@@ -164,7 +193,7 @@ export function ConfiguracionPage() {
                                         <Label htmlFor="logoUrl">URL del Logo (Opcional)</Label>
                                         <Input
                                             id="logoUrl"
-                                            {...form.register('logoUrl')}
+                                            {...businessForm.register('logoUrl')}
                                             placeholder="https://..."
                                         />
                                     </div>
@@ -191,7 +220,7 @@ export function ConfiguracionPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <form onSubmit={fiscalForm.handleSubmit(onFiscalSubmit)} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="impuesto">ITBIS / Impuesto (%)</Label>
@@ -199,7 +228,7 @@ export function ConfiguracionPage() {
                                             <Input
                                                 id="impuesto"
                                                 type="number"
-                                                {...form.register('impuestoPorcentaje')}
+                                                {...fiscalForm.register('impuestoPorcentaje')}
                                                 min="0"
                                                 max="100"
                                             />
@@ -212,7 +241,7 @@ export function ConfiguracionPage() {
                                             <Input
                                                 id="propina"
                                                 type="number"
-                                                {...form.register('propinaPorcentaje')}
+                                                {...fiscalForm.register('propinaPorcentaje')}
                                                 min="0"
                                                 max="100"
                                             />
@@ -222,9 +251,9 @@ export function ConfiguracionPage() {
                                     <div className="space-y-2">
                                         <Label htmlFor="moneda">Moneda</Label>
                                         <Select
-                                            onValueChange={(value: string) => form.setValue('moneda', value)}
-                                            defaultValue={form.getValues('moneda')}
-                                            value={form.watch('moneda')}
+                                            onValueChange={(value: string) => fiscalForm.setValue('moneda', value)}
+                                            defaultValue={fiscalForm.getValues('moneda')}
+                                            value={fiscalForm.watch('moneda')}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Seleccionar moneda" />

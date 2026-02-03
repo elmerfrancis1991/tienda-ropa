@@ -7,24 +7,11 @@ export type Periodo = 'dia' | 'semana' | 'mes' | 'anio' | 'todos'
 export function useReportes() {
     const { ventas, loading, error } = useVentas()
 
-    const getStatsByPeriod = (periodo: Periodo) => {
-        const now = new Date()
-        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)) // Monday
-        startOfWeek.setHours(0, 0, 0, 0)
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-        const startOfYear = new Date(now.getFullYear(), 0, 1)
-
-        let startDate = new Date(0) // Begin of time
-        if (periodo === 'dia') startDate = startOfDay
-        if (periodo === 'semana') startDate = startOfWeek
-        if (periodo === 'mes') startDate = startOfMonth
-        if (periodo === 'anio') startDate = startOfYear
-
-        // Filter sales by date
+    const getStatsByDateRange = (startDate: Date, endDate: Date) => {
+        // Filter sales by date range
         const ventasPorFecha = ventas.filter(v => {
             const fecha = v.fecha instanceof Date ? v.fecha : (v.fecha as any).toDate()
-            return fecha >= startDate
+            return fecha >= startDate && fecha <= endDate
         })
 
         // Filter valid sales for stats (not cancelled)
@@ -50,7 +37,11 @@ export function useReportes() {
 
         // Charts Logic
         const chartMap = new Map<string, number>()
-        if (periodo === 'dia') {
+        // Determine granularity based on range duration
+        const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+
+        if (diffDays <= 1) {
+            // Horas
             for (let i = 8; i <= 20; i += 2) chartMap.set(`${i}:00`, 0)
             ventasPeriodo.forEach(v => {
                 const date = v.fecha instanceof Date ? v.fecha : (v.fecha as any).toDate()
@@ -58,7 +49,8 @@ export function useReportes() {
                 const key = `${hour}:00`
                 chartMap.set(key, (chartMap.get(key) || 0) + v.total)
             })
-        } else if (periodo === 'semana') {
+        } else if (diffDays <= 7) {
+            // Dias nombre
             const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
             dias.forEach(d => chartMap.set(d, 0))
             ventasPeriodo.forEach(v => {
@@ -67,7 +59,7 @@ export function useReportes() {
                 chartMap.set(dayName, (chartMap.get(dayName) || 0) + v.total)
             })
         } else {
-            // Month/General: Group by date
+            // Dates
             ventasPeriodo.forEach(v => {
                 const date = v.fecha instanceof Date ? v.fecha : (v.fecha as any).toDate()
                 const key = date.toLocaleDateString()
@@ -126,10 +118,39 @@ export function useReportes() {
         }
     }
 
+    const getStatsByPeriod = (periodo: Periodo, customDate?: Date) => {
+        const now = customDate ? new Date(customDate) : new Date()
+        let startDate = new Date(0)
+        let endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+
+        if (periodo === 'dia') {
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+        } else if (periodo === 'semana') {
+            const currentDay = now.getDay()
+            const dayDiff = currentDay === 0 ? 6 : currentDay - 1
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayDiff)
+            startDate.setHours(0, 0, 0, 0)
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59) // End of today (or end of week?) usually 'This Week' implies up to now.
+        } else if (periodo === 'mes') {
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+            // End of month
+            endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+        } else if (periodo === 'anio') {
+            startDate = new Date(now.getFullYear(), 0, 1)
+            endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59)
+        } else if (periodo === 'todos') {
+            endDate = new Date()
+        }
+
+        return getStatsByDateRange(startDate, endDate)
+    }
+
     return {
         ventas,
         loading,
         error,
-        getStatsByPeriod
+        getStatsByPeriod,
+        getStatsByDateRange
     }
 }

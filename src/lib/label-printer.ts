@@ -1,14 +1,14 @@
 import { Producto } from "@/types";
 
 export interface LabelData {
-    nombre: string;
-    precio: number;
-    codigoBarra: string;
-    variante?: string;
+  nombre: string;
+  precio: number;
+  codigoBarra: string;
+  variante?: string;
 }
 
 export function printLabels(producto: Producto, cantidad: number = 1) {
-    const windowContent = `
+  const windowContent = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -93,10 +93,9 @@ export function printLabels(producto: Producto, cantidad: number = 1) {
               <div class="nombre">${producto.nombre}</div>
               <div class="precio">RD$${producto.precio.toLocaleString()}</div>
               <div class="barcode">${producto.codigoBarra}</div>
-              <div class="codigo-texto">${producto.codigoBarra}</div>
               ${(producto.talla || producto.color)
-            ? `<div class="variante">${producto.talla || ''} ${producto.color || ''}</div>`
-            : ''}
+      ? `<div class="variante">${producto.talla || ''} ${producto.color || ''}</div>`
+      : ''}
             </div>
           `).join('')}
         </div>
@@ -110,9 +109,9 @@ export function printLabels(producto: Producto, cantidad: number = 1) {
     </html>
   `;
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (printWindow) {
-        printWindow.document.write(windowContent);
-        printWindow.document.close();
-    }
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  if (printWindow) {
+    printWindow.document.write(windowContent);
+    printWindow.document.close();
+  }
 }

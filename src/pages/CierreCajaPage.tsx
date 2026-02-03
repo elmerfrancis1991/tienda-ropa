@@ -164,94 +164,91 @@ export default function CierreCajaPage() {
                 }
                 .center { text-align: center; }
                 .bold { font-weight: bold; }
-                .header { 
-                    font-size: 18px; 
+                .header-title { 
+                    font-size: 16px; 
                     font-weight: bold; 
-                    margin-bottom: 6px;
-                    border-bottom: 2px solid #000;
-                    padding-bottom: 6px;
                     text-transform: uppercase;
+                    margin-bottom: 5px;
                 }
                 .line { 
                     border-bottom: 1px dashed #000; 
-                    margin: 6px 0; 
+                    margin: 8px 0; 
                 }
-                .section {
-                    margin: 6px 0;
-                    padding: 4px 0;
+                .section-title {
+                    font-weight: bold;
+                    font-size: 14px;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    margin-top: 8px;
                 }
                 .row {
                     display: flex;
                     justify-content: space-between;
-                    padding: 3px 0;
-                    font-size: 14px;
+                    padding: 2px 0;
                 }
                 .row.total {
-                    font-size: 16px;
                     font-weight: bold;
-                    border-top: 2px solid #000;
-                    margin-top: 6px;
-                    padding-top: 6px;
-                }
-                .section-title {
-                    font-weight: bold;
-                    font-size: 15px;
-                    margin-bottom: 4px;
-                    text-decoration: underline;
+                    margin-top: 5px;
+                    padding-top: 5px;
+                    border-top: 1px solid #000;
                 }
             </style>
         </head>
         <body>
-            <div class="center header">CIERRE DE CAJA</div>
+            <div class="center header-title">CIERRE DE CAJA</div>
             
-            <div class="section">
-                <div class="row">
-                    <span>Fecha:</span>
-                    <span class="bold">${formatDate(cierre.fecha)}</span>
-                </div>
-                <div class="row">
-                    <span>Usuario:</span>
-                    <span class="bold">${cierre.usuarioNombre}</span>
-                </div>
+            <div class="row">
+                <span>Fecha:</span>
+                <span>${formatDate(cierre.fecha)}</span>
+            </div>
+            <div class="row">
+                <span>Usuario:</span>
+                <span>${cierre.usuarioNombre}</span>
             </div>
 
             <div class="line"></div>
 
-            <div class="section-title">APERTURA Y CIERRE</div>
+            <div class="section-title">RESUMEN DE CAJA</div>
             <div class="row">
-                <span>Monto Apertura:</span>
+                <span>Fondo Inicial:</span>
                 <span>${formatCurrency(cierre.montoApertura)}</span>
             </div>
             <div class="row">
-                <span>Monto Cierre:</span>
-                <span class="bold">${formatCurrency(cierre.montoCierre)}</span>
+                <span>Ventas Efectivo:</span>
+                <span>${formatCurrency(cierre.ventasEfectivo || 0)}</span>
+            </div>
+            <div class="row">
+                <span>Total Esperado:</span>
+                <span>${formatCurrency((cierre.montoApertura || 0) + (cierre.ventasEfectivo || 0))}</span>
+            </div>
+             <div class="row bold">
+                <span>Total Real:</span>
+                <span>${formatCurrency(cierre.montoCierre)}</span>
             </div>
 
             <div class="line"></div>
 
-            <div class="section-title">DESGLOSE DE VENTAS</div>
-            <div class="section">
-                <div class="row">
-                    <span>Efectivo:</span>
-                    <span>${formatCurrency(cierre.ventasEfectivo || 0)}</span>
-                </div>
-                <div class="row">
-                    <span>Tarjeta:</span>
-                    <span>${formatCurrency(cierre.ventasTarjeta || 0)}</span>
-                </div>
-                <div class="row">
-                    <span>Transferencia:</span>
-                    <span>${formatCurrency(cierre.ventasTransferencia || 0)}</span>
-                </div>
-                <div class="row total">
-                    <span>TOTAL VENTAS:</span>
-                    <span>${formatCurrency(cierre.ventasTotal)}</span>
-                </div>
+            <div class="section-title">VENTAS POR MÉTODO</div>
+            <div class="row">
+                <span>Efectivo:</span>
+                <span>${formatCurrency(cierre.ventasEfectivo || 0)}</span>
+            </div>
+            <div class="row">
+                <span>Tarjeta:</span>
+                <span>${formatCurrency(cierre.ventasTarjeta || 0)}</span>
+            </div>
+            <div class="row">
+                <span>Transferencia:</span>
+                <span>${formatCurrency(cierre.ventasTransferencia || 0)}</span>
+            </div>
+            <div class="row total">
+                <span>TOTAL VENTAS:</span>
+                <span>${formatCurrency(cierre.ventasTotal)}</span>
             </div>
 
             <div class="line"></div>
 
-            <div class="row total" style="font-size: 18px; color: ${cierre.diferencia < 0 ? '#d00' : '#080'}">
+            <div class="row total" style="font-size: 16px;">
                 <span>DIFERENCIA:</span>
                 <span>${cierre.diferencia > 0 ? '+' : ''}${formatCurrency(cierre.diferencia)}</span>
             </div>
@@ -259,9 +256,7 @@ export default function CierreCajaPage() {
             ${cierre.observaciones ? `
             <div class="line"></div>
             <div class="section-title">OBSERVACIONES</div>
-            <div class="section">
-                <p style="font-style: italic; font-size: 13px;">${cierre.observaciones}</p>
-            </div>
+            <p style="font-style: italic; font-size: 12px;">${cierre.observaciones}</p>
             ` : ''}
 
             <div class="line"></div>
@@ -305,15 +300,10 @@ export default function CierreCajaPage() {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    {isCajaAbierta ? (
+                    {isCajaAbierta && (
                         <Button onClick={() => setShowCerrarModal(true)} variant="destructive">
                             <DoorClosed className="h-4 w-4 mr-2" />
                             Cerrar Caja
-                        </Button>
-                    ) : (
-                        <Button onClick={() => setShowAbrirModal(true)}>
-                            <DoorOpen className="h-4 w-4 mr-2" />
-                            Abrir Caja
                         </Button>
                     )}
                 </div>

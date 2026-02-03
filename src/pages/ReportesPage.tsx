@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatCurrency, cn } from '@/lib/utils'
 import { useReportes, Periodo } from '@/hooks/useReportes'
 import { useVentas } from '@/hooks/useVentas'
@@ -57,12 +58,23 @@ export default function ReportesPage() {
     const { anularVenta } = useVentas()
     const { revertirStock } = useProductos()
     const { hasPermiso } = useAuth()
+
     const [periodo, setPeriodo] = useState<Periodo>('semana')
+    const [selectedMonth, setSelectedMonth] = useState<string>(new Date().getMonth().toString())
+    const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString())
     const [exporting, setExporting] = useState(false)
     const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null)
     const [showAnularModal, setShowAnularModal] = useState(false)
 
-    const filteredData = useMemo(() => getStatsByPeriod(periodo), [periodo, getStatsByPeriod])
+    // Calculate detailed date based on selection
+    const customDate = useMemo(() => {
+        const date = new Date()
+        date.setFullYear(parseInt(selectedYear))
+        date.setMonth(parseInt(selectedMonth))
+        return date
+    }, [selectedYear, selectedMonth])
+
+    const filteredData = useMemo(() => getStatsByPeriod(periodo, customDate), [periodo, customDate, getStatsByPeriod])
     const maxChartValue = Math.max(...filteredData.chartData.map(d => d.value), 100)
 
     const handleExport = async () => {
@@ -94,13 +106,31 @@ export default function ReportesPage() {
     }
 
     const getPeriodoLabel = (p: Periodo): string => {
+        const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
         switch (p) {
             case 'dia': return 'Hoy'
             case 'semana': return 'Esta Semana'
-            case 'mes': return 'Este Mes'
+            case 'mes': return `Mes de ${months[parseInt(selectedMonth)]} ${selectedYear}`
+            case 'anio': return `Año ${selectedYear}`
             default: return 'Período'
         }
     }
+
+    const years = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - i).toString())
+    const months = [
+        { value: '0', label: 'Enero' },
+        { value: '1', label: 'Febrero' },
+        { value: '2', label: 'Marzo' },
+        { value: '3', label: 'Abril' },
+        { value: '4', label: 'Mayo' },
+        { value: '5', label: 'Junio' },
+        { value: '6', label: 'Julio' },
+        { value: '7', label: 'Agosto' },
+        { value: '8', label: 'Septiembre' },
+        { value: '9', label: 'Octubre' },
+        { value: '10', label: 'Noviembre' },
+        { value: '11', label: 'Diciembre' },
+    ]
 
     if (loading) {
         return (
@@ -113,7 +143,7 @@ export default function ReportesPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
+            <div className="flex flex-col xl:flex-row justify-between gap-4 items-start xl:items-center">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
                         <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
@@ -124,24 +154,56 @@ export default function ReportesPage() {
                     </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto flex-wrap">
                     {/* Period Selector */}
-                    <div className="flex p-1 bg-muted rounded-lg w-full sm:w-auto">
-                        {(['dia', 'semana', 'mes'] as const).map((p) => (
+                    <div className="flex p-1 bg-muted rounded-lg w-full sm:w-auto overflow-x-auto">
+                        {(['dia', 'semana', 'mes', 'anio'] as const).map((p) => (
                             <button
                                 key={p}
                                 onClick={() => setPeriodo(p)}
                                 className={cn(
-                                    "flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                                    "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200 whitespace-nowrap",
                                     periodo === p
                                         ? "bg-background text-foreground shadow-sm"
                                         : "text-muted-foreground hover:text-foreground"
                                 )}
                             >
-                                {p === 'dia' ? 'Hoy' : p === 'semana' ? 'Semana' : 'Mes'}
+                                {p === 'dia' ? 'Hoy' : p === 'semana' ? 'Semana' : p === 'mes' ? 'Mes' : 'Año'}
                             </button>
                         ))}
                     </div>
+
+                    {/* Date Filters */}
+                    {(periodo === 'mes' || periodo === 'anio') && (
+                        <div className="flex gap-2 w-full sm:w-auto">
+                            {periodo === 'mes' && (
+                                <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                                    <SelectTrigger className="w-[140px]">
+                                        <SelectValue placeholder="Mes" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {months.map((m) => (
+                                            <SelectItem key={m.value} value={m.value}>
+                                                {m.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                            <Select value={selectedYear} onValueChange={setSelectedYear}>
+                                <SelectTrigger className="w-[100px]">
+                                    <SelectValue placeholder="Año" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {years.map((y) => (
+                                        <SelectItem key={y} value={y}>
+                                            {y}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     <Button
                         variant="outline"
@@ -344,20 +406,6 @@ export default function ReportesPage() {
                                                 </Badge>
                                             </div>
                                         </div>
-
-                                        {/* Acciones de Admin */}
-                                        {hasPermiso('ventas:anular') && venta.estado !== 'cancelada' && (
-                                            <div className="absolute inset-y-0 right-0 items-center pr-3 hidden group-hover:flex bg-muted/90 rounded-r-lg">
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    className="h-8 px-2 text-[10px]"
-                                                    onClick={() => handleAnularClick(venta)}
-                                                >
-                                                    Anular
-                                                </Button>
-                                            </div>
-                                        )}
                                     </div>
                                 ))
                             ) : (

@@ -32,7 +32,11 @@ function ReloadPrompt() {
                 action: (
                     <Button
                         size="sm"
-                        onClick={() => updateServiceWorker(true)}
+                        onClick={() => {
+                            updateServiceWorker(true)
+                            // Force hard reload after a short delay to ensure SW takes over
+                            setTimeout(() => window.location.reload(), 500)
+                        }}
                         className="bg-primary text-primary-foreground font-bold shadow-lg"
                     >
                         <RefreshCw className="mr-2 h-4 w-4" />
@@ -72,7 +76,10 @@ function ReloadPrompt() {
                 {needRefresh && (
                     <Button
                         size="lg"
-                        onClick={() => updateServiceWorker(true)}
+                        onClick={() => {
+                            updateServiceWorker(true)
+                            setTimeout(() => window.location.reload(), 500)
+                        }}
                         className="w-full mt-1 bg-primary text-primary-foreground font-bold hover:scale-[1.02] transition-transform shadow-md"
                     >
                         <RefreshCw className="mr-2 h-4 w-4" />

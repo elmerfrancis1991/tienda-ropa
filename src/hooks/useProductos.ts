@@ -13,12 +13,30 @@ import {
     writeBatch,
     onSnapshot,
     setDoc,
+    runTransaction,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useAuth } from '@/contexts/AuthContext'
 import { Producto } from '@/types'
 import { generateId } from '@/lib/utils'
 import { productSchema } from '@/utils/validation'
+
+// Tipos de movimiento de inventario
+type TipoMovimiento = 'VENTA' | 'ANULACION' | 'AJUSTE_MANUAL' | 'COMPRA' | 'DEVOLUCION'
+
+interface StockMovement {
+    productoId: string
+    productoNombre: string
+    cantidad: number // Positivo (entrada) o Negativo (salida)
+    tipo: TipoMovimiento
+    motivo?: string
+    usuarioId: string
+    usuarioNombre: string
+    tenantId: string
+    fecha: Date
+    stockAnterior: number
+    stockNuevo: number
+}
 
 // Demo products for testing (Flat SKU: each variant is a separate product)
 const DEMO_PRODUCTS: Omit<Producto, 'id'>[] = [
@@ -226,10 +244,55 @@ export function useProductos(): UseProductosReturn {
 
         try {
             const docRef = doc(db, 'productos', id)
-            await updateDoc(docRef, {
-                ...updates,
-                updatedAt: Timestamp.now(),
-            })
+
+            // Check for stock change to log it
+            if (updates.stock !== undefined) {
+                await runTransaction(db, async (transaction) => {
+                    const sfDoc = await transaction.get(docRef);
+                    if (!sfDoc.exists()) {
+                        throw "Producto no existe";
+                    }
+
+                    const currentData = sfDoc.data() as Producto;
+                    const oldStock = currentData.stock;
+                    const newStock = updates.stock!;
+                    const diff = newStock - oldStock;
+
+                    if (diff !== 0) {
+                        transaction.update(docRef, {
+                            ...updates,
+                            updatedAt: Timestamp.now()
+                        });
+
+                        // Log movement
+                        const movRef = doc(collection(db, 'movimientos_inventario'));
+                        transaction.set(movRef, {
+                            productoId: id,
+                            productoNombre: currentData.nombre,
+                            cantidad: diff,
+                            tipo: 'AJUSTE_MANUAL',
+                            motivo: 'Actualización manual desde inventario',
+                            usuarioId: user?.uid || 'system',
+                            usuarioNombre: user?.nombre || 'Sistema',
+                            tenantId: user?.tenantId,
+                            fecha: Timestamp.now(),
+                            stockAnterior: oldStock,
+                            stockNuevo: newStock
+                        });
+                    } else {
+                        transaction.update(docRef, {
+                            ...updates,
+                            updatedAt: Timestamp.now()
+                        });
+                    }
+                });
+            } else {
+                await updateDoc(docRef, {
+                    ...updates,
+                    updatedAt: Timestamp.now(),
+                })
+            }
+
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error al actualizar producto'
             setError(message)
@@ -339,6 +402,22 @@ export function useProductos(): UseProductosReturn {
                 batch.update(docRef, {
                     stock: newStock,
                     updatedAt: Timestamp.now()
+                })
+
+                // Audit Log (Batch)
+                const movRef = doc(collection(db, 'movimientos_inventario'))
+                batch.set(movRef, {
+                    productoId: item.productoId,
+                    productoNombre: product.nombre,
+                    cantidad: item.cantidad,
+                    tipo: 'ANULACION',
+                    motivo: 'Anulación de venta',
+                    usuarioId: user?.uid || 'system',
+                    usuarioNombre: user?.nombre || 'Sistema',
+                    tenantId: user?.tenantId,
+                    fecha: Timestamp.now(),
+                    stockAnterior: product.stock,
+                    stockNuevo: newStock
                 })
             }
 
