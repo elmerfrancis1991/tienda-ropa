@@ -125,5 +125,18 @@ service cloud.firestore {
       allow read: if isAuth() && belongsToTenant(resource.data);
       allow create: if isAuth() && creatingInTenant();
     }
+
+    // TENANTS - Multi-tenancy support
+    match /tenants/{tenantId} {
+      // Allow users to read their own tenant data
+      allow read: if isAuth() && getTenantId() == tenantId;
+      
+      // CONFIG SUBCOLLECTION
+      match /config/{configId} {
+        // Allow authenticated users from the same tenant to read/write config
+        allow read: if isAuth() && getTenantId() == tenantId;
+        allow write: if isAuth() && getTenantId() == tenantId;
+      }
+    }
   }
 }

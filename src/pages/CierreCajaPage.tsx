@@ -150,14 +150,14 @@ export default function CierreCajaPage() {
         <head>
             <title>Cierre de Caja</title>
             <style>
-                @page { margin: 0; size: 58mm auto; }
+                @page { margin: 0; size: 70mm auto; }
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
                     font-family: 'Courier New', monospace; 
                     font-size: 14px; 
-                    width: 58mm;
-                    max-width: 58mm;
-                    padding: 2mm;
+                    width: 70mm;
+                    max-width: 70mm;
+                    padding: 3mm;
                     color: black;
                     line-height: 1.3;
                     font-weight: 500;
