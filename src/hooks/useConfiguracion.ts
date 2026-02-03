@@ -62,7 +62,11 @@ export function useConfiguracion() {
     }, [user?.tenantId]);
 
     const saveConfig = async (nuevaConfig: Partial<ConfiguracionGeneral>): Promise<void> => {
+        console.log('saveConfig called with:', nuevaConfig)
+        console.log('Current tenantId:', user?.tenantId)
+
         if (!user?.tenantId) {
+            console.error('No tenantId found')
             throw new Error('Usuario no autenticado');
         }
 
@@ -70,7 +74,9 @@ export function useConfiguracion() {
             const configRef = doc(db, 'tenants', user.tenantId, 'config', 'general');
             const configActualizada = { ...config, ...nuevaConfig };
 
+            console.log('Saving to Firestore:', configActualizada)
             await setDoc(configRef, configActualizada, { merge: true });
+            console.log('Firestore save completed')
 
             // El estado se actualizará automáticamente por onSnapshot
         } catch (err) {

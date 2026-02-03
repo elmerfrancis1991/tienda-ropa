@@ -64,11 +64,6 @@ export function printLabels(producto: Producto, cantidad: number = 1) {
             margin: 2px 0;
           }
           
-          .codigo-texto {
-            font-size: 8px;
-            font-family: monospace;
-          }
-          
           .variante {
             font-size: 8px;
             color: #555;

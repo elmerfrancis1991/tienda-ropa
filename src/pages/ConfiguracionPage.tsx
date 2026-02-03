@@ -81,14 +81,16 @@ export function ConfiguracionPage() {
     }, [config, loading, businessForm, fiscalForm])
 
     const onBusinessSubmit = async (data: BusinessFormValues) => {
+        console.log('onBusinessSubmit called with data:', data)
         try {
             await saveConfig(data)
+            console.log('saveConfig completed successfully')
             toast({
                 title: "Información del negocio guardada",
                 description: "Los cambios se han actualizado correctamente.",
             })
         } catch (error) {
-            console.error(error)
+            console.error('Error in onBusinessSubmit:', error)
             toast({
                 title: "Error al guardar",
                 description: "No se pudieron guardar los cambios.",
@@ -98,14 +100,16 @@ export function ConfiguracionPage() {
     }
 
     const onFiscalSubmit = async (data: FiscalFormValues) => {
+        console.log('onFiscalSubmit called with data:', data)
         try {
             await saveConfig(data)
+            console.log('saveConfig completed successfully')
             toast({
                 title: "Configuración fiscal guardada",
                 description: "Los cambios se han actualizado correctamente.",
             })
         } catch (error) {
-            console.error(error)
+            console.error('Error in onFiscalSubmit:', error)
             toast({
                 title: "Error al guardar",
                 description: "No se pudieron guardar los cambios.",
